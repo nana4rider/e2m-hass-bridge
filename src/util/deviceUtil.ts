@@ -3,7 +3,7 @@ import {
   ManufacturerConfig,
   ManufacturerConfigMap,
   UnitMapping,
-} from "@/config/deviceConfig";
+} from "@/deviceConfig";
 import { hex2ascii } from "@/util/dataTransformUtil";
 import type {
   ApiDevice,

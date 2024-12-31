@@ -1,8 +1,5 @@
-import {
-  IgnoreDeviceTypes,
-  IgnorePropertyPatterns,
-} from "@/config/deviceConfig";
-import logger from "@/config/loggerConfig";
+import { IgnoreDeviceTypes, IgnorePropertyPatterns } from "@/deviceConfig";
+import logger from "@/logger";
 import { createDevice, language, origin } from "@/payload";
 import {
   getCompositeComponents,
