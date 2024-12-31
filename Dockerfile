@@ -12,8 +12,6 @@ FROM node:22-alpine AS runtime
 
 WORKDIR /app
 COPY --chown=node:node --from=build /app/package*.json ./
-RUN npm install --only=production
-
 COPY --chown=node:node --from=build /app/dist dist
 
 USER node
