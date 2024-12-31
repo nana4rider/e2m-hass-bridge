@@ -1,4 +1,7 @@
-import { ApiDevice, ApiDeviceProperty } from "echonetlite2mqtt/server/ApiTypes";
+import type {
+  ApiDevice,
+  ApiDeviceProperty,
+} from "echonetlite2mqtt/server/ApiTypes";
 
 export type Component = SimpleComponent | CompositeComponent;
 export type SimpleComponent =

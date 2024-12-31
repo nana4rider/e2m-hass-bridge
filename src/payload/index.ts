@@ -1,6 +1,6 @@
+import { getAsciiProductCode, getManufacturerName } from "@/util/deviceUtil";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import env from "env-var";
-import { getAsciiProductCode, getManufacturerName } from "../util/deviceUtil";
 
 export const language =
   env.get("DISCOVERY_LANGUAGE").asString() === "en" ? "en" : "ja";

@@ -1,22 +1,22 @@
-import type { ApiDeviceProperty } from "echonetlite2mqtt/server/ApiTypes";
-import {
-  isBooleanType,
-  isElNumberType,
-  isElStateType,
-} from "../../util/deviceUtil";
+import { climateBuilder } from "@/payload/component/composite/climate";
+import { binarySensorBuilder } from "@/payload/component/readonly/binary_sensor";
+import { sensorBuilder } from "@/payload/component/readonly/sensor";
+import { lockBuilder } from "@/payload/component/writable/lock";
+import { numberBuilder } from "@/payload/component/writable/number";
+import { selectBuilder } from "@/payload/component/writable/select";
+import { switchBuilder } from "@/payload/component/writable/switch";
+import { textBuilder } from "@/payload/component/writable/text";
 import {
   CompositeComponentConfig,
   SimpleComponent,
   SimpleComponentBuilder,
-} from "../type";
-import { climateBuilder } from "./composite/climate";
-import { binarySensorBuilder } from "./readonly/binary_sensor";
-import { sensorBuilder } from "./readonly/sensor";
-import { lockBuilder } from "./writable/lock";
-import { numberBuilder } from "./writable/number";
-import { selectBuilder } from "./writable/select";
-import { switchBuilder } from "./writable/switch";
-import { textBuilder } from "./writable/text";
+} from "@/payload/type";
+import {
+  isBooleanType,
+  isElNumberType,
+  isElStateType,
+} from "@/util/deviceUtil";
+import type { ApiDeviceProperty } from "echonetlite2mqtt/server/ApiTypes";
 
 /** 単一のプロパティから構成されるコンポーネント */
 const simpleComponentBuilder = new Map<

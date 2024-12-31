@@ -1,3 +1,10 @@
+import {
+  Manufacturer,
+  ManufacturerConfig,
+  ManufacturerConfigMap,
+  UnitMapping,
+} from "@/config/deviceConfig";
+import { hex2ascii } from "@/util/dataTransformUtil";
 import type {
   ApiDevice,
   ApiDeviceProperty,
@@ -7,13 +14,6 @@ import {
   ElNumberType,
   ElStateType,
 } from "echonetlite2mqtt/server/MraTypes";
-import {
-  Manufacturer,
-  ManufacturerConfig,
-  ManufacturerConfigMap,
-  UnitMapping,
-} from "../config/deviceConfig";
-import { hex2ascii } from "./dataTransformUtil";
 
 export function getDeviceValue<T = string, R extends boolean = false>(
   apiDevice: ApiDevice,

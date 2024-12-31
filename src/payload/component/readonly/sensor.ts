@@ -1,9 +1,9 @@
+import { Payload } from "@/payload/type";
+import { getUnit, isElNumberType } from "@/util/deviceUtil";
 import type {
   ApiDevice,
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
-import { getUnit, isElNumberType } from "../../../util/deviceUtil";
-import { Payload } from "../../type";
 
 export function sensorBuilder(
   apiDevice: ApiDevice,

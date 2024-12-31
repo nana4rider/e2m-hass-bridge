@@ -9,5 +9,10 @@
   },
   "[dotenv]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.importModuleSpecifierEnding": "minimal",
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
   }
 }

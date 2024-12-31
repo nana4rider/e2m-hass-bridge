@@ -1,11 +1,10 @@
-import globals from "globals";
 import pluginJs from "@eslint/js";
+import globals from "globals";
 import tseslint from "typescript-eslint";
-
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  { files: ["src/**/*.{ts}"] },
-  { ignores: ["dist", "eslint.config.mjs"] },
+  { files: ["src/**/*.ts"] },
+  { ignores: ["dist", "*.js"] },
   { languageOptions: { globals: globals.node } },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -13,8 +12,12 @@ export default [
     languageOptions: {
       parserOptions: {
         project: "./tsconfig.json",
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    settings: {
+      "import/resolver": {
+        typescript: true,
+        node: true,
       },
     },
     rules: {

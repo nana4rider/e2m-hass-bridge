@@ -1,14 +1,11 @@
-import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
-import {
-  formattedPythonDict,
-  reverseKeyValue,
-} from "../../../util/dataTransformUtil";
+import { Payload } from "@/payload/type";
+import { formattedPythonDict, reverseKeyValue } from "@/util/dataTransformUtil";
 import {
   assertElStateType,
   getDeviceProperties,
   getManifactureConfig,
-} from "../../../util/deviceUtil";
-import { Payload } from "../../type";
+} from "@/util/deviceUtil";
+import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 
 const OperationModeMapping = {
   auto: "auto",

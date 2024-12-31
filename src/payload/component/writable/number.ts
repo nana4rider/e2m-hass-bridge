@@ -1,9 +1,9 @@
+import { Payload } from "@/payload/type";
+import { assertElNumberType, getUnit } from "@/util/deviceUtil";
 import type {
   ApiDevice,
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
-import { assertElNumberType, getUnit } from "../../../util/deviceUtil";
-import { Payload } from "../../type";
 
 export function numberBuilder(
   apiDevice: ApiDevice,

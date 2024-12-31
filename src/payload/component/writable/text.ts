@@ -1,8 +1,8 @@
+import { Payload } from "@/payload/type";
 import type {
   ApiDevice,
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
-import { Payload } from "../../type";
 
 export function textBuilder(
   apiDevice: ApiDevice,

@@ -1,3 +1,15 @@
+import {
+  IgnoreDeviceTypes,
+  IgnorePropertyPatterns,
+} from "@/config/deviceConfig";
+import logger from "@/config/loggerConfig";
+import { createDevice, language, origin } from "@/payload";
+import {
+  getCompositeComponents,
+  getSimpleComponent,
+  getSimpleComponentBuilder,
+} from "@/payload/component";
+import { Component, Payload } from "@/payload/type";
 import type {
   ApiDevice,
   ApiDeviceSummary,
@@ -5,18 +17,6 @@ import type {
 import env from "env-var";
 import http from "http";
 import mqtt from "mqtt";
-import {
-  IgnoreDeviceTypes,
-  IgnorePropertyPatterns,
-} from "./config/deviceConfig";
-import logger from "./config/loggerConfig";
-import { createDevice, language, origin } from "./payload";
-import {
-  getCompositeComponents,
-  getSimpleComponent,
-  getSimpleComponentBuilder,
-} from "./payload/component";
-import { Component, Payload } from "./payload/type";
 
 async function main() {
   logger.info("e2m-hass-bridge: start");
@@ -181,7 +181,10 @@ async function main() {
     logger.info("e2m-hass-bridge: shutdown");
     await client.endAsync();
     logger.info("mqtt-client: closed");
-    process.exit(0);
+    server.close(() => {
+      logger.info("http: closed");
+      process.exit(0);
+    });
   };
 
   process.on("SIGINT", () => void shutdownHandler());
