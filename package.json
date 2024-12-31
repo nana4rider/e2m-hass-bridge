@@ -1,0 +1,29 @@
+{
+  "name": "e2m-hass-bridge",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "node --env-file=.env -r ts-node/register src/index.ts",
+    "start": "node dist/index",
+    "build": "npx tsc",
+    "lint": "npx eslint && npx prettier . --check",
+    "lint:fix": "npx eslint --fix && npx prettier . --write"
+  },
+  "author": "nana4rider",
+  "license": "ISC",
+  "dependencies": {
+    "env-var": "^7.5.0",
+    "mqtt": "^5.10.3",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "echonetlite2mqtt": "github:banban525/echonetlite2mqtt#v3.2.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "prettier": "3.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.2"
+  }
+}
