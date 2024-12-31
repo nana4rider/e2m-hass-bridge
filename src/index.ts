@@ -1,11 +1,10 @@
 import { IgnoreDeviceTypes, IgnorePropertyPatterns } from "@/deviceConfig";
 import logger from "@/logger";
-import { createDevice, language, origin } from "@/payload";
 import {
-  getCompositeComponents,
-  getSimpleComponent,
+  getCompositeComponentBuilders,
   getSimpleComponentBuilder,
-} from "@/payload/component";
+} from "@/payload/component/builder";
+import { createDevice, origin } from "@/payload/meta";
 import { Component, Payload } from "@/payload/type";
 import type {
   ApiDevice,
@@ -14,6 +13,8 @@ import type {
 import env from "env-var";
 import http from "http";
 import mqtt from "mqtt";
+import { language } from "./deviceConfig";
+import { getSimpleComponent } from "./payload/component/resolver";
 
 async function main() {
   logger.info("e2m-hass-bridge: start");
@@ -64,7 +65,7 @@ async function main() {
     });
 
     // 複数のプロパティから構成されるコンポーネント(climate等)
-    getCompositeComponents(deviceType).forEach(
+    getCompositeComponentBuilders(deviceType).forEach(
       ({ id, component, builder, name }) => {
         const uniqueId = `echonetlite_${deviceId}_composite_${id}`;
         const topic = getTopic(component, uniqueId);

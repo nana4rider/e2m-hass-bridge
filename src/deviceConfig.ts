@@ -1,3 +1,8 @@
+import env from "env-var";
+
+export const language =
+  env.get("DESCRIPTION_LANGUAGE").asString() === "en" ? "en" : "ja";
+
 /**
  * メーカーコード
  * https://echonet.jp/wp/wp-content/uploads/pdf/General/Echonet/ManufacturerCode/list_code.pdf
