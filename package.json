@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx --env-file=.env src/index.ts",
+    "dev": "npx tsx --env-file=.env src/index.ts",
     "start": "node dist/index",
     "build": "node build.js",
     "lint": "npx eslint && npx prettier . --check",
