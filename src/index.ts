@@ -190,7 +190,9 @@ async function main() {
   logger.info("e2m-hass-bridge: ready");
 }
 
-main().catch((error) => {
-  logger.error("e2m-hass-bridge:", error);
+try {
+  await main();
+} catch (err) {
+  logger.error("e2m-hass-bridge:", err);
   process.exit(1);
-});
+}
