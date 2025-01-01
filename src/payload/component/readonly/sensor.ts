@@ -5,6 +5,8 @@ import type {
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
 
+const intDeviceClass = ["temperature", "humidity"];
+
 export function sensorBuilder(
   apiDevice: ApiDevice,
   property: ApiDeviceProperty,
@@ -15,23 +17,22 @@ export function sensorBuilder(
     state_topic: property.mqttTopics,
   };
 
+  const deviceClass = getDeviceClass(apiDevice, property);
+  if (deviceClass) {
+    payload.device_class = deviceClass;
+  }
+
   if (isElNumberType(data)) {
+    const nativeValue =
+      deviceClass && intDeviceClass.includes(deviceClass) ? "int" : "float";
+    payload.native_value = nativeValue;
     payload.value_template = `
-{% if value | float(default=None) is not none %}
-  {{ value | float }}
+{% if value | ${nativeValue}(default=None) is not none %}
+  {{ value | ${nativeValue} }}
 {% else %}
   unknown
 {% endif %}
 `.trim();
-
-    if (!data.multiple || Number.isInteger(data.multiple)) {
-      payload.suggested_display_precision = 0;
-    }
-  }
-
-  const deviceClass = getDeviceClass(property);
-  if (deviceClass) {
-    payload.device_class = deviceClass;
   }
 
   const unit = getUnit(data);
@@ -42,8 +43,15 @@ export function sensorBuilder(
   return payload;
 }
 
-function getDeviceClass(property: ApiDeviceProperty): string | undefined {
-  const { name } = property;
+function getDeviceClass(
+  { deviceType }: ApiDevice,
+  { name }: ApiDeviceProperty,
+): string | undefined {
+  if (deviceType === "temperatureSensor" && name === "value") {
+    return "temperature";
+  } else if (deviceType === "humiditySensor" && name === "value") {
+    return "humidity";
+  }
 
   if (name === "consumedCumulativeElectricEnergy") {
     return "energy";
