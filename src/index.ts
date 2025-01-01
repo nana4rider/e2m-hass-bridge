@@ -50,7 +50,7 @@ async function main() {
       }
       const uniqueId = `echonetlite_${deviceId}_simple_${property.name}`;
       // コンポーネントの指定がない場合は自動判断する
-      const component = getSimpleComponent(property);
+      const component = getSimpleComponent(apiDevice, property);
       if (!component) {
         return; // 未サポートのプロパティ
       }

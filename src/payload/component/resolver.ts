@@ -4,15 +4,25 @@ import {
   isElNumberType,
   isElStateType,
 } from "@/util/deviceUtil";
-import type { ApiDeviceProperty } from "echonetlite2mqtt/server/ApiTypes";
+import type {
+  ApiDevice,
+  ApiDeviceProperty,
+} from "echonetlite2mqtt/server/ApiTypes";
 
 export function getSimpleComponent(
+  { deviceType }: ApiDevice,
   property: ApiDeviceProperty,
 ): SimpleComponent | undefined {
   const { data, accessRule } = property.schema;
+  const { name } = property;
   // 値を読み取れないプロパティはサポートしない
-  if (accessRule.get === "notApplicable") {
-    return undefined;
+  if (accessRule.get === "notApplicable") return undefined;
+
+  // デバイス固有の設定
+  if (deviceType === "electricLock") {
+    if (name === "mainElectricLock" || name === "subElectricLock") {
+      return "lock";
+    }
   }
 
   if (property.writable) {

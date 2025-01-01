@@ -18,9 +18,8 @@ export function lockBuilder(
     command_topic: `${property.mqttTopics}/set`,
     payload_lock: lock.name,
     payload_unlock: unlock.name,
-    state_lock: lock.name,
-    state_unlock: unlock.name,
-    optimistic: false,
+    state_locked: lock.name,
+    state_unlocked: unlock.name,
     qos: 1,
     retain: true,
   };
