@@ -23,6 +23,10 @@ export function sensorBuilder(
   unknown
 {% endif %}
 `.trim();
+
+    if (!data.multiple || Number.isInteger(data.multiple)) {
+      payload.suggested_display_precision = 0;
+    }
   }
 
   const deviceClass = getDeviceClass(property);
