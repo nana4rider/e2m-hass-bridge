@@ -13,6 +13,7 @@ const OperationModeMapping = {
   heating: "heat",
   dehumidification: "dry",
   circulation: "fan_only",
+  other: "unknown",
 };
 
 export function climateBuilder(apiDevice: ApiDevice): Payload {
@@ -54,16 +55,17 @@ function operationModeBuilder(apiDevice: ApiDevice): Payload {
 {% if value == 'off' %}
   {"operationStatus": "false"}
 {% else %}
-  {% set mode_mapping = ${formattedPythonDict(reverseKeyValue(OperationModeMapping))} %}
-  {{ {"operationStatus": "true", "operationMode": mode_mapping[value]} | tojson }}
+  {% set mapping = ${formattedPythonDict(reverseKeyValue(OperationModeMapping))} %}
+  {{ {"operationStatus": "true", "operationMode": mapping[value]} | tojson }}
 {% endif %}`.trim(),
     mode_command_topic: `${apiDevice.mqttTopics}/properties/set`,
     mode_state_topic: `${apiDevice.mqttTopics}/properties`,
-    mode_state_template: `{% if value_json.operationStatus == 'false' %}
+    mode_state_template: `
+{% if value_json.operationStatus == 'false' %}
   off
 {% else %}
-  {% set mode_mapping = ${formattedPythonDict(OperationModeMapping)} %}
-  {{ mode_mapping.get(value_json.operationMode, 'off') }}
+  {% set mapping = ${formattedPythonDict(OperationModeMapping)} %}
+  {{ mapping.get(value_json.operationMode, 'unknown') }}
 {% endif %}`.trim(),
   };
 }
@@ -95,12 +97,12 @@ function fanModeBuilder(apiDevice: ApiDevice): Payload {
     fan_modes: Object.keys(fanmodeMapping.command),
     fan_mode_command_topic: `${apiDevice.mqttTopics}/properties/airFlowLevel/set`,
     fan_mode_command_template: `
-{% set fan_mapping = ${formattedPythonDict(fanmodeMapping.command)} %}
-{{ fan_mapping[value] }}`.trim(),
+{% set mapping = ${formattedPythonDict(fanmodeMapping.command)} %}
+{{ mapping[value] }}`.trim(),
     fan_mode_state_topic: `${apiDevice.mqttTopics}/properties/airFlowLevel`,
     fan_mode_state_template: `
-{% set fan_mapping = ${formattedPythonDict(fanmodeMapping.state)} %}
-{{ fan_mapping.get(value, 'auto') }}
+{% set mapping = ${formattedPythonDict(fanmodeMapping.state)} %}
+{{ mapping.get(value, 'unknown') }}
 `.trim(),
   };
 }
