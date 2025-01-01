@@ -19,7 +19,10 @@ export function getSimpleComponent(
   if (accessRule.get === "notApplicable") return undefined;
 
   // デバイス固有の設定
-  if (deviceType === "monoFunctionalLighting") {
+  if (
+    deviceType === "monoFunctionalLighting" ||
+    deviceType === "generalLighting"
+  ) {
     if (name === "operationStatus") {
       return "light";
     }
