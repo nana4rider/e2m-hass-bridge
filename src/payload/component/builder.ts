@@ -25,6 +25,7 @@ simpleComponentBuilder.set("number", numberBuilder);
 simpleComponentBuilder.set("text", textBuilder);
 // writable
 simpleComponentBuilder.set("switch", switchBuilder);
+simpleComponentBuilder.set("light", switchBuilder);
 simpleComponentBuilder.set("lock", lockBuilder);
 
 /**

@@ -10,6 +10,7 @@ export type SimpleComponent =
   | "sensor"
   // writable
   | "switch"
+  | "light"
   | "lock"
   | "select"
   | "number"
