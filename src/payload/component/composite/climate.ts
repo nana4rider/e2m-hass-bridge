@@ -7,13 +7,12 @@ import {
 } from "@/util/deviceUtil";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 
-const OperationModeMapping = {
+const OperationModeMapping: Record<string, string> = {
   auto: "auto",
   cooling: "cool",
   heating: "heat",
   dehumidification: "dry",
   circulation: "fan_only",
-  other: "unknown",
 };
 
 export function climateBuilder(apiDevice: ApiDevice): Payload {
@@ -36,13 +35,9 @@ function getModes(apiDevice: ApiDevice): string[] {
   const operationMode = getDeviceProperties(apiDevice, "operationMode", true);
   const { data } = operationMode.schema;
   assertElStateType(data);
-  const modes: string[] = data.enum
-    .map(({ name }) =>
-      name in OperationModeMapping
-        ? OperationModeMapping[name as keyof typeof OperationModeMapping]
-        : undefined,
-    )
-    .filter((name): name is string => Boolean(name));
+  const modes = data.enum
+    .map(({ name }) => OperationModeMapping[name])
+    .filter(Boolean);
   modes.push("off");
 
   return modes;
