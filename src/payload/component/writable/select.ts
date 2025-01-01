@@ -27,11 +27,11 @@ export function selectBuilder(
     command_topic: `${property.mqttTopics}/set`,
     value_template: `
 {% set mapping = ${formattedPythonDict(valueMapping)} %}
-{{ mapping[value] }}
+{{ mapping.get(value, 'unknown') }}
 `.trim(),
     command_template: `
 {% set mapping = ${formattedPythonDict(commandMapping)} %}
-{{ mapping.get(value, 'unknown') }}
+{{ mapping[value] }}
 `.trim(),
   };
 }
