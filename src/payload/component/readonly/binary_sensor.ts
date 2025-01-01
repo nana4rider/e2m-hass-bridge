@@ -13,7 +13,7 @@ export function binarySensorBuilder(
   assertBooleanType(data);
 
   const [on, off] = data.enum;
-  const deviceClass = getDeviceClass(property, on.name);
+  const deviceClass = getDeviceClass(apiDevice, property, on.name);
 
   const payload: Payload = {
     state_topic: property.mqttTopics,
@@ -29,10 +29,13 @@ export function binarySensorBuilder(
 }
 
 function getDeviceClass(
-  property: ApiDeviceProperty,
+  { deviceType }: ApiDevice,
+  { name }: ApiDeviceProperty,
   onValue: string,
 ): string | undefined {
-  const { name } = property;
+  if (deviceType === "humanDetectionSensor" && name === "detection") {
+    return "motion";
+  }
 
   if (name === "smokeDetection") {
     return "smoke";
