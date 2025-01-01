@@ -1,5 +1,7 @@
+import { language } from "@/deviceConfig";
 import { Payload } from "@/payload/type";
-import { getUnit, isElNumberType } from "@/util/deviceUtil";
+import { formattedPythonDict } from "@/util/dataTransformUtil";
+import { getUnit, isElNumberType, isElStateType } from "@/util/deviceUtil";
 import type {
   ApiDevice,
   ApiDeviceProperty,
@@ -31,6 +33,16 @@ export function sensorBuilder(
   unknown
 {% endif %}
 `.trim();
+  } else if (isElStateType(data)) {
+    const valueMapping: Record<string, string> = {};
+    data.enum.forEach(({ name, descriptions }) => {
+      valueMapping[name] = descriptions[language];
+    });
+
+    payload.value_template = `
+    {% set mapping = ${formattedPythonDict(valueMapping)} %}
+    {{ mapping.get(value, 'unknown') }}
+    `.trim();
   }
 
   const unit = getUnit(data);
