@@ -1,4 +1,5 @@
 import { climateBuilder } from "@/payload/component/composite/climate";
+import { lightBuilder } from "@/payload/component/composite/light";
 import { binarySensorBuilder } from "@/payload/component/readonly/binary_sensor";
 import { sensorBuilder } from "@/payload/component/readonly/sensor";
 import { lockBuilder } from "@/payload/component/writable/lock";
@@ -41,6 +42,13 @@ compositeComponentConfigs.set("homeAirConditioner", {
     name: "エアコン",
     component: "climate",
     builder: climateBuilder,
+  },
+});
+compositeComponentConfigs.set("generalLighting", {
+  main: {
+    name: "照明",
+    component: "light",
+    builder: lightBuilder,
   },
 });
 
