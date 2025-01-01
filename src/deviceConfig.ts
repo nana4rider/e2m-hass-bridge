@@ -35,6 +35,7 @@ export const IgnorePropertyPatterns: RegExp[] = [
   /^electricWaterHeater_estimatedElectricEnergyAtShiftTime/,
   /^electricWaterHeater_electricEnergyConsumptionRate/,
   // climateで実装
+  /^homeAirConditioner_operationStatus$/,
   /^homeAirConditioner_operationMode$/,
   /^homeAirConditioner_targetTemperature$/,
   /^homeAirConditioner_airFlowLevel$/,
