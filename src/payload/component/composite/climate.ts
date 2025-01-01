@@ -100,7 +100,7 @@ function fanModeBuilder(apiDevice: ApiDevice): Payload {
     fan_mode_state_topic: `${apiDevice.mqttTopics}/properties/airFlowLevel`,
     fan_mode_state_template: `
 {% set fan_mapping = ${formattedPythonDict(fanmodeMapping.state)} %}
-{{ fan_mapping.get(value, value) }}
+{{ fan_mapping.get(value, 'auto') }}
 `.trim(),
   };
 }
