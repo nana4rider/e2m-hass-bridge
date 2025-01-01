@@ -5,8 +5,6 @@ import type {
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
 
-const intDeviceClass = ["temperature", "humidity"];
-
 export function sensorBuilder(
   apiDevice: ApiDevice,
   property: ApiDeviceProperty,
@@ -24,7 +22,7 @@ export function sensorBuilder(
 
   if (isElNumberType(data)) {
     const nativeValue =
-      deviceClass && intDeviceClass.includes(deviceClass) ? "int" : "float";
+      !data.multiple || Number.isInteger(data.multiple) ? "int" : "float";
     payload.native_value = nativeValue;
     payload.value_template = `
 {% if value | ${nativeValue}(default=None) is not none %}
