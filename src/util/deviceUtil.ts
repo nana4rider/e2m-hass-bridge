@@ -124,11 +124,9 @@ export function assertBooleanType(
 }
 
 export function getManifactureConfig<T extends keyof ManufacturerConfig>(
-  apiDevice: ApiDevice,
+  manufacturer: string,
   key: T,
 ): ManufacturerConfig[T] | undefined {
-  const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
-
   if (!(manufacturer in ManufacturerConfigMap)) return undefined;
 
   const configMap = ManufacturerConfigMap[manufacturer];

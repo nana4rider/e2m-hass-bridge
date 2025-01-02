@@ -119,6 +119,19 @@ export const ManufacturerConfigMap: Readonly<
         },
       },
     },
+    autoRequestProperties: {
+      homeAirConditioner: [
+        // Eoliaアプリやリモコンで変更された場合に通知されない
+        "operationStatus",
+        "operationMode",
+        "targetTemperature",
+        "airFlowLevel",
+        "airFlowDirectionVertical",
+        "automaticControlAirFlowDirection",
+        "roomTemperature",
+        "humidity",
+      ],
+    },
   },
   // https://github.com/banban525/echonet-lite-kaden-emulator
   [Manufacturer.KadenEmulator]: {
@@ -169,4 +182,7 @@ export interface ManufacturerConfig {
     };
   };
   override?: OverrideConfig;
+  autoRequestProperties?: {
+    [deviceType: string]: string[];
+  };
 }

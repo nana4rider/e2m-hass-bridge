@@ -1,6 +1,7 @@
 import {
   IgnoreDeviceTypePatterns,
   IgnorePropertyPatterns,
+  language,
 } from "@/deviceConfig";
 import logger from "@/logger";
 import {
@@ -10,8 +11,10 @@ import {
   getSimpleComponentBuilder,
 } from "@/payload/builder";
 import { Component, Payload } from "@/payload/payloadType";
+import { getSimpleComponent } from "@/payload/resolver";
 import {
   getCompositeOverridePayload,
+  getManifactureConfig,
   getSimpleOverridePayload,
 } from "@/util/deviceUtil";
 import type {
@@ -21,11 +24,10 @@ import type {
 import env from "env-var";
 import http from "http";
 import mqtt from "mqtt";
-import { language } from "./deviceConfig";
-import { getSimpleComponent } from "./payload/resolver";
+import { setInterval, setTimeout } from "timers/promises";
 
 async function main() {
-  logger.info("e2m-hass-bridge: start");
+  logger.info("start");
 
   const haDiscoveryPrefix = env
     .get("HA_DISCOVERY_PREFIX")
@@ -35,9 +37,13 @@ async function main() {
     .get("ECHONETLITE2MQTT_BASE_TOPIC")
     .default("echonetlite2mqtt/elapi/v2/devices")
     .asString();
+  const autoRequestInterval = env
+    .get("AUTO_REQUEST_INTERVAL")
+    .default(30000)
+    .asIntPositive();
   const port = env.get("PORT").default(3000).asIntPositive();
 
-  const getTopic = (component: Component, uniqueId: string) => {
+  const getDiscoveryTopic = (component: Component, uniqueId: string) => {
     return `${haDiscoveryPrefix}/${component}/${uniqueId}/config`;
   };
 
@@ -64,7 +70,7 @@ async function main() {
       if (!component) {
         return; // 未サポートのプロパティ
       }
-      const topic = getTopic(component, uniqueId);
+      const topic = getDiscoveryTopic(component, uniqueId);
       const builder = getSimpleComponentBuilder(component);
       const payload = builder(apiDevice, property);
       payload.unique_id = uniqueId;
@@ -78,7 +84,7 @@ async function main() {
     getCompositeComponentBuilders(deviceType).forEach(
       ({ compositeComponentId, component, builder, name }) => {
         const uniqueId = `echonetlite_${deviceId}_composite_${compositeComponentId}`;
-        const topic = getTopic(component, uniqueId);
+        const topic = getDiscoveryTopic(component, uniqueId);
         const payload = builder(apiDevice);
         payload.unique_id = uniqueId;
         payload.name = name?.[language] ?? apiDevice.descriptions[language];
@@ -114,10 +120,11 @@ async function main() {
   // デバイスリストを購読
   await client.subscribeAsync(echonetlite2mqttBaseTopic);
 
-  const subscribeDevices = new Set<string>();
+  const subscribeDevices = new Map<string, ApiDeviceSummary>();
 
   const handleDeviceList = (apiDeviceSummaries: ApiDeviceSummary[]) => {
-    apiDeviceSummaries.forEach(({ deviceType, mqttTopics }) => {
+    apiDeviceSummaries.forEach((summary) => {
+      const { deviceType, mqttTopics } = summary;
       // 除外するデバイスタイプは購読しない
       if (
         IgnoreDeviceTypePatterns.some((tester) => tester.test(deviceType)) ||
@@ -125,7 +132,7 @@ async function main() {
       ) {
         return;
       }
-      subscribeDevices.add(mqttTopics);
+      subscribeDevices.set(mqttTopics, summary);
       // デバイスのtopicを購読
       client.subscribe(mqttTopics);
       logger.debug(`subscribe to: ${mqttTopics}`);
@@ -161,8 +168,7 @@ async function main() {
       if (topic === echonetlite2mqttBaseTopic) {
         handleDeviceList(JSON.parse(payload.toString()) as ApiDeviceSummary[]);
         return;
-      }
-      if (subscribeDevices.has(topic)) {
+      } else if (subscribeDevices.has(topic)) {
         const apiDevice = JSON.parse(payload.toString()) as ApiDevice;
         handleDevice(apiDevice);
         return;
@@ -173,6 +179,31 @@ async function main() {
       logger.error("message error:", err);
     }
   });
+
+  // 更新通知をしないプロパティに対して、定期的に自動リクエストする
+  void (async () => {
+    for await (const _ of setInterval(autoRequestInterval)) {
+      await Promise.all(
+        Array.from(subscribeDevices.values()).map(
+          async ({ deviceType, manufacturer, mqttTopics }) => {
+            const autoRequestProperties = getManifactureConfig(
+              manufacturer.code,
+              "autoRequestProperties",
+            );
+            const targetProperties = autoRequestProperties?.[deviceType];
+            if (!targetProperties) return;
+            // TODO multiple requests実装後に見直す
+            for (const propertyName of targetProperties) {
+              const topic = `${mqttTopics}/properties/${propertyName}/request`;
+              await client.publishAsync(topic, "");
+              await setTimeout(500);
+              logger.debug(`request: ${topic}`);
+            }
+          },
+        ),
+      );
+    }
+  })();
 
   const server = http.createServer((req, res) => {
     if (req.url === "/health") {
@@ -189,11 +220,11 @@ async function main() {
   });
 
   const shutdownHandler = async () => {
-    logger.info("e2m-hass-bridge: shutdown");
+    logger.info("shutdown start");
     await client.endAsync();
     logger.info("mqtt-client: closed");
     server.close(() => {
-      logger.info("http: closed");
+      logger.info("shutdown finished");
       process.exit(0);
     });
   };
@@ -201,12 +232,12 @@ async function main() {
   process.on("SIGINT", () => void shutdownHandler());
   process.on("SIGTERM", () => void shutdownHandler());
 
-  logger.info("e2m-hass-bridge: ready");
+  logger.info("ready");
 }
 
 try {
   await main();
 } catch (err) {
-  logger.error("e2m-hass-bridge:", err);
+  logger.error("main() error:", err);
   process.exit(1);
 }

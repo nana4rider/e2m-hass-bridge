@@ -4,6 +4,7 @@ import { formattedPythonDict, reverseKeyValue } from "@/util/dataTransformUtil";
 import {
   assertElStateType,
   getDeviceProperties,
+  getDeviceValue,
   getManifactureConfig,
   isElStateType,
 } from "@/util/deviceUtil";
@@ -83,7 +84,8 @@ function buildFanMode(apiDevice: ApiDevice): Payload {
   const airFlowLevel = getDeviceProperties(apiDevice, "airFlowLevel");
   if (!airFlowLevel || !airFlowLevel.writable) return {};
 
-  const climateConfig = getManifactureConfig(apiDevice, "climate");
+  const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
+  const climateConfig = getManifactureConfig(manufacturer, "climate");
   const fanmodeMapping = climateConfig?.fanmodeMapping;
   if (!fanmodeMapping) return {};
 
