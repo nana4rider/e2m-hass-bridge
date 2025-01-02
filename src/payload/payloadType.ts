@@ -33,6 +33,11 @@ export type SimpleComponentBuilder = (
   apiDevice: ApiDevice,
   property: ApiDeviceProperty,
 ) => Payload;
+export type SimpleComponentConfig = {
+  component: SimpleComponent;
+  property: ApiDeviceProperty;
+  builder: SimpleComponentBuilder;
+};
 
 export type CompositeComponentBuilder = (apiDevice: ApiDevice) => Payload;
 export type CompositeComponentConfig = {

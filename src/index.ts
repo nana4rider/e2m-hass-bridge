@@ -1,17 +1,12 @@
-import {
-  IgnoreDeviceTypePatterns,
-  IgnorePropertyPatterns,
-  language,
-} from "@/deviceConfig";
+import { IgnoreDeviceTypePatterns, language } from "@/deviceConfig";
 import logger from "@/logger";
 import {
   buildDevice,
   buildOrigin,
-  getCompositeComponentBuilders,
-  getSimpleComponentBuilder,
+  getCompositeComponentConfigs,
+  getSimpleComponentConfigs,
 } from "@/payload/builder";
 import { Component, Payload } from "@/payload/payloadType";
-import { getSimpleComponent } from "@/payload/resolver";
 import {
   getAutoRequestProperties,
   getCompositeOverridePayload,
@@ -73,48 +68,32 @@ async function main() {
   const createDiscoveryEntries = (apiDevice: ApiDevice) => {
     const discoveryEntries: { topic: string; payload: Payload }[] = [];
     const device = buildDevice(apiDevice);
-    const { id: deviceId, deviceType } = apiDevice;
-
     // 単一のプロパティから構成されるコンポーネント(sensor等)
-    apiDevice.properties.forEach((property) => {
-      if (
-        IgnorePropertyPatterns.some((tester) =>
-          tester.test(`${deviceType}_${property.name}`),
-        )
-      ) {
-        logger.debug(`Ignore Property: ${deviceType}_${property.name}`);
-        return;
-      }
-      const uniqueId = `echonetlite_${deviceId}_simple_${property.name}`;
-      // コンポーネントの指定がない場合は自動判断する
-      const component = getSimpleComponent(apiDevice, property);
-      if (!component) {
-        return; // 未サポートのプロパティ
-      }
-      const topic = getDiscoveryTopic(component, uniqueId);
-      const builder = getSimpleComponentBuilder(component);
-      const payload = builder(apiDevice, property);
-      payload.unique_id = uniqueId;
-      payload.name = property.schema.propertyName[language];
-      const ovverride = getSimpleOverridePayload(apiDevice, property.name);
-
-      discoveryEntries.push({ topic, payload: { ...payload, ...ovverride } });
-    });
+    getSimpleComponentConfigs(apiDevice).forEach(
+      ({ component, property, builder }) => {
+        const uniqueId = `echonetlite_${apiDevice.id}_simple_${property.name}`;
+        const topic = getDiscoveryTopic(component, uniqueId);
+        const payload = builder(apiDevice, property);
+        payload.unique_id = uniqueId;
+        payload.name = property.schema.propertyName[language];
+        const override = getSimpleOverridePayload(apiDevice, property.name);
+        discoveryEntries.push({ topic, payload: { ...payload, ...override } });
+      },
+    );
 
     // 複数のプロパティから構成されるコンポーネント(climate等)
-    getCompositeComponentBuilders(deviceType).forEach(
+    getCompositeComponentConfigs(apiDevice).forEach(
       ({ compositeComponentId, component, builder, name }) => {
-        const uniqueId = `echonetlite_${deviceId}_composite_${compositeComponentId}`;
+        const uniqueId = `echonetlite_${apiDevice.id}_composite_${compositeComponentId}`;
         const topic = getDiscoveryTopic(component, uniqueId);
         const payload = builder(apiDevice);
         payload.unique_id = uniqueId;
         payload.name = name?.[language] ?? apiDevice.descriptions[language];
-        const ovverride = getCompositeOverridePayload(
+        const override = getCompositeOverridePayload(
           apiDevice,
           compositeComponentId,
         );
-
-        discoveryEntries.push({ topic, payload: { ...payload, ...ovverride } });
+        discoveryEntries.push({ topic, payload: { ...payload, ...override } });
       },
     );
 
@@ -223,14 +202,44 @@ async function main() {
     }
   })();
 
-  // ヘルスチェック用のHTTPサーバー
   const server = http.createServer((req, res) => {
+    const resJson = (o: unknown, statusCode = 200) => {
+      res.writeHead(statusCode, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(o));
+    };
+
     if (req.url === "/health") {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({}));
+      resJson({});
+    } else if (req.url === "/status") {
+      const devices = Array.from(targetDevices.values()).map((apiDevice) => {
+        const { id, deviceType } = apiDevice;
+        const autoRequestProperties = getAutoRequestProperties(apiDevice);
+        const simpleComponents = getSimpleComponentConfigs(apiDevice).map(
+          ({ property, component }) => ({
+            name: property.name,
+            component,
+          }),
+        );
+        const compositeComponents = getCompositeComponentConfigs(apiDevice).map(
+          ({ compositeComponentId, component }) => ({
+            compositeComponentId,
+            component,
+          }),
+        );
+        return {
+          id,
+          deviceType,
+          autoRequestProperties,
+          simpleComponents,
+          compositeComponents,
+        };
+      });
+      resJson({
+        mqttTaskQueue: mqttTaskQueue.length,
+        devices,
+      });
     } else {
-      res.writeHead(404);
-      res.end();
+      resJson({ error: "Not Found" }, 404);
     }
   });
   server.listen(port, "0.0.0.0", () => {
