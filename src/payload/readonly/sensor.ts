@@ -22,6 +22,11 @@ export function buildSensor(
     payload.device_class = deviceClass;
   }
 
+  const stateClass = getStateClass(apiDevice, property);
+  if (stateClass) {
+    payload.state_class = stateClass;
+  }
+
   if (isElNumberType(data)) {
     const nativeValue =
       !data.multiple || Number.isInteger(data.multiple) ? "int" : "float";
@@ -40,8 +45,8 @@ export function buildSensor(
     });
 
     payload.value_template = `
-    {% set mapping = ${formattedPythonDict(valueMapping)} %}
-    {{ mapping.get(value, 'unknown') }}
+{% set mapping = ${formattedPythonDict(valueMapping)} %}
+{{ mapping.get(value, 'unknown') }}
     `.trim();
   }
 
@@ -80,4 +85,15 @@ function getDeviceClass(
   } else {
     return undefined;
   }
+}
+
+function getStateClass(
+  { deviceType }: ApiDevice,
+  { name }: ApiDeviceProperty,
+): string | undefined {
+  if (name === "consumedCumulativeElectricEnergy") {
+    return "total_increasing";
+  }
+
+  return undefined;
 }
