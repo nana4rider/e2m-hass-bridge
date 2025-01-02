@@ -1,4 +1,5 @@
 import { climateBuilder } from "@/payload/component/composite/climate";
+import { coverBuilder } from "@/payload/component/composite/cover";
 import { binarySensorBuilder } from "@/payload/component/readonly/binary_sensor";
 import { sensorBuilder } from "@/payload/component/readonly/sensor";
 import { lockBuilder } from "@/payload/component/writable/lock";
@@ -35,12 +36,15 @@ const compositeComponentConfigs = new Map<string, CompositeComponentConfig[]>();
 compositeComponentConfigs.set("homeAirConditioner", [
   {
     compositeComponentId: "climate",
-    name: {
-      ja: "エアコン",
-      en: "Air Conditioner",
-    },
     component: "climate",
     builder: climateBuilder,
+  },
+]);
+compositeComponentConfigs.set("electricRainDoor", [
+  {
+    compositeComponentId: "cover",
+    component: "cover",
+    builder: coverBuilder,
   },
 ]);
 

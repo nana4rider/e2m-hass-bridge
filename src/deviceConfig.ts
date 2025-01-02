@@ -43,6 +43,9 @@ export const IgnorePropertyPatterns: RegExp[] = [
   /^homeAirConditioner_airFlowLevel$/,
   /^homeAirConditioner_airFlowDirectionVertical$/,
   /^homeAirConditioner_automaticControlAirFlowDirection$/,
+  // coverで実装
+  /^electricRainDoor_openCloseStatus$/,
+  /^electricRainDoor_openCloseOperation$/,
 ];
 
 /**
@@ -71,9 +74,9 @@ export interface ManufacturerConfig {
         [propertyName: string]: Payload;
       };
     };
-    composite?: {
+    composite?: Partial<{
       [id in CompositeComponentId]: Payload;
-    };
+    }>;
   };
 }
 
@@ -127,6 +130,9 @@ export const ManufacturerConfigMap: Partial<
         climate: {
           min_temp: 16,
           max_temp: 30,
+        },
+        cover: {
+          optimistic: false,
         },
       },
     },

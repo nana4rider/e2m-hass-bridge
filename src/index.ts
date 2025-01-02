@@ -75,7 +75,7 @@ async function main() {
         const topic = getTopic(component, uniqueId);
         const payload = builder(apiDevice);
         payload.unique_id = uniqueId;
-        payload.name = name[language];
+        payload.name = name?.[language] ?? apiDevice.descriptions[language];
         const ovverride = getCompositeOverridePayload(
           apiDevice,
           compositeComponentId,

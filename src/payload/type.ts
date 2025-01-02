@@ -15,10 +15,10 @@ export type SimpleComponent =
   | "select"
   | "number"
   | "text";
-export type CompositeComponent = "climate";
+export type CompositeComponent = "climate" | "cover";
 
 /** Home Assistantにおけるunique_idのsuffixに利用される */
-export type CompositeComponentId = "climate";
+export type CompositeComponentId = "climate" | "cover";
 
 export type SimpleComponentBuilder = (
   apiDevice: ApiDevice,
@@ -29,7 +29,8 @@ export type CompositeComponentBuilder = (apiDevice: ApiDevice) => Payload;
 
 export type CompositeComponentConfig = {
   compositeComponentId: CompositeComponentId;
-  name: {
+  /** 設定しない場合は、descriptionが採用される */
+  name?: {
     ja: string;
     en: string;
   };

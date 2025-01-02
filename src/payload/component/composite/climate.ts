@@ -67,6 +67,7 @@ function operationModeBuilder(apiDevice: ApiDevice): Payload {
   {% set mapping = ${formattedPythonDict(OperationModeMapping)} %}
   {{ mapping.get(value_json.operationMode, 'unknown') }}
 {% endif %}`.trim(),
+    mode_command_topic: `${apiDevice.mqttTopics}/properties/set`,
     mode_command_template: `
 {% if value == 'off' %}
   {"operationStatus": "false"}
@@ -75,7 +76,6 @@ function operationModeBuilder(apiDevice: ApiDevice): Payload {
   {{ {"operationStatus": "true", "operationMode": mapping[value]} | tojson }}
 {% endif %}
 `.trim(),
-    mode_command_topic: `${apiDevice.mqttTopics}/properties/set`,
   };
 }
 
