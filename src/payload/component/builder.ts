@@ -35,7 +35,10 @@ const compositeComponentConfigs = new Map<string, CompositeComponentConfig[]>();
 compositeComponentConfigs.set("homeAirConditioner", [
   {
     compositeComponentId: "climate",
-    name: "エアコン",
+    name: {
+      ja: "エアコン",
+      en: "Air Conditioner",
+    },
     component: "climate",
     builder: climateBuilder,
   },

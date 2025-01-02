@@ -29,7 +29,10 @@ export type CompositeComponentBuilder = (apiDevice: ApiDevice) => Payload;
 
 export type CompositeComponentConfig = {
   compositeComponentId: CompositeComponentId;
-  name: string;
+  name: {
+    ja: string;
+    en: string;
+  };
   /** SimpleComponentも指定可能(複数のプロパティを組み合わせたスイッチ等) */
   component: Component;
   builder: CompositeComponentBuilder;
