@@ -9,6 +9,7 @@ export const language =
  */
 export const Manufacturer = {
   Panasonic: "00000b",
+  KadenEmulator: "ffffff",
 } as const;
 type Manufacturer = (typeof Manufacturer)[keyof typeof Manufacturer];
 
@@ -47,7 +48,7 @@ export const IgnorePropertyPatterns: RegExp[] = [
  * Wh, W, V, second, r/min, ppm, MJ, minutes, minute, mA, m3/h, m3, lux, liter
  * L, kWh, kW, kvarh, klux, digit, degree, days, Celsius, Ah, A, %
  */
-export const UnitMapping: Record<string, string> = {
+export const UnitMapping: { [hass: string]: string } = {
   // Home Assistantのプリセットに変換
   second: "s",
   minute: "min",
@@ -55,17 +56,27 @@ export const UnitMapping: Record<string, string> = {
 };
 
 export interface ManufacturerConfig {
-  climate: {
+  climate?: {
     minTemperature?: number;
     maxTemperature?: number;
     fanmodeMapping?: {
-      command: Record<string, string>;
-      state: Record<string, string>;
+      command: { [hass: string]: string };
+      state: { [echonet: string]: string };
+    };
+  };
+  numberRange?: {
+    [deviceType: string]: {
+      [propertyName: string]: {
+        min?: number;
+        max?: number;
+      };
     };
   };
 }
 
-export const ManufacturerConfigMap: Record<Manufacturer, ManufacturerConfig> = {
+export const ManufacturerConfigMap: Partial<
+  Record<Manufacturer, ManufacturerConfig>
+> = {
   [Manufacturer.Panasonic]: {
     climate: {
       minTemperature: 16,
@@ -85,6 +96,21 @@ export const ManufacturerConfigMap: Record<Manufacturer, ManufacturerConfig> = {
           "3": "2",
           "4": "3",
           "6": "4",
+        },
+      },
+    },
+  },
+  // https://github.com/banban525/echonet-lite-kaden-emulator
+  [Manufacturer.KadenEmulator]: {
+    climate: {
+      minTemperature: 15,
+      maxTemperature: 30,
+    },
+    numberRange: {
+      electricWaterHeater: {
+        targetBathWaterTemperature: {
+          min: 30,
+          max: 60,
         },
       },
     },

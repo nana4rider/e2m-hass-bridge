@@ -121,11 +121,17 @@ export function assertBooleanType(
   }
 }
 
-export function getManifactureConfig(
+export function getManifactureConfig<T extends keyof ManufacturerConfig>(
   apiDevice: ApiDevice,
-): ManufacturerConfig | undefined {
+  key: T,
+): ManufacturerConfig[T] | undefined {
   const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
-  return manufacturer in ManufacturerConfigMap
-    ? ManufacturerConfigMap[manufacturer as keyof typeof ManufacturerConfigMap]
-    : undefined;
+
+  if (!(manufacturer in ManufacturerConfigMap)) return undefined;
+
+  const configMap =
+    ManufacturerConfigMap[manufacturer as keyof typeof ManufacturerConfigMap];
+  if (!configMap) return undefined;
+
+  return configMap[key];
 }

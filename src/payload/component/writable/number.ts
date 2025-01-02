@@ -1,5 +1,9 @@
 import { Payload } from "@/payload/type";
-import { assertElNumberType, getUnit } from "@/util/deviceUtil";
+import {
+  assertElNumberType,
+  getManifactureConfig,
+  getUnit,
+} from "@/util/deviceUtil";
 import type {
   ApiDevice,
   ApiDeviceProperty,
@@ -22,12 +26,19 @@ export function numberBuilder(
     payload.unit_of_measurement = unit;
   }
 
-  const { maximum, minimum } = data;
-  if (maximum) {
-    payload.max = maximum;
+  const numberRangeConfig = getManifactureConfig(apiDevice, "numberRange");
+  const numberRangePropertyConfig =
+    numberRangeConfig?.[apiDevice.deviceType]?.[property.name];
+  const configMax = numberRangePropertyConfig?.max;
+  const configMin = numberRangePropertyConfig?.min;
+  const min = configMin ?? data.minimum;
+  const max = configMax ?? data.maximum;
+
+  if (min) {
+    payload.min = min;
   }
-  if (minimum) {
-    payload.min = minimum;
+  if (max) {
+    payload.max = max;
   }
 
   return payload;

@@ -84,8 +84,7 @@ function operationModeBuilder(apiDevice: ApiDevice): Payload {
 function tempRangeBuilder(apiDevice: ApiDevice): Payload {
   const payload: Payload = {};
 
-  const manufacturerConfig = getManifactureConfig(apiDevice);
-  const climateConfig = manufacturerConfig?.climate;
+  const climateConfig = getManifactureConfig(apiDevice, "climate");
   if (climateConfig?.minTemperature) {
     payload.min_temp = climateConfig.minTemperature;
   }
@@ -100,8 +99,8 @@ function fanModeBuilder(apiDevice: ApiDevice): Payload {
   const airFlowLevel = getDeviceProperties(apiDevice, "airFlowLevel");
   if (!airFlowLevel || !airFlowLevel.writable) return {};
 
-  const manufacturerConfig = getManifactureConfig(apiDevice);
-  const fanmodeMapping = manufacturerConfig?.climate?.fanmodeMapping;
+  const climateConfig = getManifactureConfig(apiDevice, "climate");
+  const fanmodeMapping = climateConfig?.fanmodeMapping;
   if (!fanmodeMapping) return {};
 
   return {
