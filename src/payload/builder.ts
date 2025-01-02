@@ -1,19 +1,19 @@
 import { language } from "@/deviceConfig";
-import { climateBuilder } from "@/payload/composite/climate";
-import { coverBuilder } from "@/payload/composite/cover";
+import { buildClimate } from "@/payload/composite/climate";
+import { buildCover } from "@/payload/composite/cover";
 import {
   CompositeComponentConfig,
   Payload,
   SimpleComponent,
   SimpleComponentBuilder,
 } from "@/payload/payloadType";
-import { binarySensorBuilder } from "@/payload/readonly/binary_sensor";
-import { sensorBuilder } from "@/payload/readonly/sensor";
-import { lockBuilder } from "@/payload/writable/lock";
-import { numberBuilder } from "@/payload/writable/number";
-import { selectBuilder } from "@/payload/writable/select";
-import { switchBuilder } from "@/payload/writable/switch";
-import { textBuilder } from "@/payload/writable/text";
+import { buildBinarySensor } from "@/payload/readonly/binary_sensor";
+import { buildSensor } from "@/payload/readonly/sensor";
+import { buildLock } from "@/payload/writable/lock";
+import { buildNumber } from "@/payload/writable/number";
+import { buildSelect } from "@/payload/writable/select";
+import { buildSwitch } from "@/payload/writable/switch";
+import { buildText } from "@/payload/writable/text";
 import { getAsciiProductCode, getManufacturerName } from "@/util/deviceUtil";
 import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import { homepage, name as packageName, version } from "package.json";
@@ -24,15 +24,15 @@ const simpleComponentBuilder = new Map<
   SimpleComponentBuilder
 >();
 // readonly
-simpleComponentBuilder.set("binary_sensor", binarySensorBuilder);
-simpleComponentBuilder.set("sensor", sensorBuilder);
-simpleComponentBuilder.set("select", selectBuilder);
-simpleComponentBuilder.set("number", numberBuilder);
-simpleComponentBuilder.set("text", textBuilder);
+simpleComponentBuilder.set("binary_sensor", buildBinarySensor);
+simpleComponentBuilder.set("sensor", buildSensor);
+simpleComponentBuilder.set("select", buildSelect);
+simpleComponentBuilder.set("number", buildNumber);
+simpleComponentBuilder.set("text", buildText);
 // writable
-simpleComponentBuilder.set("switch", switchBuilder);
-simpleComponentBuilder.set("light", switchBuilder);
-simpleComponentBuilder.set("lock", lockBuilder);
+simpleComponentBuilder.set("switch", buildSwitch);
+simpleComponentBuilder.set("light", buildSwitch);
+simpleComponentBuilder.set("lock", buildLock);
 
 /**
  * 複数のプロパティから構成されるコンポーネント
@@ -42,14 +42,14 @@ compositeComponentConfigs.set("homeAirConditioner", [
   {
     compositeComponentId: "climate",
     component: "climate",
-    builder: climateBuilder,
+    builder: buildClimate,
   },
 ]);
 compositeComponentConfigs.set("electricRainDoor", [
   {
     compositeComponentId: "cover",
     component: "cover",
-    builder: coverBuilder,
+    builder: buildCover,
   },
 ]);
 
@@ -69,7 +69,7 @@ export function getCompositeComponentBuilders(
   return compositeComponentConfigs.get(deviceType) ?? [];
 }
 
-export function deviceBuilder(apiDevice: ApiDevice): Readonly<Payload> {
+export function buildDevice(apiDevice: ApiDevice): Readonly<Payload> {
   const device: Payload = {
     identifiers: [`echonetlite_${apiDevice.id}`],
     name: `${apiDevice.descriptions[language]}(${apiDevice.ip})`,
@@ -80,7 +80,7 @@ export function deviceBuilder(apiDevice: ApiDevice): Readonly<Payload> {
   return { device };
 }
 
-export function originBuilder(): Readonly<Payload> {
+export function buildOrigin(): Readonly<Payload> {
   const origin: Payload = {};
   if (typeof packageName === "string") origin.name = packageName;
   if (typeof version === "string") origin.sw_version = version;

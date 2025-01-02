@@ -30,10 +30,10 @@ const SwingModeOrder = [
   "lowermost",
 ];
 
-export function climateBuilder(apiDevice: ApiDevice): Payload {
-  const operationMode = operationModeBuilder(apiDevice);
-  const fanMode = fanModeBuilder(apiDevice);
-  const swingMode = swingModeBuilder(apiDevice);
+export function buildClimate(apiDevice: ApiDevice): Payload {
+  const operationMode = buildOperationMode(apiDevice);
+  const fanMode = buildFanMode(apiDevice);
+  const swingMode = buildSwingMode(apiDevice);
 
   return {
     ...operationMode,
@@ -46,7 +46,7 @@ export function climateBuilder(apiDevice: ApiDevice): Payload {
   };
 }
 
-function operationModeBuilder(apiDevice: ApiDevice): Payload {
+function buildOperationMode(apiDevice: ApiDevice): Payload {
   const operationMode = getDeviceProperties(apiDevice, "operationMode");
   if (!operationMode) return {};
 
@@ -79,7 +79,7 @@ function operationModeBuilder(apiDevice: ApiDevice): Payload {
   };
 }
 
-function fanModeBuilder(apiDevice: ApiDevice): Payload {
+function buildFanMode(apiDevice: ApiDevice): Payload {
   const airFlowLevel = getDeviceProperties(apiDevice, "airFlowLevel");
   if (!airFlowLevel || !airFlowLevel.writable) return {};
 
@@ -102,7 +102,7 @@ function fanModeBuilder(apiDevice: ApiDevice): Payload {
   };
 }
 
-function swingModeBuilder(apiDevice: ApiDevice): Payload {
+function buildSwingMode(apiDevice: ApiDevice): Payload {
   const airFlowDirectionVertical = getDeviceProperties(
     apiDevice,
     "airFlowDirectionVertical",

@@ -2,7 +2,7 @@ import { Payload } from "@/payload/payloadType";
 import { getDeviceProperties } from "@/util/deviceUtil";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 
-export function coverBuilder(apiDevice: ApiDevice): Payload {
+export function buildCover(apiDevice: ApiDevice): Payload {
   const openCloseStatusProperty = getDeviceProperties(
     apiDevice,
     "openCloseStatus",

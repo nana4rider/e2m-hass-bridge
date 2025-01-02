@@ -4,10 +4,10 @@ import {
 } from "@/deviceConfig";
 import logger from "@/logger";
 import {
-  deviceBuilder,
+  buildDevice,
+  buildOrigin,
   getCompositeComponentBuilders,
   getSimpleComponentBuilder,
-  originBuilder,
 } from "@/payload/builder";
 import { Component, Payload } from "@/payload/payloadType";
 import {
@@ -41,11 +41,11 @@ async function main() {
     return `${haDiscoveryPrefix}/${component}/${uniqueId}/config`;
   };
 
-  const origin = originBuilder();
+  const origin = buildOrigin();
 
   const createDiscoveryEntries = (apiDevice: ApiDevice) => {
     const discoveryEntries: { topic: string; payload: Payload }[] = [];
-    const device = deviceBuilder(apiDevice);
+    const device = buildDevice(apiDevice);
     const { id: deviceId, deviceType } = apiDevice;
 
     // 単一のプロパティから構成されるコンポーネント(sensor等)
