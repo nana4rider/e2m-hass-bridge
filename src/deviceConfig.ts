@@ -135,6 +135,7 @@ export const ManufacturerDeviceConfig: Readonly<
         "roomTemperature",
         "humidity",
       ],
+      electricWaterHeater: ["remainingWater"],
     },
   },
   // https://github.com/banban525/echonet-lite-kaden-emulator
