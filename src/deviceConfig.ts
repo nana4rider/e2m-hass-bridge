@@ -128,7 +128,7 @@ export const ManufacturerConfigMap: Partial<
       },
       composite: {
         climate: {
-          min_temp: 16,
+          min_temp: 18,
           max_temp: 30,
         },
         cover: {
