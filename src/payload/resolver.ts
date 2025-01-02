@@ -1,4 +1,4 @@
-import { SimpleComponent } from "@/payload/type";
+import { SimpleComponent } from "@/payload/payloadType";
 import {
   isBooleanType,
   isElNumberType,

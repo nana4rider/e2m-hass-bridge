@@ -3,7 +3,15 @@ import type {
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
 
-export type Component = SimpleComponent | CompositeComponent;
+type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JSONValue[]
+  | { [key: string]: JSONValue };
+export type Payload = Record<string, JSONValue>;
+
 export type SimpleComponent =
   // readonly
   | "binary_sensor"
@@ -16,6 +24,7 @@ export type SimpleComponent =
   | "number"
   | "text";
 export type CompositeComponent = "climate" | "cover";
+export type Component = SimpleComponent | CompositeComponent;
 
 /** Home Assistantにおけるunique_idのsuffixに利用される */
 export type CompositeComponentId = "climate" | "cover";
@@ -26,7 +35,6 @@ export type SimpleComponentBuilder = (
 ) => Payload;
 
 export type CompositeComponentBuilder = (apiDevice: ApiDevice) => Payload;
-
 export type CompositeComponentConfig = {
   compositeComponentId: CompositeComponentId;
   /** 設定しない場合は、descriptionが採用される */
@@ -38,11 +46,3 @@ export type CompositeComponentConfig = {
   component: Component;
   builder: CompositeComponentBuilder;
 };
-type JSONValue =
-  | string
-  | number
-  | boolean
-  | null
-  | JSONValue[]
-  | { [key: string]: JSONValue };
-export type Payload = Record<string, JSONValue>;

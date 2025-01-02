@@ -1,4 +1,4 @@
-import { Payload } from "@/payload/type";
+import { Payload } from "@/payload/payloadType";
 import { assertElNumberType, getUnit } from "@/util/deviceUtil";
 import type {
   ApiDevice,

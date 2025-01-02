@@ -1,10 +1,11 @@
 import {
+  GlobalOverrideConfig,
   Manufacturer,
   ManufacturerConfig,
   ManufacturerConfigMap,
   UnitMapping,
 } from "@/deviceConfig";
-import { CompositeComponentId, Payload } from "@/payload/type";
+import { CompositeComponentId, Payload } from "@/payload/payloadType";
 import { hex2ascii } from "@/util/dataTransformUtil";
 import type {
   ApiDevice,
@@ -130,8 +131,7 @@ export function getManifactureConfig<T extends keyof ManufacturerConfig>(
 
   if (!(manufacturer in ManufacturerConfigMap)) return undefined;
 
-  const configMap =
-    ManufacturerConfigMap[manufacturer as keyof typeof ManufacturerConfigMap];
+  const configMap = ManufacturerConfigMap[manufacturer];
   if (!configMap) return undefined;
 
   return configMap[key];
@@ -141,28 +141,36 @@ export function getSimpleOverridePayload(
   apiDevice: ApiDevice,
   propertyName: string,
 ): Payload {
+  const payload = {
+    ...GlobalOverrideConfig?.simple?.[apiDevice.deviceType]?.[propertyName],
+  };
   const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
 
-  if (!(manufacturer in ManufacturerConfigMap)) return {};
+  if (!(manufacturer in ManufacturerConfigMap)) return payload;
 
-  const configMap =
-    ManufacturerConfigMap[manufacturer as keyof typeof ManufacturerConfigMap];
+  const configMap = ManufacturerConfigMap[manufacturer];
 
-  return (
-    configMap?.override?.simple?.[apiDevice.deviceType]?.[propertyName] ?? {}
-  );
+  return {
+    ...payload,
+    ...configMap?.override?.simple?.[apiDevice.deviceType]?.[propertyName],
+  };
 }
 
 export function getCompositeOverridePayload(
   apiDevice: ApiDevice,
   compositeComponentId: CompositeComponentId,
 ): Payload {
+  const payload = {
+    ...GlobalOverrideConfig?.composite?.[compositeComponentId],
+  };
   const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
 
-  if (!(manufacturer in ManufacturerConfigMap)) return {};
+  if (!(manufacturer in ManufacturerConfigMap)) return payload;
 
-  const configMap =
-    ManufacturerConfigMap[manufacturer as keyof typeof ManufacturerConfigMap];
+  const configMap = ManufacturerConfigMap[manufacturer];
 
-  return configMap?.override?.composite?.[compositeComponentId] ?? {};
+  return {
+    ...payload,
+    ...configMap?.override?.composite?.[compositeComponentId],
+  };
 }

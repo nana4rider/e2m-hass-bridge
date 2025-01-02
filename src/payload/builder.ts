@@ -1,17 +1,22 @@
-import { climateBuilder } from "@/payload/component/composite/climate";
-import { coverBuilder } from "@/payload/component/composite/cover";
-import { binarySensorBuilder } from "@/payload/component/readonly/binary_sensor";
-import { sensorBuilder } from "@/payload/component/readonly/sensor";
-import { lockBuilder } from "@/payload/component/writable/lock";
-import { numberBuilder } from "@/payload/component/writable/number";
-import { selectBuilder } from "@/payload/component/writable/select";
-import { switchBuilder } from "@/payload/component/writable/switch";
-import { textBuilder } from "@/payload/component/writable/text";
+import { language } from "@/deviceConfig";
+import { climateBuilder } from "@/payload/composite/climate";
+import { coverBuilder } from "@/payload/composite/cover";
 import {
   CompositeComponentConfig,
+  Payload,
   SimpleComponent,
   SimpleComponentBuilder,
-} from "@/payload/type";
+} from "@/payload/payloadType";
+import { binarySensorBuilder } from "@/payload/readonly/binary_sensor";
+import { sensorBuilder } from "@/payload/readonly/sensor";
+import { lockBuilder } from "@/payload/writable/lock";
+import { numberBuilder } from "@/payload/writable/number";
+import { selectBuilder } from "@/payload/writable/select";
+import { switchBuilder } from "@/payload/writable/switch";
+import { textBuilder } from "@/payload/writable/text";
+import { getAsciiProductCode, getManufacturerName } from "@/util/deviceUtil";
+import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
+import { homepage, name as packageName, version } from "package.json";
 
 /** 単一のプロパティから構成されるコンポーネント */
 const simpleComponentBuilder = new Map<
@@ -62,4 +67,23 @@ export function getCompositeComponentBuilders(
   deviceType: string,
 ): CompositeComponentConfig[] {
   return compositeComponentConfigs.get(deviceType) ?? [];
+}
+
+export function deviceBuilder(apiDevice: ApiDevice): Readonly<Payload> {
+  const device: Payload = {
+    identifiers: [`echonetlite_${apiDevice.id}`],
+    name: `${apiDevice.descriptions[language]}(${apiDevice.ip})`,
+    manufacturer: getManufacturerName(apiDevice),
+  };
+  const model = getAsciiProductCode(apiDevice);
+  if (model) device.model = model;
+  return { device };
+}
+
+export function originBuilder(): Readonly<Payload> {
+  const origin: Payload = {};
+  if (typeof packageName === "string") origin.name = packageName;
+  if (typeof version === "string") origin.sw_version = version;
+  if (typeof homepage === "string") origin.support_url = homepage;
+  return { origin };
 }

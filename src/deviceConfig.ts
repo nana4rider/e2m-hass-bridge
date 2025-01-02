@@ -1,4 +1,4 @@
-import { CompositeComponentId, Payload } from "@/payload/type";
+import { CompositeComponentId, Payload } from "@/payload/payloadType";
 import env from "env-var";
 
 export const language =
@@ -14,13 +14,13 @@ export const Manufacturer = {
   MoekadenRoom: "000000",
   // https://github.com/banban525/echonet-lite-kaden-emulator
   KadenEmulator: "ffffff",
-} as const;
+};
 type Manufacturer = (typeof Manufacturer)[keyof typeof Manufacturer];
 
 /**
  * 検出を除外するデバイスタイプのパターン
  */
-export const IgnoreDeviceTypePatterns: RegExp[] = [
+export const IgnoreDeviceTypePatterns: Readonly<RegExp[]> = [
   /^nodeProfile$/,
   /^Unknown_/,
 ];
@@ -29,7 +29,7 @@ export const IgnoreDeviceTypePatterns: RegExp[] = [
  * 検出を除外するプロパティのパターン
  * ${deviceType}_${propertyName}
  */
-export const IgnorePropertyPatterns: RegExp[] = [
+export const IgnorePropertyPatterns: Readonly<RegExp[]> = [
   // 共通
   /_unknown/,
   /_installationLocation$/,
@@ -63,34 +63,30 @@ export const IgnorePropertyPatterns: RegExp[] = [
  * Wh, W, V, second, r/min, ppm, MJ, minutes, minute, mA, m3/h, m3, lux, liter
  * L, kWh, kW, kvarh, klux, digit, degree, days, Celsius, Ah, A, %
  */
-export const UnitMapping: { [hass: string]: string } = {
+export const UnitMapping: Readonly<{ [hass: string]: string }> = {
   // Home Assistantのプリセットに変換
   second: "s",
   minute: "min",
   Celsius: "°C",
 };
 
-export interface ManufacturerConfig {
-  climate?: {
-    fanmodeMapping?: {
-      command: { [hass: string]: string };
-      state: { [echonet: string]: string };
-    };
-  };
-  override?: {
-    simple?: {
-      [deviceType: string]: {
-        [propertyName: string]: Payload;
-      };
-    };
-    composite?: Partial<{
-      [id in CompositeComponentId]: Payload;
-    }>;
-  };
-}
+/**
+ * 上書き設定
+ */
+export const GlobalOverrideConfig: Readonly<OverrideConfig> = {
+  composite: {
+    climate: {
+      icon: "mdi:air-conditioner",
+    },
+  },
+  simple: {},
+};
 
-export const ManufacturerConfigMap: Partial<
-  Record<Manufacturer, ManufacturerConfig>
+/**
+ * メーカーごとの上書き設定
+ */
+export const ManufacturerConfigMap: Readonly<
+  Partial<Record<Manufacturer, ManufacturerConfig>>
 > = {
   [Manufacturer.Panasonic]: {
     climate: {
@@ -147,3 +143,30 @@ export const ManufacturerConfigMap: Partial<
     },
   },
 };
+
+/**
+ * 上書き設定
+ */
+export interface OverrideConfig {
+  simple?: {
+    [deviceType: string]: {
+      [propertyName: string]: Payload;
+    };
+  };
+  composite?: Partial<{
+    [id in CompositeComponentId]: Payload;
+  }>;
+}
+
+/**
+ * メーカー独自の設定
+ */
+export interface ManufacturerConfig {
+  climate?: {
+    fanmodeMapping?: {
+      command: { [hass: string]: string };
+      state: { [echonet: string]: string };
+    };
+  };
+  override?: OverrideConfig;
+}

@@ -4,11 +4,12 @@ import {
 } from "@/deviceConfig";
 import logger from "@/logger";
 import {
+  deviceBuilder,
   getCompositeComponentBuilders,
   getSimpleComponentBuilder,
-} from "@/payload/component/builder";
-import { createDevice, origin } from "@/payload/meta";
-import { Component, Payload } from "@/payload/type";
+  originBuilder,
+} from "@/payload/builder";
+import { Component, Payload } from "@/payload/payloadType";
 import {
   getCompositeOverridePayload,
   getSimpleOverridePayload,
@@ -21,7 +22,7 @@ import env from "env-var";
 import http from "http";
 import mqtt from "mqtt";
 import { language } from "./deviceConfig";
-import { getSimpleComponent } from "./payload/component/resolver";
+import { getSimpleComponent } from "./payload/resolver";
 
 async function main() {
   logger.info("e2m-hass-bridge: start");
@@ -40,9 +41,11 @@ async function main() {
     return `${haDiscoveryPrefix}/${component}/${uniqueId}/config`;
   };
 
+  const origin = originBuilder();
+
   const createDiscoveryEntries = (apiDevice: ApiDevice) => {
     const discoveryEntries: { topic: string; payload: Payload }[] = [];
-    const device = createDevice(apiDevice);
+    const device = deviceBuilder(apiDevice);
     const { id: deviceId, deviceType } = apiDevice;
 
     // 単一のプロパティから構成されるコンポーネント(sensor等)
@@ -92,8 +95,8 @@ async function main() {
       topic,
       payload: {
         ...payload,
-        device,
-        origin,
+        ...device,
+        ...origin,
       },
     }));
   };

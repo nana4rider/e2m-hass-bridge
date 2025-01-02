@@ -1,4 +1,4 @@
-import { Payload } from "@/payload/type";
+import { Payload } from "@/payload/payloadType";
 import { getDeviceProperties } from "@/util/deviceUtil";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 

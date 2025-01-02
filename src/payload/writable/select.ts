@@ -1,5 +1,5 @@
 import { language } from "@/deviceConfig";
-import { Payload } from "@/payload/type";
+import { Payload } from "@/payload/payloadType";
 import { formattedPythonDict } from "@/util/dataTransformUtil";
 import { assertElStateType } from "@/util/deviceUtil";
 import type {
