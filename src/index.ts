@@ -24,7 +24,7 @@ import type {
 import env from "env-var";
 import http from "http";
 import mqtt from "mqtt";
-import { setInterval, setTimeout } from "timers/promises";
+import { setInterval } from "timers/promises";
 
 async function main() {
   logger.info("start");
@@ -39,12 +39,29 @@ async function main() {
     .asString();
   const autoRequestInterval = env
     .get("AUTO_REQUEST_INTERVAL")
-    .default(30000)
+    .default(60000)
     .asIntPositive();
   const port = env.get("PORT").default(3000).asIntPositive();
 
   const getDiscoveryTopic = (component: Component, uniqueId: string) => {
     return `${haDiscoveryPrefix}/${component}/${uniqueId}/config`;
+  };
+
+  const mqttTaskQueue: (() => Promise<void>)[] = [];
+  let isMqttTaskRunning = true;
+  const mqttTask = (async () => {
+    for await (const _ of setInterval(100)) {
+      logger.silly(`mqttTaskQueue.length: ${mqttTaskQueue.length}`);
+      if (!isMqttTaskRunning) break;
+      const task = mqttTaskQueue.shift();
+      if (task) {
+        await task();
+      }
+    }
+  })();
+  const stopTask = async () => {
+    isMqttTaskRunning = false;
+    await mqttTask;
   };
 
   const origin = buildOrigin();
@@ -134,8 +151,10 @@ async function main() {
       }
       subscribeDevices.set(mqttTopics, summary);
       // デバイスのtopicを購読
-      client.subscribe(mqttTopics);
-      logger.info(`subscribe to: ${mqttTopics}`);
+      mqttTaskQueue.push(async () => {
+        await client.subscribeAsync(mqttTopics);
+        logger.info(`subscribe to: ${mqttTopics}`);
+      });
     });
   };
 
@@ -145,21 +164,23 @@ async function main() {
     discoveryEntries.forEach((entry) => {
       const message = JSON.stringify(entry.payload);
       // Home Assistantへ送信
-      client.publish(entry.topic, message, {
-        qos: 1,
-        retain: true,
+      mqttTaskQueue.push(async () => {
+        await client.publishAsync(entry.topic, message, {
+          qos: 1,
+          retain: true,
+        });
+        if (logger.isDebugEnabled()) {
+          logger.debug(`publish to: ${entry.topic}`);
+          const separator = "-".repeat(80);
+          logger.silly(
+            separator +
+              "\n" +
+              JSON.stringify(entry.payload, null, " ") +
+              "\n" +
+              separator,
+          );
+        }
       });
-      if (logger.isDebugEnabled()) {
-        logger.debug(`publish to: ${entry.topic}`);
-        const separator = "-".repeat(80);
-        logger.debug(
-          separator +
-            "\n" +
-            JSON.stringify(entry.payload, null, " ") +
-            "\n" +
-            separator,
-        );
-      }
     });
   };
 
@@ -184,28 +205,28 @@ async function main() {
   // 更新通知をしないプロパティに対して、定期的に自動リクエストする
   void (async () => {
     for await (const _ of setInterval(autoRequestInterval)) {
-      await Promise.all(
-        Array.from(subscribeDevices.values()).map(
-          async ({ deviceType, manufacturer, mqttTopics }) => {
-            const autoRequestProperties = getManifactureConfig(
-              manufacturer.code,
-              "autoRequestProperties",
-            );
-            const targetProperties = autoRequestProperties?.[deviceType];
-            if (!targetProperties) return;
-            // TODO multiple requests実装後に見直す
-            for (const propertyName of targetProperties) {
-              const topic = `${mqttTopics}/properties/${propertyName}/request`;
+      Array.from(subscribeDevices.values()).map(
+        ({ deviceType, manufacturer, mqttTopics }) => {
+          const autoRequestProperties = getManifactureConfig(
+            manufacturer.code,
+            "autoRequestProperties",
+          );
+          const targetProperties = autoRequestProperties?.[deviceType];
+          if (!targetProperties) return;
+          // TODO multiple requests実装後に見直す
+          for (const propertyName of targetProperties) {
+            const topic = `${mqttTopics}/properties/${propertyName}/request`;
+            mqttTaskQueue.push(async () => {
               await client.publishAsync(topic, "");
-              await setTimeout(500);
-              logger.debug(`request: ${topic}`);
-            }
-          },
-        ),
+            });
+            logger.debug(`request: ${topic}`);
+          }
+        },
       );
     }
   })();
 
+  // ヘルスチェック用のHTTPサーバー
   const server = http.createServer((req, res) => {
     if (req.url === "/health") {
       res.writeHead(200, { "Content-Type": "application/json" });
@@ -215,13 +236,14 @@ async function main() {
       res.end();
     }
   });
-
   server.listen(port, "0.0.0.0", () => {
     logger.info(`Health check server running on port ${port}`);
   });
 
   const shutdownHandler = async () => {
     logger.info("shutdown start");
+    await stopTask();
+    logger.info("mqttTask: stoped");
     await client.endAsync();
     logger.info("mqtt-client: closed");
     server.close(() => {
