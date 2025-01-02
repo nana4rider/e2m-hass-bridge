@@ -135,7 +135,7 @@ async function main() {
       subscribeDevices.set(mqttTopics, summary);
       // デバイスのtopicを購読
       client.subscribe(mqttTopics);
-      logger.debug(`subscribe to: ${mqttTopics}`);
+      logger.info(`subscribe to: ${mqttTopics}`);
     });
   };
 
