@@ -10,6 +10,9 @@ export const language =
  */
 export const Manufacturer = {
   Panasonic: "00000b",
+  // https://github.com/SonyCSL/MoekadenRoom
+  MoekadenRoom: "000000",
+  // https://github.com/banban525/echonet-lite-kaden-emulator
   KadenEmulator: "ffffff",
 } as const;
 type Manufacturer = (typeof Manufacturer)[keyof typeof Manufacturer];
