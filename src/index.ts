@@ -13,8 +13,8 @@ import {
 import { Component, Payload } from "@/payload/payloadType";
 import { getSimpleComponent } from "@/payload/resolver";
 import {
+  getAutoRequestProperties,
   getCompositeOverridePayload,
-  getManifactureConfig,
   getSimpleOverridePayload,
 } from "@/util/deviceUtil";
 import type {
@@ -141,19 +141,19 @@ async function main() {
   // デバイスリストを購読
   await client.subscribeAsync(echonetlite2mqttBaseTopic);
 
-  const subscribeDevices = new Map<string, ApiDeviceSummary>();
+  const subscribeDeviceTopics = new Set<string>();
+  const targetDevices = new Map<string, ApiDevice>();
 
   const handleDeviceList = (apiDeviceSummaries: ApiDeviceSummary[]) => {
-    apiDeviceSummaries.forEach((summary) => {
-      const { deviceType, mqttTopics } = summary;
+    apiDeviceSummaries.forEach(({ deviceType, mqttTopics }) => {
       // 除外するデバイスタイプは購読しない
       if (
         IgnoreDeviceTypePatterns.some((tester) => tester.test(deviceType)) ||
-        subscribeDevices.has(mqttTopics)
+        subscribeDeviceTopics.has(mqttTopics)
       ) {
         return;
       }
-      subscribeDevices.set(mqttTopics, summary);
+      subscribeDeviceTopics.add(mqttTopics);
       // デバイスのtopicを購読
       mqttTaskQueue.push(async () => {
         await client.subscribeAsync(mqttTopics);
@@ -184,6 +184,7 @@ async function main() {
               separator,
           );
         }
+        targetDevices.set(apiDevice.id, apiDevice);
       });
     });
   };
@@ -194,7 +195,7 @@ async function main() {
       if (topic === echonetlite2mqttBaseTopic) {
         handleDeviceList(JSON.parse(payload.toString()) as ApiDeviceSummary[]);
         return;
-      } else if (subscribeDevices.has(topic)) {
+      } else if (subscribeDeviceTopics.has(topic)) {
         const apiDevice = JSON.parse(payload.toString()) as ApiDevice;
         handleDevice(apiDevice);
         return;
@@ -209,24 +210,16 @@ async function main() {
   // 更新通知をしないプロパティに対して、定期的に自動リクエストする
   void (async () => {
     for await (const _ of setInterval(autoRequestInterval)) {
-      Array.from(subscribeDevices.values()).map(
-        ({ deviceType, manufacturer, mqttTopics }) => {
-          const autoRequestProperties = getManifactureConfig(
-            manufacturer.code,
-            "autoRequestProperties",
-          );
-          const targetProperties = autoRequestProperties?.[deviceType];
-          if (!targetProperties) return;
-          // TODO multiple requests実装後に見直す
-          for (const propertyName of targetProperties) {
-            const topic = `${mqttTopics}/properties/${propertyName}/request`;
-            mqttTaskQueue.push(async () => {
-              await client.publishAsync(topic, "");
-            });
-            logger.debug(`request: ${topic}`);
-          }
-        },
-      );
+      Array.from(targetDevices.values()).map((apiDevice) => {
+        const autoRequestProperties = getAutoRequestProperties(apiDevice);
+        for (const propertyName of autoRequestProperties) {
+          const topic = `${apiDevice.mqttTopics}/properties/${propertyName}/request`;
+          mqttTaskQueue.push(async () => {
+            await client.publishAsync(topic, "");
+          });
+          logger.debug(`request: ${topic}`);
+        }
+      });
     }
   })();
 

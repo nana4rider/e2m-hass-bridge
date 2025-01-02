@@ -71,22 +71,26 @@ export const UnitMapping: Readonly<{ [hass: string]: string }> = {
 };
 
 /**
- * 上書き設定
+ * グローバル設定
  */
-export const GlobalOverrideConfig: Readonly<OverrideConfig> = {
-  composite: {
-    climate: {
-      icon: "mdi:air-conditioner",
+export const GlobalDeviceConfig: DeviceConfig = {
+  override: {
+    composite: {
+      climate: {
+        icon: "mdi:air-conditioner",
+      },
     },
   },
-  simple: {},
+  autoRequestProperties: {
+    "*": ["consumedCumulativeElectricEnergy"],
+  },
 };
 
 /**
- * メーカーごとの上書き設定
+ * メーカーごとの独自設定
  */
-export const ManufacturerConfigMap: Readonly<
-  Partial<Record<Manufacturer, ManufacturerConfig>>
+export const ManufacturerDeviceConfig: Readonly<
+  Partial<Record<Manufacturer, DeviceConfig>>
 > = {
   [Manufacturer.Panasonic]: {
     climate: {
@@ -158,6 +162,22 @@ export const ManufacturerConfigMap: Readonly<
 };
 
 /**
+ * デバイスの設定
+ */
+export interface DeviceConfig {
+  climate?: {
+    fanmodeMapping?: {
+      command: { [hass: string]: string };
+      state: { [echonet: string]: string };
+    };
+  };
+  override?: OverrideConfig;
+  autoRequestProperties?: {
+    [deviceType: string]: string[];
+  };
+}
+
+/**
  * 上書き設定
  */
 export interface OverrideConfig {
@@ -169,20 +189,4 @@ export interface OverrideConfig {
   composite?: Partial<{
     [id in CompositeComponentId]: Payload;
   }>;
-}
-
-/**
- * メーカー独自の設定
- */
-export interface ManufacturerConfig {
-  climate?: {
-    fanmodeMapping?: {
-      command: { [hass: string]: string };
-      state: { [echonet: string]: string };
-    };
-  };
-  override?: OverrideConfig;
-  autoRequestProperties?: {
-    [deviceType: string]: string[];
-  };
 }

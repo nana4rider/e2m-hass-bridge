@@ -1,8 +1,8 @@
 import {
-  GlobalOverrideConfig,
+  DeviceConfig,
+  GlobalDeviceConfig,
   Manufacturer,
-  ManufacturerConfig,
-  ManufacturerConfigMap,
+  ManufacturerDeviceConfig,
   UnitMapping,
 } from "@/deviceConfig";
 import { CompositeComponentId, Payload } from "@/payload/payloadType";
@@ -123,13 +123,13 @@ export function assertBooleanType(
   }
 }
 
-export function getManifactureConfig<T extends keyof ManufacturerConfig>(
+export function getManifactureConfig<T extends keyof DeviceConfig>(
   manufacturer: string,
   key: T,
-): ManufacturerConfig[T] | undefined {
-  if (!(manufacturer in ManufacturerConfigMap)) return undefined;
+): DeviceConfig[T] | undefined {
+  if (!(manufacturer in ManufacturerDeviceConfig)) return undefined;
 
-  const configMap = ManufacturerConfigMap[manufacturer];
+  const configMap = ManufacturerDeviceConfig[manufacturer];
   if (!configMap) return undefined;
 
   return configMap[key];
@@ -140,17 +140,17 @@ export function getSimpleOverridePayload(
   propertyName: string,
 ): Payload {
   const payload = {
-    ...GlobalOverrideConfig?.simple?.[apiDevice.deviceType]?.[propertyName],
+    ...GlobalDeviceConfig?.override?.simple?.[apiDevice.deviceType]?.[
+      propertyName
+    ],
   };
   const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
-
-  if (!(manufacturer in ManufacturerConfigMap)) return payload;
-
-  const configMap = ManufacturerConfigMap[manufacturer];
+  if (!(manufacturer in ManufacturerDeviceConfig)) return payload;
+  const overrideConfig = getManifactureConfig(manufacturer, "override");
 
   return {
     ...payload,
-    ...configMap?.override?.simple?.[apiDevice.deviceType]?.[propertyName],
+    ...overrideConfig?.simple?.[apiDevice.deviceType]?.[propertyName],
   };
 }
 
@@ -159,16 +159,40 @@ export function getCompositeOverridePayload(
   compositeComponentId: CompositeComponentId,
 ): Payload {
   const payload = {
-    ...GlobalOverrideConfig?.composite?.[compositeComponentId],
+    ...GlobalDeviceConfig?.override?.composite?.[compositeComponentId],
   };
   const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
-
-  if (!(manufacturer in ManufacturerConfigMap)) return payload;
-
-  const configMap = ManufacturerConfigMap[manufacturer];
+  if (!(manufacturer in ManufacturerDeviceConfig)) return payload;
+  const overrideConfig = getManifactureConfig(manufacturer, "override");
 
   return {
     ...payload,
-    ...configMap?.override?.composite?.[compositeComponentId],
+    ...overrideConfig?.composite?.[compositeComponentId],
   };
+}
+
+export function getAutoRequestProperties(apiDevice: ApiDevice): string[] {
+  let propertyNames = [
+    ...(GlobalDeviceConfig?.autoRequestProperties?.["*"] ?? []),
+    ...(GlobalDeviceConfig?.autoRequestProperties?.[apiDevice.deviceType] ??
+      []),
+  ];
+  const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
+  if (manufacturer in ManufacturerDeviceConfig) {
+    const autoRequestProperties = getManifactureConfig(
+      manufacturer,
+      "autoRequestProperties",
+    );
+
+    propertyNames = [
+      ...propertyNames,
+      ...(autoRequestProperties?.["*"] ?? []),
+      ...(autoRequestProperties?.[apiDevice.deviceType] ?? []),
+    ];
+  }
+
+  return propertyNames.filter(
+    (propertyName) =>
+      getDeviceProperties(apiDevice, propertyName) !== undefined,
+  );
 }
