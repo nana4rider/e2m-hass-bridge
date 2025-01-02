@@ -22,7 +22,7 @@ export function buildSensor(
     payload.device_class = deviceClass;
   }
 
-  const stateClass = getStateClass(apiDevice, property);
+  const stateClass = getStateClass(property);
   if (stateClass) {
     payload.state_class = stateClass;
   }
@@ -87,10 +87,7 @@ function getDeviceClass(
   }
 }
 
-function getStateClass(
-  { deviceType }: ApiDevice,
-  { name }: ApiDeviceProperty,
-): string | undefined {
+function getStateClass({ name }: ApiDeviceProperty): string | undefined {
   if (name === "consumedCumulativeElectricEnergy") {
     return "total_increasing";
   }

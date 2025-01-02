@@ -37,6 +37,10 @@ async function main() {
     .get("ECHONETLITE2MQTT_BASE_TOPIC")
     .default("echonetlite2mqtt/elapi/v2/devices")
     .asString();
+  const mqttTaskInterval = env
+    .get("MQTT_TASK_INTERVAL")
+    .default(100)
+    .asIntPositive();
   const autoRequestInterval = env
     .get("AUTO_REQUEST_INTERVAL")
     .default(60000)
@@ -50,7 +54,7 @@ async function main() {
   const mqttTaskQueue: (() => Promise<void>)[] = [];
   let isMqttTaskRunning = true;
   const mqttTask = (async () => {
-    for await (const _ of setInterval(100)) {
+    for await (const _ of setInterval(mqttTaskInterval)) {
       logger.silly(`mqttTaskQueue.length: ${mqttTaskQueue.length}`);
       if (!isMqttTaskRunning) break;
       const task = mqttTaskQueue.shift();
