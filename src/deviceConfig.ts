@@ -30,12 +30,15 @@ export const IgnorePropertyPatterns: RegExp[] = [
   // 共通
   /_unknown/,
   /_installationLocation$/,
+  /_locationInformation$/,
   /_protocol$/,
   /_id$/,
+  /_serialNumber$/,
   /_manufacturerFaultCode$/,
   /_manufacturer$/,
   /_productCode$/,
-  /_locationInformation$/,
+  /_businessFacilityCode$/,
+  /_productionDate$/,
   // json?
   /^electricWaterHeater_estimatedElectricEnergyAtShiftTime/,
   /^electricWaterHeater_electricEnergyConsumptionRate/,
