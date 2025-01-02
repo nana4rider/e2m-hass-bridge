@@ -146,6 +146,7 @@ async function main() {
       const message = JSON.stringify(entry.payload);
       // Home Assistantへ送信
       client.publish(entry.topic, message, {
+        qos: 1,
         retain: true,
       });
       if (logger.isDebugEnabled()) {
