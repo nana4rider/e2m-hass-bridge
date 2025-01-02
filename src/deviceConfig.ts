@@ -1,3 +1,4 @@
+import { CompositeComponentId, Payload } from "@/payload/type";
 import env from "env-var";
 
 export const language =
@@ -40,6 +41,8 @@ export const IgnorePropertyPatterns: RegExp[] = [
   /^homeAirConditioner_operationMode$/,
   /^homeAirConditioner_targetTemperature$/,
   /^homeAirConditioner_airFlowLevel$/,
+  /^homeAirConditioner_airFlowDirectionVertical$/,
+  /^homeAirConditioner_automaticControlAirFlowDirection$/,
 ];
 
 /**
@@ -57,19 +60,19 @@ export const UnitMapping: { [hass: string]: string } = {
 
 export interface ManufacturerConfig {
   climate?: {
-    minTemperature?: number;
-    maxTemperature?: number;
     fanmodeMapping?: {
       command: { [hass: string]: string };
       state: { [echonet: string]: string };
     };
   };
-  numberRange?: {
-    [deviceType: string]: {
-      [propertyName: string]: {
-        min?: number;
-        max?: number;
+  override?: {
+    simple?: {
+      [deviceType: string]: {
+        [propertyName: string]: Payload;
       };
+    };
+    composite?: {
+      [id in CompositeComponentId]: Payload;
     };
   };
 }
@@ -79,8 +82,6 @@ export const ManufacturerConfigMap: Partial<
 > = {
   [Manufacturer.Panasonic]: {
     climate: {
-      minTemperature: 16,
-      maxTemperature: 30,
       fanmodeMapping: {
         command: {
           auto: "auto",
@@ -99,18 +100,30 @@ export const ManufacturerConfigMap: Partial<
         },
       },
     },
+    override: {
+      composite: {
+        climate: {
+          min_temp: 16,
+          max_temp: 30,
+        },
+      },
+    },
   },
   // https://github.com/banban525/echonet-lite-kaden-emulator
   [Manufacturer.KadenEmulator]: {
-    climate: {
-      minTemperature: 15,
-      maxTemperature: 30,
-    },
-    numberRange: {
-      electricWaterHeater: {
-        targetBathWaterTemperature: {
-          min: 30,
-          max: 60,
+    override: {
+      simple: {
+        electricWaterHeater: {
+          targetBathWaterTemperature: {
+            min: 30,
+            max: 60,
+          },
+        },
+      },
+      composite: {
+        climate: {
+          min_temp: 16,
+          max_temp: 30,
         },
       },
     },

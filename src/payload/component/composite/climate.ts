@@ -32,13 +32,11 @@ const SwingModeOrder = [
 
 export function climateBuilder(apiDevice: ApiDevice): Payload {
   const operationMode = operationModeBuilder(apiDevice);
-  const tempRange = tempRangeBuilder(apiDevice);
   const fanMode = fanModeBuilder(apiDevice);
   const swingMode = swingModeBuilder(apiDevice);
 
   return {
     ...operationMode,
-    ...tempRange,
     ...fanMode,
     ...swingMode,
     temperature_state_topic: `${apiDevice.mqttTopics}/properties/targetTemperature`,
@@ -79,20 +77,6 @@ function operationModeBuilder(apiDevice: ApiDevice): Payload {
 `.trim(),
     mode_command_topic: `${apiDevice.mqttTopics}/properties/set`,
   };
-}
-
-function tempRangeBuilder(apiDevice: ApiDevice): Payload {
-  const payload: Payload = {};
-
-  const climateConfig = getManifactureConfig(apiDevice, "climate");
-  if (climateConfig?.minTemperature) {
-    payload.min_temp = climateConfig.minTemperature;
-  }
-  if (climateConfig?.maxTemperature) {
-    payload.max_temp = climateConfig.maxTemperature;
-  }
-
-  return payload;
 }
 
 function fanModeBuilder(apiDevice: ApiDevice): Payload {

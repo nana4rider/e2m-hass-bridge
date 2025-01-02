@@ -6,6 +6,10 @@ import {
 } from "@/payload/component/builder";
 import { createDevice, origin } from "@/payload/meta";
 import { Component, Payload } from "@/payload/type";
+import {
+  getCompositeOverridePayload,
+  getSimpleOverridePayload,
+} from "@/util/deviceUtil";
 import type {
   ApiDevice,
   ApiDeviceSummary,
@@ -57,24 +61,27 @@ async function main() {
       const topic = getTopic(component, uniqueId);
       const builder = getSimpleComponentBuilder(component);
       const payload = builder(apiDevice, property);
-
       payload.unique_id = uniqueId;
       payload.name = property.schema.propertyName[language];
+      const ovverride = getSimpleOverridePayload(apiDevice, property.name);
 
-      discoveryEntries.push({ topic, payload });
+      discoveryEntries.push({ topic, payload: { ...payload, ...ovverride } });
     });
 
     // 複数のプロパティから構成されるコンポーネント(climate等)
     getCompositeComponentBuilders(deviceType).forEach(
-      ({ id, component, builder, name }) => {
-        const uniqueId = `echonetlite_${deviceId}_composite_${id}`;
+      ({ compositeComponentId, component, builder, name }) => {
+        const uniqueId = `echonetlite_${deviceId}_composite_${compositeComponentId}`;
         const topic = getTopic(component, uniqueId);
         const payload = builder(apiDevice);
-
         payload.unique_id = uniqueId;
         payload.name = name;
+        const ovverride = getCompositeOverridePayload(
+          apiDevice,
+          compositeComponentId,
+        );
 
-        discoveryEntries.push({ topic, payload });
+        discoveryEntries.push({ topic, payload: { ...payload, ...ovverride } });
       },
     );
 

@@ -4,6 +4,7 @@ import {
   ManufacturerConfigMap,
   UnitMapping,
 } from "@/deviceConfig";
+import { CompositeComponentId, Payload } from "@/payload/type";
 import { hex2ascii } from "@/util/dataTransformUtil";
 import type {
   ApiDevice,
@@ -134,4 +135,34 @@ export function getManifactureConfig<T extends keyof ManufacturerConfig>(
   if (!configMap) return undefined;
 
   return configMap[key];
+}
+
+export function getSimpleOverridePayload(
+  apiDevice: ApiDevice,
+  propertyName: string,
+): Payload {
+  const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
+
+  if (!(manufacturer in ManufacturerConfigMap)) return {};
+
+  const configMap =
+    ManufacturerConfigMap[manufacturer as keyof typeof ManufacturerConfigMap];
+
+  return (
+    configMap?.override?.simple?.[apiDevice.deviceType]?.[propertyName] ?? {}
+  );
+}
+
+export function getCompositeOverridePayload(
+  apiDevice: ApiDevice,
+  compositeComponentId: CompositeComponentId,
+): Payload {
+  const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
+
+  if (!(manufacturer in ManufacturerConfigMap)) return {};
+
+  const configMap =
+    ManufacturerConfigMap[manufacturer as keyof typeof ManufacturerConfigMap];
+
+  return configMap?.override?.composite?.[compositeComponentId] ?? {};
 }

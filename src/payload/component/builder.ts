@@ -30,19 +30,16 @@ simpleComponentBuilder.set("lock", lockBuilder);
 
 /**
  * 複数のプロパティから構成されるコンポーネント
- * レコードのキーは、unique_idの一部に使用します。
  */
-const compositeComponentConfigs = new Map<
-  string,
-  Record<string, CompositeComponentConfig>
->();
-compositeComponentConfigs.set("homeAirConditioner", {
-  main: {
+const compositeComponentConfigs = new Map<string, CompositeComponentConfig[]>();
+compositeComponentConfigs.set("homeAirConditioner", [
+  {
+    compositeComponentId: "climate",
     name: "エアコン",
     component: "climate",
     builder: climateBuilder,
   },
-});
+]);
 
 export function getSimpleComponentBuilder(
   component: SimpleComponent,
@@ -56,12 +53,6 @@ export function getSimpleComponentBuilder(
 
 export function getCompositeComponentBuilders(
   deviceType: string,
-): (CompositeComponentConfig & { id: string })[] {
-  const compositeComponentConfig = compositeComponentConfigs.get(deviceType);
-  if (!compositeComponentConfig) return [];
-
-  return Object.entries(compositeComponentConfig).map(([id, config]) => ({
-    ...config,
-    ...{ id },
-  }));
+): CompositeComponentConfig[] {
+  return compositeComponentConfigs.get(deviceType) ?? [];
 }
