@@ -15,9 +15,12 @@ export const Manufacturer = {
 type Manufacturer = (typeof Manufacturer)[keyof typeof Manufacturer];
 
 /**
- * 検出を除外するデバイスタイプ
+ * 検出を除外するデバイスタイプのパターン
  */
-export const IgnoreDeviceTypes = new Set(["nodeProfile"]);
+export const IgnoreDeviceTypePatterns: RegExp[] = [
+  /^nodeProfile$/,
+  /^Unknown_/,
+];
 
 /**
  * 検出を除外するプロパティのパターン

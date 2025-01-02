@@ -1,4 +1,7 @@
-import { IgnoreDeviceTypes, IgnorePropertyPatterns } from "@/deviceConfig";
+import {
+  IgnoreDeviceTypePatterns,
+  IgnorePropertyPatterns,
+} from "@/deviceConfig";
 import logger from "@/logger";
 import {
   getCompositeComponentBuilders,
@@ -114,7 +117,7 @@ async function main() {
     apiDeviceSummaries.forEach(({ deviceType, mqttTopics }) => {
       // 除外するデバイスタイプは購読しない
       if (
-        IgnoreDeviceTypes.has(deviceType) ||
+        IgnoreDeviceTypePatterns.some((tester) => tester.test(deviceType)) ||
         subscribeDevices.has(mqttTopics)
       ) {
         return;
