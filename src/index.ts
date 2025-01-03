@@ -1,12 +1,13 @@
 import { IgnoreDeviceTypePatterns, language } from "@/deviceConfig";
 import logger from "@/logger";
+import createMqtt from "@/mqtt";
 import {
   buildDevice,
   buildOrigin,
   getCompositeComponentConfigs,
   getSimpleComponentConfigs,
 } from "@/payload/builder";
-import { Component, Payload } from "@/payload/payloadType";
+import { Payload } from "@/payload/payloadType";
 import {
   getAutoRequestProperties,
   getCompositeOverridePayload,
@@ -18,74 +19,58 @@ import type {
 } from "echonetlite2mqtt/server/ApiTypes";
 import env from "env-var";
 import http from "http";
-import mqtt from "mqtt";
 import { setInterval } from "timers/promises";
 
 async function main() {
   logger.info("start");
 
-  const haDiscoveryPrefix = env
-    .get("HA_DISCOVERY_PREFIX")
-    .default("homeassistant")
-    .asString();
-  const echonetlite2mqttBaseTopic = env
-    .get("ECHONETLITE2MQTT_BASE_TOPIC")
-    .default("echonetlite2mqtt/elapi/v2/devices")
-    .asString();
-  const mqttTaskInterval = env
-    .get("MQTT_TASK_INTERVAL")
-    .default(100)
-    .asIntPositive();
   const autoRequestInterval = env
     .get("AUTO_REQUEST_INTERVAL")
     .default(60000)
     .asIntPositive();
   const port = env.get("PORT").default(3000).asIntPositive();
 
-  const getDiscoveryTopic = (component: Component, uniqueId: string) => {
-    return `${haDiscoveryPrefix}/${component}/${uniqueId}/config`;
-  };
-
-  const mqttTaskQueue: (() => Promise<void>)[] = [];
-  let isMqttTaskRunning = true;
-  const mqttTask = (async () => {
-    for await (const _ of setInterval(mqttTaskInterval)) {
-      logger.silly(`mqttTaskQueue.length: ${mqttTaskQueue.length}`);
-      if (!isMqttTaskRunning) break;
-      const task = mqttTaskQueue.shift();
-      if (task) {
-        await task();
-      }
-    }
-  })();
-  const stopTask = async () => {
-    isMqttTaskRunning = false;
-    await mqttTask;
-  };
-
+  const targetDevices = new Map<string, ApiDevice>();
   const origin = buildOrigin();
 
-  const createDiscoveryEntries = (apiDevice: ApiDevice) => {
-    const discoveryEntries: { topic: string; payload: Payload }[] = [];
+  const handleDeviceList = (apiDeviceSummaries: ApiDeviceSummary[]) => {
+    logger.info("handleDeviceList");
+    apiDeviceSummaries.forEach(({ deviceType, mqttTopics }) => {
+      if (
+        mqtt.isSubscribe(mqttTopics) ||
+        // 除外するデバイスタイプは購読しない
+        IgnoreDeviceTypePatterns.some((tester) => tester.test(deviceType))
+      ) {
+        return;
+      }
+      mqtt.addSubscribe(mqttTopics);
+    });
+  };
+
+  const handleDevice = (apiDevice: ApiDevice) => {
+    logger.info(`handleDevice: ${apiDevice.id}`);
+    const discoveryEntries: { relativeTopic: string; payload: Payload }[] = [];
     const device = buildDevice(apiDevice);
     // 単一のプロパティから構成されるコンポーネント(sensor等)
     getSimpleComponentConfigs(apiDevice).forEach(
       ({ component, property, builder }) => {
         const uniqueId = `echonetlite_${apiDevice.id}_simple_${property.name}`;
-        const topic = getDiscoveryTopic(component, uniqueId);
+        const relativeTopic = `${component}/${uniqueId}/config`;
         const payload = builder(apiDevice, property);
         payload.unique_id = uniqueId;
         payload.name = property.schema.propertyName[language];
         const override = getSimpleOverridePayload(apiDevice, property.name);
-        discoveryEntries.push({ topic, payload: { ...payload, ...override } });
+        discoveryEntries.push({
+          relativeTopic,
+          payload: { ...payload, ...override },
+        });
       },
     );
-
     // 複数のプロパティから構成されるコンポーネント(climate等)
     getCompositeComponentConfigs(apiDevice).forEach(
       ({ compositeComponentId, component, builder, name }) => {
         const uniqueId = `echonetlite_${apiDevice.id}_composite_${compositeComponentId}`;
-        const topic = getDiscoveryTopic(component, uniqueId);
+        const relativeTopic = `${component}/${uniqueId}/config`;
         const payload = builder(apiDevice);
         payload.unique_id = uniqueId;
         payload.name = name?.[language] ?? apiDevice.descriptions[language];
@@ -93,111 +78,36 @@ async function main() {
           apiDevice,
           compositeComponentId,
         );
-        discoveryEntries.push({ topic, payload: { ...payload, ...override } });
+        discoveryEntries.push({
+          relativeTopic,
+          payload: { ...payload, ...override },
+        });
       },
     );
 
-    return discoveryEntries.map(({ topic, payload }) => ({
-      topic,
-      payload: {
-        ...payload,
-        ...device,
-        ...origin,
-      },
-    }));
-  };
-
-  const client = await mqtt.connectAsync(
-    env.get("MQTT_BROKER").required().asString(),
-    {
-      username: env.get("MQTT_USERNAME").asString(),
-      password: env.get("MQTT_PASSWORD").asString(),
-    },
-  );
-
-  logger.info("mqtt-client: connected");
-
-  // デバイスリストを購読
-  await client.subscribeAsync(echonetlite2mqttBaseTopic);
-
-  const subscribeDeviceTopics = new Set<string>();
-  const targetDevices = new Map<string, ApiDevice>();
-
-  const handleDeviceList = (apiDeviceSummaries: ApiDeviceSummary[]) => {
-    apiDeviceSummaries.forEach(({ deviceType, mqttTopics }) => {
-      // 除外するデバイスタイプは購読しない
-      if (
-        IgnoreDeviceTypePatterns.some((tester) => tester.test(deviceType)) ||
-        subscribeDeviceTopics.has(mqttTopics)
-      ) {
-        return;
-      }
-      subscribeDeviceTopics.add(mqttTopics);
-      // デバイスのtopicを購読
-      mqttTaskQueue.push(async () => {
-        await client.subscribeAsync(mqttTopics);
-        logger.info(`subscribe to: ${mqttTopics}`);
-      });
-    });
-  };
-
-  const handleDevice = (apiDevice: ApiDevice) => {
-    logger.info(`handleDevice: ${apiDevice.id}`);
-    const discoveryEntries = createDiscoveryEntries(apiDevice);
-    discoveryEntries.forEach((entry) => {
-      const message = JSON.stringify(entry.payload);
+    discoveryEntries.forEach(({ relativeTopic, payload }) => {
       // Home Assistantへ送信
-      mqttTaskQueue.push(async () => {
-        await client.publishAsync(entry.topic, message, {
-          qos: 1,
-          retain: true,
-        });
-        if (logger.isDebugEnabled()) {
-          logger.debug(`publish to: ${entry.topic}`);
-          const separator = "-".repeat(80);
-          logger.silly(
-            separator +
-              "\n" +
-              JSON.stringify(entry.payload, null, " ") +
-              "\n" +
-              separator,
-          );
-        }
-        targetDevices.set(apiDevice.id, apiDevice);
-      });
+      mqtt.pushHassDiscovery(
+        relativeTopic,
+        {
+          ...payload,
+          ...device,
+          ...origin,
+        },
+        () => {
+          targetDevices.set(apiDevice.id, apiDevice);
+        },
+      );
     });
   };
 
-  client.on("message", (topic, payload) => {
-    logger.debug("receive topic:", topic);
-    try {
-      if (topic === echonetlite2mqttBaseTopic) {
-        handleDeviceList(JSON.parse(payload.toString()) as ApiDeviceSummary[]);
-        return;
-      } else if (subscribeDeviceTopics.has(topic)) {
-        const apiDevice = JSON.parse(payload.toString()) as ApiDevice;
-        handleDevice(apiDevice);
-        return;
-      } else {
-        logger.error(`unknown topic: ${topic}`);
-      }
-    } catch (err) {
-      logger.error("message error:", err);
-    }
-  });
-
+  const mqtt = await createMqtt(handleDeviceList, handleDevice);
   // 更新通知をしないプロパティに対して、定期的に自動リクエストする
   void (async () => {
     for await (const _ of setInterval(autoRequestInterval)) {
       Array.from(targetDevices.values()).map((apiDevice) => {
         const autoRequestProperties = getAutoRequestProperties(apiDevice);
-        for (const propertyName of autoRequestProperties) {
-          const topic = `${apiDevice.mqttTopics}/properties/${propertyName}/request`;
-          mqttTaskQueue.push(async () => {
-            await client.publishAsync(topic, "");
-          });
-          logger.debug(`request: ${topic}`);
-        }
+        mqtt.pushE2mRequest(apiDevice, autoRequestProperties);
       });
     }
   })();
@@ -210,7 +120,7 @@ async function main() {
 
     if (req.url === "/health") {
       resJson({});
-    } else if (req.url === "/status") {
+    } else if (req.url === "/") {
       const devices = Array.from(targetDevices.values()).map((apiDevice) => {
         const { id, deviceType } = apiDevice;
         const autoRequestProperties = getAutoRequestProperties(apiDevice);
@@ -235,7 +145,7 @@ async function main() {
         };
       });
       resJson({
-        mqttTaskQueue: mqttTaskQueue.length,
+        taskQueueSize: mqtt.taskQueueSize,
         devices,
       });
     } else {
@@ -248,10 +158,7 @@ async function main() {
 
   const shutdownHandler = async () => {
     logger.info("shutdown start");
-    await stopTask();
-    logger.info("mqttTask: stoped");
-    await client.endAsync();
-    logger.info("mqtt-client: closed");
+    await mqtt.close();
     server.close(() => {
       logger.info("shutdown finished");
       process.exit(0);

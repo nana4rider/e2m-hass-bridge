@@ -23,3 +23,7 @@ export function reverseKeyValue<T extends Record<string, string | number>>(
 
   return reversed;
 }
+
+export function toJson<T>(text: string): T {
+  return JSON.parse(text) as T;
+}
