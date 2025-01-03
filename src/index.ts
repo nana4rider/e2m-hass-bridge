@@ -1,4 +1,4 @@
-import { IgnoreDeviceTypePatterns, language } from "@/deviceConfig";
+import { language } from "@/deviceConfig";
 import logger from "@/logger";
 import {
   buildDevice,
@@ -14,10 +14,7 @@ import {
   getCompositeOverridePayload,
   getSimpleOverridePayload,
 } from "@/util/deviceUtil";
-import type {
-  ApiDevice,
-  ApiDeviceSummary,
-} from "echonetlite2mqtt/server/ApiTypes";
+import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import env from "env-var";
 import { setInterval } from "timers/promises";
 
@@ -28,24 +25,11 @@ async function main() {
     .get("AUTO_REQUEST_INTERVAL")
     .default(60000)
     .asIntPositive();
+
   const targetDevices = new Map<string, ApiDevice>();
   const origin = buildOrigin();
 
-  const handleDeviceList = (apiDeviceSummaries: ApiDeviceSummary[]) => {
-    logger.info("handleDeviceList");
-    apiDeviceSummaries.forEach(({ deviceType, mqttTopics }) => {
-      if (
-        mqtt.isSubscribe(mqttTopics) ||
-        // 除外するデバイスタイプは購読しない
-        IgnoreDeviceTypePatterns.some((tester) => tester.test(deviceType))
-      ) {
-        return;
-      }
-      mqtt.addSubscribe(mqttTopics);
-    });
-  };
-
-  const handleDevice = (apiDevice: ApiDevice) => {
+  const mqtt = await createMqtt((apiDevice: ApiDevice) => {
     logger.info(`handleDevice: ${apiDevice.id}`);
     const discoveryEntries: { relativeTopic: string; payload: Payload }[] = [];
     const device = buildDevice(apiDevice);
@@ -97,9 +81,7 @@ async function main() {
         },
       );
     });
-  };
-
-  const mqtt = await createMqtt(handleDeviceList, handleDevice);
+  });
 
   const http = await createHttp();
   http.setEndpoint("/health", () => ({}));

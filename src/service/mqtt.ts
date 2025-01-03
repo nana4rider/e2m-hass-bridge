@@ -1,3 +1,4 @@
+import { IgnoreDeviceTypePatterns } from "@/deviceConfig";
 import logger from "@/logger";
 import { Payload } from "@/payload/payloadType";
 import { toJson } from "@/util/dataTransformUtil";
@@ -7,7 +8,6 @@ import mqttjs from "mqtt";
 import { setInterval } from "timers/promises";
 
 export default async function createMqtt(
-  handleDeviceList: (apiDeviceSummaries: ApiDeviceSummary[]) => void,
   handleDevice: (apiDevice: ApiDevice) => void,
 ) {
   const haDiscoveryPrefix = env
@@ -22,7 +22,6 @@ export default async function createMqtt(
     .get("MQTT_TASK_INTERVAL")
     .default(100)
     .asIntPositive();
-  const subscribeDeviceTopics = new Set<string>();
 
   const client = await mqttjs.connectAsync(
     env.get("MQTT_BROKER").required().asString(),
@@ -31,6 +30,25 @@ export default async function createMqtt(
       password: env.get("MQTT_PASSWORD").asString(),
     },
   );
+
+  const subscribeDeviceTopics = new Set<string>();
+  const handleDeviceList = (apiDeviceSummaries: ApiDeviceSummary[]) => {
+    logger.info("[MQTT] handleDeviceList");
+    apiDeviceSummaries.forEach(({ deviceType, mqttTopics }) => {
+      if (
+        subscribeDeviceTopics.has(mqttTopics) ||
+        // 除外するデバイスタイプは購読しない
+        IgnoreDeviceTypePatterns.some((tester) => tester.test(deviceType))
+      ) {
+        return;
+      }
+      subscribeDeviceTopics.add(mqttTopics);
+      taskQueue.push(async () => {
+        await client.subscribeAsync(mqttTopics);
+        logger.info(`[MQTT] subscribe to: ${mqttTopics}`);
+      });
+    });
+  };
 
   client.on("message", (topic, payload) => {
     logger.debug("[MQTT] receive topic:", topic);
@@ -75,18 +93,6 @@ export default async function createMqtt(
     logger.info("[MQTT] closed");
   };
 
-  const addSubscribe = (topic: string) => {
-    subscribeDeviceTopics.add(topic);
-    taskQueue.push(async () => {
-      await client.subscribeAsync(topic);
-      logger.info(`[MQTT] subscribe to: ${topic}`);
-    });
-  };
-
-  const isSubscribe = (topic: string) => {
-    return subscribeDeviceTopics.has(topic);
-  };
-
   const pushHassDiscovery = (
     relativeTopic: string,
     payload: Payload,
@@ -117,11 +123,9 @@ export default async function createMqtt(
     });
   };
 
-  const pushE2mRequest = (
-    apiDevice: ApiDevice,
-    autoRequestProperties: string[],
-  ) => {
-    for (const propertyName of autoRequestProperties) {
+  const pushE2mRequest = (apiDevice: ApiDevice, propertyNames: string[]) => {
+    // TODO multiple requests
+    for (const propertyName of propertyNames) {
       const topic = `${apiDevice.mqttTopics}/properties/${propertyName}/request`;
       taskQueue.push(async () => {
         await client.publishAsync(topic, "");
@@ -134,8 +138,6 @@ export default async function createMqtt(
     get taskQueueSize() {
       return taskQueue.length;
     },
-    addSubscribe,
-    isSubscribe,
     pushHassDiscovery,
     pushE2mRequest,
     close,
