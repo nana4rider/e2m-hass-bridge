@@ -31,7 +31,7 @@ const SwingModeOrder = [
   "lowermost",
 ];
 
-export function buildClimate(apiDevice: ApiDevice): Payload {
+export default function buildClimate(apiDevice: ApiDevice): Payload {
   const operationMode = buildOperationMode(apiDevice);
   const fanMode = buildFanMode(apiDevice);
   const swingMode = buildSwingMode(apiDevice);

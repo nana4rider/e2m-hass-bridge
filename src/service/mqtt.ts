@@ -7,7 +7,7 @@ import env from "env-var";
 import mqttjs from "mqtt";
 import { setInterval } from "timers/promises";
 
-export default async function createMqtt(
+export default async function initializeMqttClient(
   handleDevice: (apiDevice: ApiDevice) => void,
 ) {
   const haDiscoveryPrefix = env

@@ -5,7 +5,7 @@ import type {
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
 
-export function buildLock(
+export default function buildLock(
   apiDevice: ApiDevice,
   property: ApiDeviceProperty,
 ): Payload {

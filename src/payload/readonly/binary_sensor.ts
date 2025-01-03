@@ -5,7 +5,7 @@ import type {
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
 
-export function buildBinarySensor(
+export default function buildBinarySensor(
   apiDevice: ApiDevice,
   property: ApiDeviceProperty,
 ): Payload {

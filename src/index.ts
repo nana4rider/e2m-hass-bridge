@@ -7,8 +7,8 @@ import {
   getSimpleComponentConfigs,
 } from "@/payload/builder";
 import { Payload } from "@/payload/payloadType";
-import createHttp from "@/service/http";
-import createMqtt from "@/service/mqtt";
+import initializeHttpServer from "@/service/http";
+import initializeMqttClient from "@/service/mqtt";
 import {
   getAutoRequestProperties,
   getCompositeOverridePayload,
@@ -29,7 +29,7 @@ async function main() {
   const targetDevices = new Map<string, ApiDevice>();
   const origin = buildOrigin();
 
-  const mqtt = await createMqtt((apiDevice: ApiDevice) => {
+  const mqtt = await initializeMqttClient((apiDevice: ApiDevice) => {
     logger.info(`handleDevice: ${apiDevice.id}`);
     const discoveryEntries: { relativeTopic: string; payload: Payload }[] = [];
     const device = buildDevice(apiDevice);
@@ -83,7 +83,7 @@ async function main() {
     });
   });
 
-  const http = await createHttp();
+  const http = await initializeHttpServer();
   http.setEndpoint("/health", () => ({}));
   http.setEndpoint("/", () => {
     const devices = Array.from(targetDevices.values()).map((apiDevice) => {

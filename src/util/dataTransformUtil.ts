@@ -24,7 +24,7 @@ export function reverseKeyValue<T extends Record<string, string | number>>(
   return reversed;
 }
 
-export function getDecimalPlaces(value: number) {
+export function getDecimalPlaces(value: number): number {
   const valueString = value.toString();
   const decimalIndex = valueString.indexOf(".");
   if (decimalIndex === -1) return 0;

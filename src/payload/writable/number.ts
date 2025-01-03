@@ -5,7 +5,7 @@ import type {
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
 
-export function buildNumber(
+export default function buildNumber(
   apiDevice: ApiDevice,
   property: ApiDeviceProperty,
 ): Payload {

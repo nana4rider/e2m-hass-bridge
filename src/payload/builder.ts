@@ -1,7 +1,7 @@
 import { IgnorePropertyPatterns, language } from "@/deviceConfig";
 import logger from "@/logger";
-import { buildClimate } from "@/payload/composite/climate";
-import { buildCover } from "@/payload/composite/cover";
+import buildClimate from "@/payload/composite/climate";
+import buildCover from "@/payload/composite/cover";
 import {
   CompositeComponentConfig,
   Payload,
@@ -9,14 +9,14 @@ import {
   SimpleComponentBuilder,
   SimpleComponentConfig,
 } from "@/payload/payloadType";
-import { buildBinarySensor } from "@/payload/readonly/binary_sensor";
-import { buildSensor } from "@/payload/readonly/sensor";
+import buildBinarySensor from "@/payload/readonly/binary_sensor";
+import buildSensor from "@/payload/readonly/sensor";
 import { getSimpleComponent } from "@/payload/resolver";
-import { buildLock } from "@/payload/writable/lock";
-import { buildNumber } from "@/payload/writable/number";
-import { buildSelect } from "@/payload/writable/select";
-import { buildSwitch } from "@/payload/writable/switch";
-import { buildText } from "@/payload/writable/text";
+import buildLock from "@/payload/writable/lock";
+import buildNumber from "@/payload/writable/number";
+import buildSelect from "@/payload/writable/select";
+import buildSwitch from "@/payload/writable/switch";
+import buildText from "@/payload/writable/text";
 import { getAsciiProductCode, getManufacturerName } from "@/util/deviceUtil";
 import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import { homepage, name as packageName, version } from "package.json";

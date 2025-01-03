@@ -4,7 +4,7 @@ import type {
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
 
-export function buildText(
+export default function buildText(
   apiDevice: ApiDevice,
   property: ApiDeviceProperty,
 ): Payload {

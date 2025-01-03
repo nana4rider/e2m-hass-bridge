@@ -49,7 +49,7 @@ export function getDeviceProperties<R extends boolean = false>(
   return property as R extends true ? never : ApiDeviceProperty | undefined;
 }
 
-export function getManufacturerName(apiDevice: ApiDevice) {
+export function getManufacturerName(apiDevice: ApiDevice): string {
   const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
   const entry = Object.entries(Manufacturer).find(
     ([, value]) => value === manufacturer,
