@@ -88,18 +88,22 @@ export default async function createMqtt(
   };
 
   const pushHassDiscovery = (
-    topic: string,
+    relativeTopic: string,
     payload: Payload,
     callback: () => void,
   ) => {
     const message = JSON.stringify(payload);
     taskQueue.push(async () => {
-      await client.publishAsync(`${haDiscoveryPrefix}/${topic}`, message, {
-        qos: 1,
-        retain: true,
-      });
+      await client.publishAsync(
+        `${haDiscoveryPrefix}/${relativeTopic}`,
+        message,
+        {
+          qos: 1,
+          retain: true,
+        },
+      );
       if (logger.isDebugEnabled()) {
-        logger.debug(`[MQTT] pushHassDiscovery: ${topic}`);
+        logger.debug(`[MQTT] pushHassDiscovery: ${relativeTopic}`);
         const separator = "-".repeat(80);
         logger.silly(
           separator +
