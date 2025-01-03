@@ -2,15 +2,9 @@ import type {
   ApiDevice,
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
+import type { JsonObject } from "type-fest";
 
-type JSONValue =
-  | string
-  | number
-  | boolean
-  | null
-  | JSONValue[]
-  | { [key: string]: JSONValue };
-export type Payload = Record<string, JSONValue>;
+export type Payload = JsonObject;
 
 export type SimpleComponent =
   // readonly

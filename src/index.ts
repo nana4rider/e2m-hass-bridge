@@ -1,6 +1,5 @@
 import { IgnoreDeviceTypePatterns, language } from "@/deviceConfig";
 import logger from "@/logger";
-import createMqtt from "@/mqtt";
 import {
   buildDevice,
   buildOrigin,
@@ -8,6 +7,8 @@ import {
   getSimpleComponentConfigs,
 } from "@/payload/builder";
 import { Payload } from "@/payload/payloadType";
+import createHttp from "@/service/http";
+import createMqtt from "@/service/mqtt";
 import {
   getAutoRequestProperties,
   getCompositeOverridePayload,
@@ -18,7 +19,6 @@ import type {
   ApiDeviceSummary,
 } from "echonetlite2mqtt/server/ApiTypes";
 import env from "env-var";
-import http from "http";
 import { setInterval } from "timers/promises";
 
 async function main() {
@@ -28,8 +28,6 @@ async function main() {
     .get("AUTO_REQUEST_INTERVAL")
     .default(60000)
     .asIntPositive();
-  const port = env.get("PORT").default(3000).asIntPositive();
-
   const targetDevices = new Map<string, ApiDevice>();
   const origin = buildOrigin();
 
@@ -102,6 +100,39 @@ async function main() {
   };
 
   const mqtt = await createMqtt(handleDeviceList, handleDevice);
+
+  const http = await createHttp();
+  http.setEndpoint("/health", () => ({}));
+  http.setEndpoint("/", () => {
+    const devices = Array.from(targetDevices.values()).map((apiDevice) => {
+      const { id, deviceType } = apiDevice;
+      const autoRequestProperties = getAutoRequestProperties(apiDevice);
+      const simpleComponents = getSimpleComponentConfigs(apiDevice).map(
+        ({ property, component }) => ({
+          name: property.name,
+          component,
+        }),
+      );
+      const compositeComponents = getCompositeComponentConfigs(apiDevice).map(
+        ({ compositeComponentId, component }) => ({
+          compositeComponentId,
+          component,
+        }),
+      );
+      return {
+        id,
+        deviceType,
+        autoRequestProperties,
+        simpleComponents,
+        compositeComponents,
+      };
+    });
+    return {
+      taskQueueSize: mqtt.taskQueueSize,
+      devices,
+    };
+  });
+
   // 更新通知をしないプロパティに対して、定期的に自動リクエストする
   void (async () => {
     for await (const _ of setInterval(autoRequestInterval)) {
@@ -112,57 +143,12 @@ async function main() {
     }
   })();
 
-  const server = http.createServer((req, res) => {
-    const resJson = (o: unknown, statusCode = 200) => {
-      res.writeHead(statusCode, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(o));
-    };
-
-    if (req.url === "/health") {
-      resJson({});
-    } else if (req.url === "/") {
-      const devices = Array.from(targetDevices.values()).map((apiDevice) => {
-        const { id, deviceType } = apiDevice;
-        const autoRequestProperties = getAutoRequestProperties(apiDevice);
-        const simpleComponents = getSimpleComponentConfigs(apiDevice).map(
-          ({ property, component }) => ({
-            name: property.name,
-            component,
-          }),
-        );
-        const compositeComponents = getCompositeComponentConfigs(apiDevice).map(
-          ({ compositeComponentId, component }) => ({
-            compositeComponentId,
-            component,
-          }),
-        );
-        return {
-          id,
-          deviceType,
-          autoRequestProperties,
-          simpleComponents,
-          compositeComponents,
-        };
-      });
-      resJson({
-        taskQueueSize: mqtt.taskQueueSize,
-        devices,
-      });
-    } else {
-      resJson({ error: "Not Found" }, 404);
-    }
-  });
-  server.listen(port, "0.0.0.0", () => {
-    logger.info(`Health check server running on port ${port}`);
-  });
-
   const shutdownHandler = async () => {
     logger.info("shutdown start");
     await mqtt.close();
-    server.close(() => {
-      logger.info("shutdown finished");
-      process.exit(0);
-    });
+    await http.close();
+    logger.info("shutdown finished");
+    process.exit(0);
   };
 
   process.on("SIGINT", () => void shutdownHandler());
