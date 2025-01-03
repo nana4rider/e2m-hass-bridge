@@ -1,6 +1,9 @@
 import { language } from "@/deviceConfig";
 import { Payload } from "@/payload/payloadType";
-import { formattedPythonDict } from "@/util/dataTransformUtil";
+import {
+  formattedPythonDict,
+  getDecimalPlaces,
+} from "@/util/dataTransformUtil";
 import { getUnit, isElNumberType, isElStateType } from "@/util/deviceUtil";
 import type {
   ApiDevice,
@@ -17,19 +20,14 @@ export function buildSensor(
     state_topic: property.mqttTopics,
   };
 
-  const deviceClass = getDeviceClass(apiDevice, property);
-  if (deviceClass) {
-    payload.device_class = deviceClass;
-  }
-
-  const stateClass = getStateClass(property);
-  if (stateClass) {
-    payload.state_class = stateClass;
-  }
-
   if (isElNumberType(data)) {
-    const nativeValue =
-      !data.multiple || Number.isInteger(data.multiple) ? "int" : "float";
+    let nativeValue: string;
+    if (!data.multiple || Number.isInteger(data.multiple)) {
+      nativeValue = "int";
+    } else {
+      nativeValue = "float";
+      payload.suggested_display_precision = getDecimalPlaces(data.multiple);
+    }
     payload.native_value = nativeValue;
     payload.value_template = `
 {% if value | ${nativeValue}(default=None) is not none %}
@@ -53,6 +51,16 @@ export function buildSensor(
   const unit = getUnit(data);
   if (unit) {
     payload.unit_of_measurement = unit;
+
+    const stateClass = getStateClass(unit);
+    if (stateClass) {
+      payload.state_class = stateClass;
+    }
+  }
+
+  const deviceClass = getDeviceClass(apiDevice, property);
+  if (deviceClass) {
+    payload.device_class = deviceClass;
   }
 
   return payload;
@@ -87,8 +95,8 @@ function getDeviceClass(
   }
 }
 
-function getStateClass({ name }: ApiDeviceProperty): string | undefined {
-  if (name === "consumedCumulativeElectricEnergy") {
+function getStateClass(unit: string): string | undefined {
+  if (unit === "kWh" || unit === "Wh") {
     return "total_increasing";
   }
 

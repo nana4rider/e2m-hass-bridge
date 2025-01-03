@@ -24,6 +24,13 @@ export function reverseKeyValue<T extends Record<string, string | number>>(
   return reversed;
 }
 
+export function getDecimalPlaces(value: number) {
+  const valueString = value.toString();
+  const decimalIndex = valueString.indexOf(".");
+  if (decimalIndex === -1) return 0;
+  return valueString.length - decimalIndex - 1;
+}
+
 export function toJson<T>(text: string): T {
   return JSON.parse(text) as T;
 }
