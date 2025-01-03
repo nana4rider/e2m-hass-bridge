@@ -30,6 +30,7 @@ export default async function createMqtt(
       password: env.get("MQTT_PASSWORD").asString(),
     },
   );
+  const taskQueue: (() => Promise<void>)[] = [];
 
   const subscribeDeviceTopics = new Set<string>();
   const handleDeviceList = (apiDeviceSummaries: ApiDeviceSummary[]) => {
@@ -72,7 +73,6 @@ export default async function createMqtt(
   // デバイスリストを購読
   await client.subscribeAsync(echonetlite2mqttBaseTopic);
 
-  const taskQueue: (() => Promise<void>)[] = [];
   let isMqttTaskRunning = true;
   const mqttTask = (async () => {
     for await (const _ of setInterval(mqttTaskInterval)) {
