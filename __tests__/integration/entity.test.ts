@@ -17,11 +17,7 @@ async function readJsonFile<T>(filePath: string): Promise<T> {
   return toJson<T>(await readFile(filePath, "utf-8"));
 }
 
-function getJsonFileNames(dir: string): string[] {
-  return globSync(`${dir}/*.json`);
-}
-
-const inputPaths = getJsonFileNames(path.join(baseDir, "input"));
+const inputPaths = globSync(path.join(baseDir, "input", "*.json"));
 
 test.each(inputPaths.map((filePath) => [path.basename(filePath), filePath]))(
   "entity: %s",

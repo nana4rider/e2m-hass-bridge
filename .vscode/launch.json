@@ -9,7 +9,7 @@
       "name": "npm run dev",
       "cwd": "${workspaceFolder}",
       "skipFiles": ["<node_internals>/**"],
-      "console": "integratedTerminal"
+      "outputCapture": "std"
     }
   ]
 }

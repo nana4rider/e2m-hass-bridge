@@ -1,9 +1,5 @@
 import { buildDevice } from "@/payload/builder";
-import { JsonValue } from "type-fest";
-
-function cast<T>(json: JsonValue) {
-  return json as T;
-}
+import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 
 const env = process.env;
 beforeEach(() => {
@@ -13,35 +9,31 @@ beforeEach(() => {
 
 test("device: manufacturerが含まれない)", () => {
   const actual = () =>
-    buildDevice(
-      cast({
-        id: "test_id",
-        ip: "127.0.0.1",
-        descriptions: {
-          ja: "test_descriptions",
-          eh: "test_descriptions",
-        },
-        values: {},
-      }),
-    );
+    buildDevice({
+      id: "test_id",
+      ip: "127.0.0.1",
+      descriptions: {
+        ja: "test_descriptions",
+        en: "test_descriptions",
+      },
+      values: {},
+    } as unknown as ApiDevice);
 
   expect(actual).toThrow();
 });
 
 test("device: 未定義のmanufacturer", () => {
-  const actual = buildDevice(
-    cast({
-      id: "test_id",
-      ip: "127.0.0.1",
-      descriptions: {
-        ja: "test_descriptions",
-        eh: "test_descriptions",
-      },
-      values: {
-        manufacturer: { value: "xxxxxx" },
-      },
-    }),
-  );
+  const actual = buildDevice({
+    id: "test_id",
+    ip: "127.0.0.1",
+    descriptions: {
+      ja: "test_descriptions",
+      eh: "test_descriptions",
+    },
+    values: {
+      manufacturer: { value: "xxxxxx" },
+    },
+  } as unknown as ApiDevice);
 
   expect(actual).toEqual({
     device: {
@@ -53,19 +45,17 @@ test("device: 未定義のmanufacturer", () => {
 });
 
 test("device: 定義済みのmanufacturer", () => {
-  const actual = buildDevice(
-    cast({
-      id: "test_id",
-      ip: "127.0.0.1",
-      descriptions: {
-        ja: "test_descriptions",
-        eh: "test_descriptions",
-      },
-      values: {
-        manufacturer: { value: "ffffff" },
-      },
-    }),
-  );
+  const actual = buildDevice({
+    id: "test_id",
+    ip: "127.0.0.1",
+    descriptions: {
+      ja: "test_descriptions",
+      en: "test_descriptions",
+    },
+    values: {
+      manufacturer: { value: "ffffff" },
+    },
+  } as unknown as ApiDevice);
 
   expect(actual).toEqual({
     device: {
@@ -77,20 +67,18 @@ test("device: 定義済みのmanufacturer", () => {
 });
 
 test("device: productCodeが存在する", () => {
-  const actual = buildDevice(
-    cast({
-      id: "test_id",
-      ip: "127.0.0.1",
-      descriptions: {
-        ja: "test_descriptions",
-        eh: "test_descriptions",
-      },
-      values: {
-        manufacturer: { value: "manufacturer" },
-        productCode: { value: "6563686f6e6574" },
-      },
-    }),
-  );
+  const actual = buildDevice({
+    id: "test_id",
+    ip: "127.0.0.1",
+    descriptions: {
+      ja: "test_descriptions",
+      en: "test_descriptions",
+    },
+    values: {
+      manufacturer: { value: "manufacturer" },
+      productCode: { value: "6563686f6e6574" },
+    },
+  } as unknown as ApiDevice);
 
   expect(actual).toEqual({
     device: {
@@ -106,20 +94,18 @@ test("device: 英語設定", async () => {
   process.env.DESCRIPTION_LANGUAGE = "en";
 
   const { buildDevice } = await import("@/payload/builder");
-  const actual = buildDevice(
-    cast({
-      id: "test_id",
-      ip: "127.0.0.1",
-      descriptions: {
-        ja: "test_descriptions_ja",
-        en: "test_descriptions_en",
-      },
-      values: {
-        manufacturer: { value: "manufacturer" },
-        productCode: { value: "6563686f6e6574" },
-      },
-    }),
-  );
+  const actual = buildDevice({
+    id: "test_id",
+    ip: "127.0.0.1",
+    descriptions: {
+      ja: "test_descriptions_ja",
+      en: "test_descriptions_en",
+    },
+    values: {
+      manufacturer: { value: "manufacturer" },
+      productCode: { value: "6563686f6e6574" },
+    },
+  } as unknown as ApiDevice);
 
   expect(actual).toEqual({
     device: {
@@ -132,20 +118,18 @@ test("device: 英語設定", async () => {
 });
 
 test("device: 日本語設定", () => {
-  const actual = buildDevice(
-    cast({
-      id: "test_id",
-      ip: "127.0.0.1",
-      descriptions: {
-        ja: "test_descriptions_ja",
-        eh: "test_descriptions_en",
-      },
-      values: {
-        manufacturer: { value: "manufacturer" },
-        productCode: { value: "6563686f6e6574" },
-      },
-    }),
-  );
+  const actual = buildDevice({
+    id: "test_id",
+    ip: "127.0.0.1",
+    descriptions: {
+      ja: "test_descriptions_ja",
+      eh: "test_descriptions_en",
+    },
+    values: {
+      manufacturer: { value: "manufacturer" },
+      productCode: { value: "6563686f6e6574" },
+    },
+  } as unknown as ApiDevice);
 
   expect(actual).toEqual({
     device: {
