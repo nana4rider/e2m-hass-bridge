@@ -1,6 +1,8 @@
 # ECHONETLite2MQTT Home Assistant Bridge
 
 [![License: ISC](https://img.shields.io/github/license/nana4rider/e2m-hass-bridge)](LICENSE)
+![GitHub Actions Test](https://github.com/nana4rider/e2m-hass-bridge/actions/workflows/test.yml/badge.svg)
+![GitHub Actions Build and Publish](https://github.com/nana4rider/e2m-hass-bridge/actions/workflows/publish.yml/badge.svg)
 
 ## 概要
 

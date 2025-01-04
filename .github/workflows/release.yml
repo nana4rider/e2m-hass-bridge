@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
+  get-version:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      current: ${{ steps.current.outputs.version }}
+      previous: ${{ steps.previous.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: current
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - id: previous
+        run: |
+          VERSION=$(git show HEAD~1:package.json | jq -r '.version')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  release:
+    runs-on: ubuntu-latest
+    needs: get-version
+    if: ${{ needs.get-version.outputs.current != needs.get-version.outputs.previous }}
+    steps:
+      - name: Add Tag
+        run: |
+          git tag "v${{ needs.get-version.outputs.current }}"
+          git push origin "v${{ needs.get-version.outputs.current }}"
+
+      - name: Create Release to GitHub
+        run: gh release create "v${{ needs.get-version.outputs.current }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

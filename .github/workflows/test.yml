@@ -1,9 +1,7 @@
-name: Node.js CI
+name: Test
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
   pull_request:
     branches:
       - main
@@ -14,11 +12,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
+
       - run: npm ci
+
       - run: npm run lint
+
       - run: npm run build
+
       - run: npm test
