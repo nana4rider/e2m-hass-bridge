@@ -11,15 +11,22 @@ import {
 } from "@/payload/payloadType";
 import buildBinarySensor from "@/payload/readonly/binary_sensor";
 import buildSensor from "@/payload/readonly/sensor";
-import { getSimpleComponent } from "@/payload/resolver";
+import { createUniqueId, getSimpleComponent } from "@/payload/resolver";
 import buildLock from "@/payload/writable/lock";
 import buildNumber from "@/payload/writable/number";
 import buildSelect from "@/payload/writable/select";
 import buildSwitch from "@/payload/writable/switch";
 import buildText from "@/payload/writable/text";
-import { getAsciiProductCode, getManufacturerName } from "@/util/deviceUtil";
+import { toJson } from "@/util/dataTransformUtil";
+import {
+  getAsciiProductCode,
+  getCompositeOverridePayload,
+  getManufacturerName,
+  getSimpleOverridePayload,
+} from "@/util/deviceUtil";
 import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
-import { homepage, name as packageName, version } from "package.json";
+import * as fs from "fs";
+import { PackageJson } from "type-fest";
 
 /** 単一のプロパティから構成されるコンポーネント */
 const simpleComponentBuilder = new Map<
@@ -108,9 +115,49 @@ export function buildDevice(apiDevice: ApiDevice): Readonly<Payload> {
 }
 
 export function buildOrigin(): Readonly<Payload> {
+  const { homepage, name, version } = toJson<PackageJson>(
+    fs.readFileSync("package.json", "utf-8"),
+  );
   const origin: Payload = {};
-  if (typeof packageName === "string") origin.name = packageName;
+  if (typeof name === "string") origin.name = name;
   if (typeof version === "string") origin.sw_version = version;
   if (typeof homepage === "string") origin.support_url = homepage;
   return { origin };
+}
+
+export function buildDiscoveryEntries(apiDevice: ApiDevice) {
+  const discoveryEntries: { relativeTopic: string; payload: Payload }[] = [];
+  // 単一のプロパティから構成されるコンポーネント(sensor等)
+  getSimpleComponentConfigs(apiDevice).forEach((componentConfig) => {
+    const { component, property, builder } = componentConfig;
+    const uniqueId = createUniqueId(apiDevice, componentConfig);
+    const relativeTopic = `${component}/${uniqueId}/config`;
+    const payload = builder(apiDevice, property);
+    payload.unique_id = uniqueId;
+    payload.name = property.schema.propertyName[language];
+    const override = getSimpleOverridePayload(apiDevice, property.name);
+    discoveryEntries.push({
+      relativeTopic,
+      payload: { ...payload, ...override },
+    });
+  });
+  // 複数のプロパティから構成されるコンポーネント(climate等)
+  getCompositeComponentConfigs(apiDevice).forEach((componentConfig) => {
+    const { compositeComponentId, component, builder, name } = componentConfig;
+    const uniqueId = createUniqueId(apiDevice, componentConfig);
+    const relativeTopic = `${component}/${uniqueId}/config`;
+    const payload = builder(apiDevice);
+    payload.unique_id = uniqueId;
+    payload.name = name?.[language] ?? apiDevice.descriptions[language];
+    const override = getCompositeOverridePayload(
+      apiDevice,
+      compositeComponentId,
+    );
+    discoveryEntries.push({
+      relativeTopic,
+      payload: { ...payload, ...override },
+    });
+  });
+
+  return discoveryEntries;
 }
