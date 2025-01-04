@@ -110,7 +110,7 @@ export function buildDevice(apiDevice: ApiDevice): Readonly<Payload> {
     manufacturer: getManufacturerName(apiDevice),
   };
   const model = getAsciiProductCode(apiDevice);
-  if (model) device.model = model;
+  if (model !== undefined) device.model = model;
   return { device };
 }
 

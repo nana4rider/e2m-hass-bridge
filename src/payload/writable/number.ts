@@ -18,14 +18,14 @@ export default function buildNumber(
   };
 
   const unit = getUnit(data);
-  if (unit) {
+  if (unit !== undefined) {
     payload.unit_of_measurement = unit;
   }
 
-  if (data.minimum) {
+  if (data.minimum !== undefined) {
     payload.min = data.minimum;
   }
-  if (data.maximum) {
+  if (data.maximum !== undefined) {
     payload.max = data.maximum;
   }
 
