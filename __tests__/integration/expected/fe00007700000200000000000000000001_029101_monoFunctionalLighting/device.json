@@ -1,0 +1,7 @@
+{
+  "device": {
+    "identifiers": ["echonetlite_fe00007700000200000000000000000001_029101"],
+    "name": "単機能照明(192.168.1.100)",
+    "manufacturer": "KadenEmulator"
+  }
+}

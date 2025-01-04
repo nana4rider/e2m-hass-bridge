@@ -1,0 +1,9 @@
+{
+  "payload": {
+    "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/humidity",
+    "unit_of_measurement": "%",
+    "device_class": "humidity",
+    "unique_id": "echonetlite_fe00000b0000013001000000000000000_simple_humidity",
+    "name": "室内相対湿度計測値"
+  }
+}

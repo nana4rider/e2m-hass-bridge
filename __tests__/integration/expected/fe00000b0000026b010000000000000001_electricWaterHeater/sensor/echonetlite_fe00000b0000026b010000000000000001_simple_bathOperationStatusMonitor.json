@@ -1,0 +1,8 @@
+{
+  "payload": {
+    "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/bathOperationStatusMonitor",
+    "value_template": "{% set mapping = {'runningHotWater':'湯張り中','noOperation':'停止中','keepingTemperature':'保温中'} %}\n{{ mapping.get(value, 'unknown') }}",
+    "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_bathOperationStatusMonitor",
+    "name": "風呂動作状態監視"
+  }
+}

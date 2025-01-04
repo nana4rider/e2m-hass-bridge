@@ -1,0 +1,534 @@
+{
+  "id": "fe00007700000200000000000000000001_029101",
+  "eoj": "029101",
+  "name": "fe00007700000200000000000000000001_029101",
+  "actions": [],
+  "deviceType": "monoFunctionalLighting",
+  "events": [],
+  "descriptions": {
+    "ja": "単機能照明",
+    "en": "Mono functional lighting"
+  },
+  "properties": [
+    {
+      "epc": "0x80",
+      "descriptions": {
+        "ja": "ON/OFFの状態を示す",
+        "en": "This property indicates the ON/OFF status."
+      },
+      "epcAtomic": "0x80",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": true,
+      "schema": {
+        "epc": "0x80",
+        "validRelease": {
+          "from": "F",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "動作状態",
+          "en": "Operation status"
+        },
+        "shortName": "operationStatus",
+        "accessRule": {
+          "get": "required",
+          "set": "required",
+          "inf": "required"
+        },
+        "descriptions": {
+          "ja": "ON/OFFの状態を示す",
+          "en": "This property indicates the ON/OFF status."
+        },
+        "data": {
+          "type": "state",
+          "size": 1,
+          "enum": [
+            {
+              "edt": "0x30",
+              "name": "true",
+              "descriptions": {
+                "ja": "ON",
+                "en": "On"
+              }
+            },
+            {
+              "edt": "0x31",
+              "name": "false",
+              "descriptions": {
+                "ja": "OFF",
+                "en": "Off"
+              }
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_029101/properties/operationStatus",
+      "name": "operationStatus"
+    },
+    {
+      "epc": "0x81",
+      "descriptions": {
+        "ja": "設置場所を示す",
+        "en": "This property indicates the installation location"
+      },
+      "epcAtomic": "0x81",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0x81",
+        "validRelease": {
+          "from": "A",
+          "to": "B"
+        },
+        "propertyName": {
+          "ja": "設置場所",
+          "en": "Installation location"
+        },
+        "shortName": "installationLocation",
+        "accessRule": {
+          "get": "required",
+          "set": "required",
+          "inf": "required"
+        },
+        "descriptions": {
+          "ja": "設置場所を示す",
+          "en": "This property indicates the installation location"
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 1,
+          "maxSize": 1
+        },
+        "remark": {
+          "ja": "bitmap(例 0x00: 未設定(初期値), 0x08: リビング)",
+          "en": "bitmap (eg. 0x00: undefined (initial data), 0x08: living)"
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_029101/properties/installationLocation",
+      "name": "installationLocation"
+    },
+    {
+      "epc": "0x82",
+      "descriptions": {
+        "ja": "対応するAPPENDIXのリリース番号を示す",
+        "en": "This property indicates the release number of the corresponding Appendix."
+      },
+      "epcAtomic": "0x82",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0x82",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "規格Version情報",
+          "en": "Standard version information"
+        },
+        "shortName": "protocol",
+        "accessRule": {
+          "get": "required",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "対応するAPPENDIXのリリース番号を示す",
+          "en": "This property indicates the release number of the corresponding Appendix."
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 4,
+          "maxSize": 4
+        },
+        "remark": {
+          "ja": "1,2バイト目は0x00。3バイト目は機器オブジェクトのリリースバージョンをASCIIで表す。リリース Aのみ小文字で0x61, B以降は大文字で0x42, 0x43...。4バイト目は、そのリリースバージョンのリビジョン番ををASCIIで表す(0x00～0xFF)。",
+          "en": "1st and 2nd data is 0x00. 3rd data is the release version of Device Object in ASCII. Only release A utilize lower case letter 0x61, Release B and later utilize upper case letter such as 0x42, 0x43... 4th data is the revision number of the release version in ASCII (0x00 - 0xFF)."
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_029101/properties/protocol",
+      "name": "protocol"
+    },
+    {
+      "epc": "0x88",
+      "descriptions": {
+        "ja": "何らかの異常(センサトラブル等)の発生状況を示す",
+        "en": "This property indicates whether a fault (e.g. a sensor trouble) has occurred or not."
+      },
+      "epcAtomic": "0x88",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0x88",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "異常発生状態",
+          "en": "Fault status"
+        },
+        "shortName": "faultStatus",
+        "accessRule": {
+          "get": "required",
+          "set": "notApplicable",
+          "inf": "required"
+        },
+        "descriptions": {
+          "ja": "何らかの異常(センサトラブル等)の発生状況を示す",
+          "en": "This property indicates whether a fault (e.g. a sensor trouble) has occurred or not."
+        },
+        "data": {
+          "type": "state",
+          "size": 1,
+          "enum": [
+            {
+              "edt": "0x41",
+              "name": "true",
+              "descriptions": {
+                "ja": "異常あり",
+                "en": "Fault occurred."
+              }
+            },
+            {
+              "edt": "0x42",
+              "name": "false",
+              "descriptions": {
+                "ja": "異常なし",
+                "en": "No fault has occurred."
+              }
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_029101/properties/faultStatus",
+      "name": "faultStatus"
+    },
+    {
+      "epc": "0x8A",
+      "descriptions": {
+        "ja": "3バイトで指定",
+        "en": "3-byte manufacturer code"
+      },
+      "epcAtomic": "0x8A",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0x8A",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "メーカコード",
+          "en": "Manufacturer code"
+        },
+        "shortName": "manufacturer",
+        "accessRule": {
+          "get": "required",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "3バイトで指定",
+          "en": "3-byte manufacturer code"
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 3,
+          "maxSize": 3
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_029101/properties/manufacturer",
+      "name": "manufacturer"
+    }
+  ],
+  "ip": "192.168.1.100",
+  "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_029101",
+  "propertyValues": {
+    "operationStatus": "true",
+    "installationLocation": "00",
+    "protocol": "00005001",
+    "faultStatus": "false",
+    "manufacturer": "ffffff"
+  },
+  "values": {
+    "operationStatus": {
+      "name": "operationStatus",
+      "deviceProperty": {
+        "name": "operationStatus",
+        "descriptions": {
+          "ja": "ON/OFFの状態を示す",
+          "en": "This property indicates the ON/OFF status."
+        },
+        "epc": "0x80",
+        "readable": true,
+        "observable": true,
+        "writable": true,
+        "schema": {
+          "epc": "0x80",
+          "validRelease": {
+            "from": "F",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "動作状態",
+            "en": "Operation status"
+          },
+          "shortName": "operationStatus",
+          "accessRule": {
+            "get": "required",
+            "set": "required",
+            "inf": "required"
+          },
+          "descriptions": {
+            "ja": "ON/OFFの状態を示す",
+            "en": "This property indicates the ON/OFF status."
+          },
+          "data": {
+            "type": "state",
+            "size": 1,
+            "enum": [
+              {
+                "edt": "0x30",
+                "name": "true",
+                "descriptions": {
+                  "ja": "ON",
+                  "en": "On"
+                }
+              },
+              {
+                "edt": "0x31",
+                "name": "false",
+                "descriptions": {
+                  "ja": "OFF",
+                  "en": "Off"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "value": "true",
+      "updated": "2025-01-04 00:16:55Z"
+    },
+    "installationLocation": {
+      "name": "installationLocation",
+      "deviceProperty": {
+        "name": "installationLocation",
+        "descriptions": {
+          "ja": "設置場所を示す",
+          "en": "This property indicates the installation location"
+        },
+        "epc": "0x81",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0x81",
+          "validRelease": {
+            "from": "A",
+            "to": "B"
+          },
+          "propertyName": {
+            "ja": "設置場所",
+            "en": "Installation location"
+          },
+          "shortName": "installationLocation",
+          "accessRule": {
+            "get": "required",
+            "set": "required",
+            "inf": "required"
+          },
+          "descriptions": {
+            "ja": "設置場所を示す",
+            "en": "This property indicates the installation location"
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 1,
+            "maxSize": 1
+          },
+          "remark": {
+            "ja": "bitmap(例 0x00: 未設定(初期値), 0x08: リビング)",
+            "en": "bitmap (eg. 0x00: undefined (initial data), 0x08: living)"
+          }
+        }
+      },
+      "value": "00",
+      "updated": "2025-01-04 00:16:55Z"
+    },
+    "protocol": {
+      "name": "protocol",
+      "deviceProperty": {
+        "name": "protocol",
+        "descriptions": {
+          "ja": "対応するAPPENDIXのリリース番号を示す",
+          "en": "This property indicates the release number of the corresponding Appendix."
+        },
+        "epc": "0x82",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0x82",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "規格Version情報",
+            "en": "Standard version information"
+          },
+          "shortName": "protocol",
+          "accessRule": {
+            "get": "required",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "対応するAPPENDIXのリリース番号を示す",
+            "en": "This property indicates the release number of the corresponding Appendix."
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 4,
+            "maxSize": 4
+          },
+          "remark": {
+            "ja": "1,2バイト目は0x00。3バイト目は機器オブジェクトのリリースバージョンをASCIIで表す。リリース Aのみ小文字で0x61, B以降は大文字で0x42, 0x43...。4バイト目は、そのリリースバージョンのリビジョン番ををASCIIで表す(0x00～0xFF)。",
+            "en": "1st and 2nd data is 0x00. 3rd data is the release version of Device Object in ASCII. Only release A utilize lower case letter 0x61, Release B and later utilize upper case letter such as 0x42, 0x43... 4th data is the revision number of the release version in ASCII (0x00 - 0xFF)."
+          }
+        }
+      },
+      "value": "00005001",
+      "updated": "2025-01-04 00:16:55Z"
+    },
+    "faultStatus": {
+      "name": "faultStatus",
+      "deviceProperty": {
+        "name": "faultStatus",
+        "descriptions": {
+          "ja": "何らかの異常(センサトラブル等)の発生状況を示す",
+          "en": "This property indicates whether a fault (e.g. a sensor trouble) has occurred or not."
+        },
+        "epc": "0x88",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0x88",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "異常発生状態",
+            "en": "Fault status"
+          },
+          "shortName": "faultStatus",
+          "accessRule": {
+            "get": "required",
+            "set": "notApplicable",
+            "inf": "required"
+          },
+          "descriptions": {
+            "ja": "何らかの異常(センサトラブル等)の発生状況を示す",
+            "en": "This property indicates whether a fault (e.g. a sensor trouble) has occurred or not."
+          },
+          "data": {
+            "type": "state",
+            "size": 1,
+            "enum": [
+              {
+                "edt": "0x41",
+                "name": "true",
+                "descriptions": {
+                  "ja": "異常あり",
+                  "en": "Fault occurred."
+                }
+              },
+              {
+                "edt": "0x42",
+                "name": "false",
+                "descriptions": {
+                  "ja": "異常なし",
+                  "en": "No fault has occurred."
+                }
+              }
+            ]
+          }
+        }
+      },
+      "value": "false",
+      "updated": "2025-01-04 00:16:55Z"
+    },
+    "manufacturer": {
+      "name": "manufacturer",
+      "deviceProperty": {
+        "name": "manufacturer",
+        "descriptions": {
+          "ja": "3バイトで指定",
+          "en": "3-byte manufacturer code"
+        },
+        "epc": "0x8A",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0x8A",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "メーカコード",
+            "en": "Manufacturer code"
+          },
+          "shortName": "manufacturer",
+          "accessRule": {
+            "get": "required",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "3バイトで指定",
+            "en": "3-byte manufacturer code"
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 3,
+            "maxSize": 3
+          }
+        }
+      },
+      "value": "ffffff",
+      "updated": "2025-01-04 00:16:55Z"
+    }
+  }
+}

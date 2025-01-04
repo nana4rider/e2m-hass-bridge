@@ -1,0 +1,8 @@
+{
+  "device": {
+    "identifiers": ["echonetlite_fe00000b0000013001000000000000000"],
+    "name": "家庭用エアコン(192.168.1.71)",
+    "manufacturer": "Panasonic",
+    "model": "CS-000000000"
+  }
+}

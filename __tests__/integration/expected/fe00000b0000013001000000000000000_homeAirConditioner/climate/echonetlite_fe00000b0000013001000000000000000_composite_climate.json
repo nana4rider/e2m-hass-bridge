@@ -1,0 +1,28 @@
+{
+  "payload": {
+    "modes": ["auto", "cool", "heat", "dry", "fan_only", "off"],
+    "mode_state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties",
+    "mode_state_template": "{% if value_json.operationStatus == 'false' %}\n  off\n{% else %}\n  {% set mapping = {'auto':'auto','cooling':'cool','heating':'heat','dehumidification':'dry','circulation':'fan_only'} %}\n  {{ mapping.get(value_json.operationMode, 'unknown') }}\n{% endif %}",
+    "mode_command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/set",
+    "mode_command_template": "{% if value == 'off' %}\n  {\"operationStatus\": \"false\"}\n{% else %}\n  {% set mapping = {'auto':'auto','cool':'cooling','heat':'heating','dry':'dehumidification','fan_only':'circulation'} %}\n  {{ {\"operationStatus\": \"true\", \"operationMode\": mapping[value]} | tojson }}\n{% endif %}",
+    "fan_modes": ["1", "2", "3", "4", "auto"],
+    "fan_mode_state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/airFlowLevel",
+    "fan_mode_state_template": "{% set mapping = {'1':'1','2':'1','3':'2','4':'3','5':'3','6':'4','7':'4','8':'4','auto':'auto'} %}\n{{ mapping.get(value, 'unknown') }}",
+    "fan_mode_command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/airFlowLevel/set",
+    "fan_mode_command_template": "{% set mapping = {'1':'2','2':'3','3':'4','4':'6','auto':'auto'} %}\n{{ mapping[value] }}",
+    "swing_modes": ["自動", "上", "上中", "中央", "下中", "下"],
+    "swing_mode_state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties",
+    "swing_mode_state_template": "{% if value_json.automaticControlAirFlowDirection == 'autoVertical' %}\n  自動\n{% else %}\n  {% set mapping = {'uppermost':'上','lowermost':'下','central':'中央','upperCenter':'上中','lowerCenter':'下中'} %}\n  {{ mapping.get(value_json.airFlowDirectionVertical, 'unknown') }}\n{% endif %}",
+    "swing_mode_command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/set",
+    "swing_mode_command_template": "{% if value == '自動' %}\n    {\"automaticControlAirFlowDirection\": \"autoVertical\"}\n{% else %}\n  {% set mapping = {'上':'uppermost','下':'lowermost','中央':'central','上中':'upperCenter','下中':'lowerCenter'} %}\n    {\"airFlowDirectionVertical\": \"{{ mapping[value] }}\"}\n{% endif %}",
+    "temperature_state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/targetTemperature",
+    "temperature_command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/targetTemperature/set",
+    "current_temperature_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/roomTemperature",
+    "current_humidity_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/humidity",
+    "unique_id": "echonetlite_fe00000b0000013001000000000000000_composite_climate",
+    "name": "家庭用エアコン"
+  },
+  "icon": "mdi:air-conditioner",
+  "min_temp": 16,
+  "max_temp": 30
+}

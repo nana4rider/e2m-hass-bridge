@@ -1,0 +1,7 @@
+{
+  "device": {
+    "identifiers": ["echonetlite_fe00007700000200000000000000000001_026b01"],
+    "name": "電気温水器(192.168.1.100)",
+    "manufacturer": "KadenEmulator"
+  }
+}

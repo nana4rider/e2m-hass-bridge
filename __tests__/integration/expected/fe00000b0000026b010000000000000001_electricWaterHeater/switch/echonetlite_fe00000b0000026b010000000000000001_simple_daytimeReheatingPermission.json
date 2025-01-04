@@ -1,0 +1,10 @@
+{
+  "payload": {
+    "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/daytimeReheatingPermission",
+    "command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/daytimeReheatingPermission/set",
+    "payload_on": "true",
+    "payload_off": "false",
+    "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_daytimeReheatingPermission",
+    "name": "昼間沸き増し許可設定"
+  }
+}

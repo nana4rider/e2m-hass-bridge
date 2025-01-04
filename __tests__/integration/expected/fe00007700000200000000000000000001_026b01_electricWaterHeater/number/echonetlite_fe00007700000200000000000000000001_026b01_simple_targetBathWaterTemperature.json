@@ -1,0 +1,12 @@
+{
+  "payload": {
+    "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_026b01/properties/targetBathWaterTemperature",
+    "command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_026b01/properties/targetBathWaterTemperature/set",
+    "unit_of_measurement": "°C",
+    "max": 100,
+    "unique_id": "echonetlite_fe00007700000200000000000000000001_026b01_simple_targetBathWaterTemperature",
+    "name": "風呂温度設定値"
+  },
+  "min": 30,
+  "max": 60
+}

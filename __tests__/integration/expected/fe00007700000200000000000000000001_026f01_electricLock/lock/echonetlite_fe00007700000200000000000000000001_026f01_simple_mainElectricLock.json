@@ -1,0 +1,14 @@
+{
+  "payload": {
+    "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_026f01/properties/mainElectricLock",
+    "command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_026f01/properties/mainElectricLock/set",
+    "payload_lock": "true",
+    "payload_unlock": "false",
+    "state_locked": "true",
+    "state_unlocked": "false",
+    "qos": 1,
+    "retain": true,
+    "unique_id": "echonetlite_fe00007700000200000000000000000001_026f01_simple_mainElectricLock",
+    "name": "施錠設定1"
+  }
+}

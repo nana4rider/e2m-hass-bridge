@@ -1,0 +1,7 @@
+{
+  "device": {
+    "identifiers": ["echonetlite_fe00000b00000ef001000000000000000_05ff01"],
+    "name": "コントローラ(192.168.1.101)",
+    "manufacturer": "Panasonic"
+  }
+}

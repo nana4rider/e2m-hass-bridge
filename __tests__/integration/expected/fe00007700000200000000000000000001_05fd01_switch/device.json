@@ -1,0 +1,7 @@
+{
+  "device": {
+    "identifiers": ["echonetlite_fe00007700000200000000000000000001_05fd01"],
+    "name": "スイッチ (JEM-A/HA端子対応)(192.168.1.100)",
+    "manufacturer": "KadenEmulator"
+  }
+}
