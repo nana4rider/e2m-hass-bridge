@@ -21,11 +21,13 @@ jobs:
       - id: current
         run: |
           VERSION=$(jq -r '.version' package.json)
+          echo $VERSION
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - id: previous
         run: |
           VERSION=$(git show HEAD~1:package.json | jq -r '.version')
+          echo $VERSION
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
   release:
