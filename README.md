@@ -43,7 +43,6 @@ npm run dev
 ### Docker
 
 ```sh
-docker build -t e2m-hass-bridge .
 docker run -d \
   --name e2m-hass-bridge \
   -e MQTT_BROKER=mqtt://localhost \
@@ -51,7 +50,7 @@ docker run -d \
   -e MQTT_PASSWORD=password \
   -p 3000:3000 \
   --restart always \
-  e2m-hass-bridge
+  nana4rider/e2m-hass-bridge:latest
 ```
 
 ## デモ
