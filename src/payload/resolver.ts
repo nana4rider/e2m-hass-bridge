@@ -1,4 +1,8 @@
-import { SimpleComponent } from "@/payload/payloadType";
+import {
+  CompositeComponentConfig,
+  SimpleComponent,
+  SimpleComponentConfig,
+} from "@/payload/payloadType";
 import {
   isBooleanType,
   isElNumberType,
@@ -53,5 +57,16 @@ export function getSimpleComponent(
     } else {
       return "sensor";
     }
+  }
+}
+
+export function createUniqueId(
+  apiDevice: ApiDevice,
+  componentConfig: SimpleComponentConfig | CompositeComponentConfig,
+): string {
+  if ("compositeComponentId" in componentConfig) {
+    return `echonetlite_${apiDevice.id}_composite_${componentConfig.compositeComponentId}`;
+  } else {
+    return `echonetlite_${apiDevice.id}_simple_${componentConfig.property.name}`;
   }
 }

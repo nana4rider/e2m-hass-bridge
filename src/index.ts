@@ -7,6 +7,7 @@ import {
   getSimpleComponentConfigs,
 } from "@/payload/builder";
 import { Payload } from "@/payload/payloadType";
+import { createUniqueId } from "@/payload/resolver";
 import initializeHttpServer from "@/service/http";
 import initializeMqttClient from "@/service/mqtt";
 import {
@@ -34,38 +35,37 @@ async function main() {
     const discoveryEntries: { relativeTopic: string; payload: Payload }[] = [];
     const device = buildDevice(apiDevice);
     // 単一のプロパティから構成されるコンポーネント(sensor等)
-    getSimpleComponentConfigs(apiDevice).forEach(
-      ({ component, property, builder }) => {
-        const uniqueId = `echonetlite_${apiDevice.id}_simple_${property.name}`;
-        const relativeTopic = `${component}/${uniqueId}/config`;
-        const payload = builder(apiDevice, property);
-        payload.unique_id = uniqueId;
-        payload.name = property.schema.propertyName[language];
-        const override = getSimpleOverridePayload(apiDevice, property.name);
-        discoveryEntries.push({
-          relativeTopic,
-          payload: { ...payload, ...override },
-        });
-      },
-    );
+    getSimpleComponentConfigs(apiDevice).forEach((componentConfig) => {
+      const { component, property, builder } = componentConfig;
+      const uniqueId = createUniqueId(apiDevice, componentConfig);
+      const relativeTopic = `${component}/${uniqueId}/config`;
+      const payload = builder(apiDevice, property);
+      payload.unique_id = uniqueId;
+      payload.name = property.schema.propertyName[language];
+      const override = getSimpleOverridePayload(apiDevice, property.name);
+      discoveryEntries.push({
+        relativeTopic,
+        payload: { ...payload, ...override },
+      });
+    });
     // 複数のプロパティから構成されるコンポーネント(climate等)
-    getCompositeComponentConfigs(apiDevice).forEach(
-      ({ compositeComponentId, component, builder, name }) => {
-        const uniqueId = `echonetlite_${apiDevice.id}_composite_${compositeComponentId}`;
-        const relativeTopic = `${component}/${uniqueId}/config`;
-        const payload = builder(apiDevice);
-        payload.unique_id = uniqueId;
-        payload.name = name?.[language] ?? apiDevice.descriptions[language];
-        const override = getCompositeOverridePayload(
-          apiDevice,
-          compositeComponentId,
-        );
-        discoveryEntries.push({
-          relativeTopic,
-          payload: { ...payload, ...override },
-        });
-      },
-    );
+    getCompositeComponentConfigs(apiDevice).forEach((componentConfig) => {
+      const { compositeComponentId, component, builder, name } =
+        componentConfig;
+      const uniqueId = createUniqueId(apiDevice, componentConfig);
+      const relativeTopic = `${component}/${uniqueId}/config`;
+      const payload = builder(apiDevice);
+      payload.unique_id = uniqueId;
+      payload.name = name?.[language] ?? apiDevice.descriptions[language];
+      const override = getCompositeOverridePayload(
+        apiDevice,
+        compositeComponentId,
+      );
+      discoveryEntries.push({
+        relativeTopic,
+        payload: { ...payload, ...override },
+      });
+    });
 
     discoveryEntries.forEach(({ relativeTopic, payload }) => {
       // Home Assistantへ送信
