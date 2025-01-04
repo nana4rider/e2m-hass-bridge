@@ -10,7 +10,7 @@
     "build": "node build.js",
     "lint": "npx eslint --max-warnings 0 && npx prettier . --check",
     "lint:fix": "npx eslint --fix && npx prettier . --write",
-    "test": "node --experimental-vm-modules ./node_modules/.bin/jest",
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
     "prepare": "husky"
   },
   "author": "nana4rider",
