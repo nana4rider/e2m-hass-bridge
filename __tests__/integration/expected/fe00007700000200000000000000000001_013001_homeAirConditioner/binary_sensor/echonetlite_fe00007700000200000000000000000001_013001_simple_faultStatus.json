@@ -1,0 +1,8 @@
+{
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_013001/properties/faultStatus",
+  "payload_on": "true",
+  "payload_off": "false",
+  "device_class": "problem",
+  "unique_id": "echonetlite_fe00007700000200000000000000000001_013001_simple_faultStatus",
+  "name": "異常発生状態"
+}

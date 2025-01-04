@@ -1,0 +1,16 @@
+{
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_026301/properties/openCloseStatus",
+  "state_closed": "fullyClosed",
+  "state_closing": "closing",
+  "state_open": "fullyOpen",
+  "state_opening": "opening",
+  "state_stopped": "stoppedHalfway",
+  "command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_026301/properties/openCloseOperation/set",
+  "payload_close": "close",
+  "payload_open": "open",
+  "payload_stop": "stop",
+  "device_class": "shutter",
+  "unique_id": "echonetlite_fe00007700000200000000000000000001_026301_composite_cover",
+  "name": "電動雨戸・シャッター",
+  "optimistic": false
+}

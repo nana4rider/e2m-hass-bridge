@@ -1,0 +1,6 @@
+{
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_026b01/properties/automaticWaterHeating",
+  "value_template": "{% set mapping = {'auto':'自動沸き上げ','manualNoHeating':'手動沸き上げ停止','manualHeating':'手動沸き上げ'} %}\n{{ mapping.get(value, 'unknown') }}",
+  "unique_id": "echonetlite_fe00007700000200000000000000000001_026b01_simple_automaticWaterHeating",
+  "name": "沸き上げ自動設定"
+}

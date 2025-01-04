@@ -1,20 +1,14 @@
-import { language } from "@/deviceConfig";
 import logger from "@/logger";
 import {
   buildDevice,
+  buildDiscoveryEntries,
   buildOrigin,
   getCompositeComponentConfigs,
   getSimpleComponentConfigs,
 } from "@/payload/builder";
-import { Payload } from "@/payload/payloadType";
-import { createUniqueId } from "@/payload/resolver";
 import initializeHttpServer from "@/service/http";
 import initializeMqttClient from "@/service/mqtt";
-import {
-  getAutoRequestProperties,
-  getCompositeOverridePayload,
-  getSimpleOverridePayload,
-} from "@/util/deviceUtil";
+import { getAutoRequestProperties } from "@/util/deviceUtil";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import env from "env-var";
 import { setInterval } from "timers/promises";
@@ -30,44 +24,12 @@ async function main() {
   const targetDevices = new Map<string, ApiDevice>();
   const origin = buildOrigin();
 
-  const mqtt = await initializeMqttClient((apiDevice: ApiDevice) => {
+  const mqtt = await initializeMqttClient((apiDevice) => {
     logger.info(`handleDevice: ${apiDevice.id}`);
-    const discoveryEntries: { relativeTopic: string; payload: Payload }[] = [];
-    const device = buildDevice(apiDevice);
-    // 単一のプロパティから構成されるコンポーネント(sensor等)
-    getSimpleComponentConfigs(apiDevice).forEach((componentConfig) => {
-      const { component, property, builder } = componentConfig;
-      const uniqueId = createUniqueId(apiDevice, componentConfig);
-      const relativeTopic = `${component}/${uniqueId}/config`;
-      const payload = builder(apiDevice, property);
-      payload.unique_id = uniqueId;
-      payload.name = property.schema.propertyName[language];
-      const override = getSimpleOverridePayload(apiDevice, property.name);
-      discoveryEntries.push({
-        relativeTopic,
-        payload: { ...payload, ...override },
-      });
-    });
-    // 複数のプロパティから構成されるコンポーネント(climate等)
-    getCompositeComponentConfigs(apiDevice).forEach((componentConfig) => {
-      const { compositeComponentId, component, builder, name } =
-        componentConfig;
-      const uniqueId = createUniqueId(apiDevice, componentConfig);
-      const relativeTopic = `${component}/${uniqueId}/config`;
-      const payload = builder(apiDevice);
-      payload.unique_id = uniqueId;
-      payload.name = name?.[language] ?? apiDevice.descriptions[language];
-      const override = getCompositeOverridePayload(
-        apiDevice,
-        compositeComponentId,
-      );
-      discoveryEntries.push({
-        relativeTopic,
-        payload: { ...payload, ...override },
-      });
-    });
 
-    discoveryEntries.forEach(({ relativeTopic, payload }) => {
+    const device = buildDevice(apiDevice);
+
+    buildDiscoveryEntries(apiDevice).forEach(({ relativeTopic, payload }) => {
       // Home Assistantへ送信
       mqtt.pushHassDiscovery(
         relativeTopic,

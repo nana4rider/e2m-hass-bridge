@@ -1,0 +1,11 @@
+{
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/consumedCumulativeElectricEnergy",
+  "suggested_display_precision": 3,
+  "native_value": "float",
+  "value_template": "{% if value | float(default=None) is not none %}\n  {{ value | float }}\n{% else %}\n  unknown\n{% endif %}",
+  "unit_of_measurement": "kWh",
+  "state_class": "total_increasing",
+  "device_class": "energy",
+  "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_consumedCumulativeElectricEnergy",
+  "name": "積算消費電力計測値"
+}

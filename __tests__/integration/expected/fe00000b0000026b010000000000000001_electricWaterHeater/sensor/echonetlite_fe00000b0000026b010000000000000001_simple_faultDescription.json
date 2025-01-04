@@ -1,0 +1,5 @@
+{
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/faultDescription",
+  "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_faultDescription",
+  "name": "異常内容"
+}

@@ -1,0 +1,8 @@
+{
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/operationStatus",
+  "payload_on": "true",
+  "payload_off": "false",
+  "device_class": "running",
+  "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_operationStatus",
+  "name": "動作状態"
+}

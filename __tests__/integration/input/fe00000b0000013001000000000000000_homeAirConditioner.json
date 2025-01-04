@@ -1,0 +1,2438 @@
+{
+  "id": "fe00000b0000013001000000000000000",
+  "eoj": "013001",
+  "name": "fe00000b0000013001000000000000000",
+  "actions": [],
+  "deviceType": "homeAirConditioner",
+  "events": [],
+  "descriptions": {
+    "ja": "家庭用エアコン",
+    "en": "Home air conditioner"
+  },
+  "properties": [
+    {
+      "epc": "0x80",
+      "descriptions": {
+        "ja": "ON/OFFの状態を示す",
+        "en": "This property indicates the ON/OFF status."
+      },
+      "epcAtomic": "0x80",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": true,
+      "schema": {
+        "epc": "0x80",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "動作状態",
+          "en": "Operation status"
+        },
+        "shortName": "operationStatus",
+        "accessRule": {
+          "get": "required",
+          "set": "required",
+          "inf": "required"
+        },
+        "descriptions": {
+          "ja": "ON/OFFの状態を示す",
+          "en": "This property indicates the ON/OFF status."
+        },
+        "data": {
+          "type": "state",
+          "size": 1,
+          "enum": [
+            {
+              "edt": "0x30",
+              "name": "true",
+              "descriptions": {
+                "ja": "ON",
+                "en": "On"
+              }
+            },
+            {
+              "edt": "0x31",
+              "name": "false",
+              "descriptions": {
+                "ja": "OFF",
+                "en": "Off"
+              }
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/operationStatus",
+      "name": "operationStatus"
+    },
+    {
+      "epc": "0x81",
+      "descriptions": {
+        "ja": "設置場所を示す",
+        "en": "This property indicates the installation location"
+      },
+      "epcAtomic": "0x81",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": true,
+      "schema": {
+        "epc": "0x81",
+        "validRelease": {
+          "from": "A",
+          "to": "B"
+        },
+        "propertyName": {
+          "ja": "設置場所",
+          "en": "Installation location"
+        },
+        "shortName": "installationLocation",
+        "accessRule": {
+          "get": "required",
+          "set": "required",
+          "inf": "required"
+        },
+        "descriptions": {
+          "ja": "設置場所を示す",
+          "en": "This property indicates the installation location"
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 1,
+          "maxSize": 1
+        },
+        "remark": {
+          "ja": "bitmap(例 0x00: 未設定(初期値), 0x08: リビング)",
+          "en": "bitmap (eg. 0x00: undefined (initial data), 0x08: living)"
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/installationLocation",
+      "name": "installationLocation"
+    },
+    {
+      "epc": "0x82",
+      "descriptions": {
+        "ja": "対応するAPPENDIXのリリース番号を示す",
+        "en": "This property indicates the release number of the corresponding Appendix."
+      },
+      "epcAtomic": "0x82",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0x82",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "規格Version情報",
+          "en": "Standard version information"
+        },
+        "shortName": "protocol",
+        "accessRule": {
+          "get": "required",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "対応するAPPENDIXのリリース番号を示す",
+          "en": "This property indicates the release number of the corresponding Appendix."
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 4,
+          "maxSize": 4
+        },
+        "remark": {
+          "ja": "1,2バイト目は0x00。3バイト目は機器オブジェクトのリリースバージョンをASCIIで表す。リリース Aのみ小文字で0x61, B以降は大文字で0x42, 0x43...。4バイト目は、そのリリースバージョンのリビジョン番ををASCIIで表す(0x00～0xFF)。",
+          "en": "1st and 2nd data is 0x00. 3rd data is the release version of Device Object in ASCII. Only release A utilize lower case letter 0x61, Release B and later utilize upper case letter such as 0x42, 0x43... 4th data is the revision number of the release version in ASCII (0x00 - 0xFF)."
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/protocol",
+      "name": "protocol"
+    },
+    {
+      "epc": "0x83",
+      "descriptions": {
+        "ja": "オブジェクトを固有に識別する番号",
+        "en": "A number that allows each object to be uniquely identified."
+      },
+      "epcAtomic": "0x83",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0x83",
+        "validRelease": {
+          "from": "A",
+          "to": "A"
+        },
+        "propertyName": {
+          "ja": "識別番号",
+          "en": "Identification number"
+        },
+        "shortName": "id",
+        "accessRule": {
+          "get": "optional",
+          "set": "optional",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "オブジェクトを固有に識別する番号",
+          "en": "A number that allows each object to be uniquely identified."
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 17,
+          "maxSize": 17
+        },
+        "remark": {
+          "ja": "1バイト目は0xFE。2～4バイト目はメーカコード。残りは機器毎のユニーク値",
+          "en": "1st data is 0xFE. 2nd to 4th data is manufacture code. The rest should be unique to each device."
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/id",
+      "name": "id"
+    },
+    {
+      "epc": "0x85",
+      "descriptions": {
+        "ja": "機器の積算消費電力を0.001kWhで示す",
+        "en": "This property indicates the cumulative power consumption of the device in increments of 0.001kWh."
+      },
+      "epcAtomic": "0x85",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0x85",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "積算消費電力計測値",
+          "en": "Measured cumulative power consumption"
+        },
+        "shortName": "consumedCumulativeElectricEnergy",
+        "accessRule": {
+          "get": "optional",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "機器の積算消費電力を0.001kWhで示す",
+          "en": "This property indicates the cumulative power consumption of the device in increments of 0.001kWh."
+        },
+        "data": {
+          "type": "number",
+          "format": "uint32",
+          "minimum": 0,
+          "maximum": 999999999,
+          "unit": "kWh",
+          "multiple": 0.001
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/consumedCumulativeElectricEnergy",
+      "name": "consumedCumulativeElectricEnergy"
+    },
+    {
+      "epc": "0x86",
+      "descriptions": {
+        "ja": "各メーカ独自の異常コードを示す",
+        "en": "This property indicates the manufacturer-defined fault code."
+      },
+      "epcAtomic": "0x86",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": false,
+      "schema": {
+        "epc": "0x86",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "メーカ異常コード",
+          "en": "Manufacturer's fault code"
+        },
+        "shortName": "manufacturerFaultCode",
+        "accessRule": {
+          "get": "optional",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "各メーカ独自の異常コードを示す",
+          "en": "This property indicates the manufacturer-defined fault code."
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 1,
+          "maxSize": 255
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/manufacturerFaultCode",
+      "name": "manufacturerFaultCode"
+    },
+    {
+      "epc": "0x88",
+      "descriptions": {
+        "ja": "何らかの異常(センサトラブル等)の発生状況を示す",
+        "en": "This property indicates whether a fault (e.g. a sensor trouble) has occurred or not."
+      },
+      "epcAtomic": "0x88",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": false,
+      "schema": {
+        "epc": "0x88",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "異常発生状態",
+          "en": "Fault status"
+        },
+        "shortName": "faultStatus",
+        "accessRule": {
+          "get": "required",
+          "set": "notApplicable",
+          "inf": "required"
+        },
+        "descriptions": {
+          "ja": "何らかの異常(センサトラブル等)の発生状況を示す",
+          "en": "This property indicates whether a fault (e.g. a sensor trouble) has occurred or not."
+        },
+        "data": {
+          "type": "state",
+          "size": 1,
+          "enum": [
+            {
+              "edt": "0x41",
+              "name": "true",
+              "descriptions": {
+                "ja": "異常あり",
+                "en": "Fault occurred."
+              }
+            },
+            {
+              "edt": "0x42",
+              "name": "false",
+              "descriptions": {
+                "ja": "異常なし",
+                "en": "No fault has occurred."
+              }
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/faultStatus",
+      "name": "faultStatus"
+    },
+    {
+      "epc": "0x89",
+      "descriptions": {
+        "ja": "異常内容",
+        "en": "Describes the fault."
+      },
+      "epcAtomic": "0x89",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0x89",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "異常内容",
+          "en": "Fault description"
+        },
+        "shortName": "faultDescription",
+        "accessRule": {
+          "get": "optional",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "異常内容",
+          "en": "Describes the fault."
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 2,
+          "maxSize": 2
+        },
+        "remark": {
+          "ja": "Appendixの2.5章 異常内容プロパティ参照",
+          "en": "See Chapter 2.5 'Fault Description' Property of the Appendix."
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/faultDescription",
+      "name": "faultDescription"
+    },
+    {
+      "epc": "0x8A",
+      "descriptions": {
+        "ja": "3バイトで指定",
+        "en": "3-byte manufacturer code"
+      },
+      "epcAtomic": "0x8A",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0x8A",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "メーカコード",
+          "en": "Manufacturer code"
+        },
+        "shortName": "manufacturer",
+        "accessRule": {
+          "get": "required",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "3バイトで指定",
+          "en": "3-byte manufacturer code"
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 3,
+          "maxSize": 3
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/manufacturer",
+      "name": "manufacturer"
+    },
+    {
+      "epc": "0x8C",
+      "descriptions": {
+        "ja": "ASCIIコードで指定",
+        "en": "Identifies the product using ASCII code."
+      },
+      "epcAtomic": "0x8C",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0x8C",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "商品コード",
+          "en": "Product code"
+        },
+        "shortName": "productCode",
+        "accessRule": {
+          "get": "optional",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "ASCIIコードで指定",
+          "en": "Identifies the product using ASCII code."
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 12,
+          "maxSize": 12
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/productCode",
+      "name": "productCode"
+    },
+    {
+      "epc": "0x8F",
+      "descriptions": {
+        "ja": "機器の節電動作を設定し、状態を取得する",
+        "en": "This property indicates whether the device is operating in power-saving mode."
+      },
+      "epcAtomic": "0x8F",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": true,
+      "schema": {
+        "epc": "0x8F",
+        "validRelease": {
+          "from": "D",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "節電動作設定",
+          "en": "Power-saving operation setting"
+        },
+        "shortName": "powerSavingOperation",
+        "accessRule": {
+          "get": "required",
+          "set": "required",
+          "inf": "required"
+        },
+        "descriptions": {
+          "ja": "機器の節電動作を設定し、状態を取得する",
+          "en": "This property indicates whether the device is operating in power-saving mode."
+        },
+        "data": {
+          "type": "state",
+          "size": 1,
+          "enum": [
+            {
+              "edt": "0x41",
+              "name": "true",
+              "descriptions": {
+                "ja": "節電動作中",
+                "en": "Operating in power-saving mode"
+              }
+            },
+            {
+              "edt": "0x42",
+              "name": "false",
+              "descriptions": {
+                "ja": "通常動作中",
+                "en": "Operating in normal operation mode"
+              }
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/powerSavingOperation",
+      "name": "powerSavingOperation"
+    },
+    {
+      "epc": "0x93",
+      "descriptions": {
+        "ja": "位置情報",
+        "en": "Location information"
+      },
+      "epcAtomic": "0x93",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": true,
+      "schema": {
+        "epc": "0x93",
+        "validRelease": {
+          "from": "A",
+          "to": "A"
+        },
+        "propertyName": {
+          "ja": "位置情報",
+          "en": "Location information"
+        },
+        "shortName": "locationInformation",
+        "accessRule": {
+          "get": "optional",
+          "set": "optional",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "位置情報",
+          "en": "Location information"
+        },
+        "data": {
+          "type": "raw",
+          "minSize": 16,
+          "maxSize": 16
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/locationInformation",
+      "name": "locationInformation"
+    },
+    {
+      "epc": "0xA0",
+      "descriptions": {
+        "ja": "風量レベルおよび風量自動状態を設定し、設定状態を取得する。風量レベルは8段階で指定",
+        "en": "Used to specify the air flow rate or use the function to automatically control the air flow rate, and to acquire the current setting. The air flow rate shall be selected from among the 8 predefined levels."
+      },
+      "epcAtomic": "0xA0",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": true,
+      "schema": {
+        "epc": "0xA0",
+        "validRelease": {
+          "from": "A",
+          "to": "C"
+        },
+        "propertyName": {
+          "ja": "風量設定",
+          "en": "Air flow rate setting"
+        },
+        "shortName": "airFlowLevel",
+        "accessRule": {
+          "get": "optional",
+          "set": "optional",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "風量レベルおよび風量自動状態を設定し、設定状態を取得する。風量レベルは8段階で指定",
+          "en": "Used to specify the air flow rate or use the function to automatically control the air flow rate, and to acquire the current setting. The air flow rate shall be selected from among the 8 predefined levels."
+        },
+        "data": {
+          "oneOf": [
+            {
+              "type": "level",
+              "base": "0x31",
+              "maximum": 8
+            },
+            {
+              "type": "state",
+              "size": 1,
+              "enum": [
+                {
+                  "edt": "0x41",
+                  "name": "auto",
+                  "descriptions": {
+                    "ja": "風量自動設定",
+                    "en": "Automatic air flow rate control function used."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/airFlowLevel",
+      "name": "airFlowLevel"
+    },
+    {
+      "epc": "0xA1",
+      "descriptions": {
+        "ja": "風向き上下左右のAUTO/非AUTOを設定し、設定状態を取得する",
+        "en": "Used to specify whether or not to use the automatic air flow direction control function, to specify the plane(s) (vertical and/or horizontal) in which the automatic air flow direction control function is to be used, and to acquire the current setting."
+      },
+      "epcAtomic": "0xA1",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": true,
+      "schema": {
+        "epc": "0xA1",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "風向自動設定",
+          "en": "Automatic control of air flow direction setting"
+        },
+        "shortName": "automaticControlAirFlowDirection",
+        "accessRule": {
+          "get": "optional",
+          "set": "optional",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "風向き上下左右のAUTO/非AUTOを設定し、設定状態を取得する",
+          "en": "Used to specify whether or not to use the automatic air flow direction control function, to specify the plane(s) (vertical and/or horizontal) in which the automatic air flow direction control function is to be used, and to acquire the current setting."
+        },
+        "data": {
+          "type": "state",
+          "size": 1,
+          "enum": [
+            {
+              "edt": "0x41",
+              "name": "auto",
+              "descriptions": {
+                "ja": "AUTO",
+                "en": "Automatic"
+              }
+            },
+            {
+              "edt": "0x42",
+              "name": "nonAuto",
+              "descriptions": {
+                "ja": "非AUTO",
+                "en": "Non-automatic"
+              }
+            },
+            {
+              "edt": "0x43",
+              "name": "autoVertical",
+              "descriptions": {
+                "ja": "上下AUTO",
+                "en": "Automatic (vertical)"
+              }
+            },
+            {
+              "edt": "0x44",
+              "name": "autoHorizontal",
+              "descriptions": {
+                "ja": "左右AUTO",
+                "en": "Automatic (horizontal)"
+              }
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/automaticControlAirFlowDirection",
+      "name": "automaticControlAirFlowDirection"
+    },
+    {
+      "epc": "0xA4",
+      "descriptions": {
+        "ja": "上下方向の風向きを5通りのパターンで設定し、設定状態を取得する",
+        "en": "Used to specify the air flow direction in the vertical plane by selecting a pattern from among the 5 predefined patterns, and to acquire the current setting."
+      },
+      "epcAtomic": "0xA4",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": true,
+      "schema": {
+        "epc": "0xA4",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "風向上下設定",
+          "en": "Air flow direction (vertical) setting"
+        },
+        "shortName": "airFlowDirectionVertical",
+        "accessRule": {
+          "get": "optional",
+          "set": "optional",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "上下方向の風向きを5通りのパターンで設定し、設定状態を取得する",
+          "en": "Used to specify the air flow direction in the vertical plane by selecting a pattern from among the 5 predefined patterns, and to acquire the current setting."
+        },
+        "data": {
+          "type": "state",
+          "size": 1,
+          "enum": [
+            {
+              "edt": "0x41",
+              "name": "uppermost",
+              "descriptions": {
+                "ja": "上",
+                "en": "Uppermost"
+              }
+            },
+            {
+              "edt": "0x42",
+              "name": "lowermost",
+              "descriptions": {
+                "ja": "下",
+                "en": "Lowermost"
+              }
+            },
+            {
+              "edt": "0x43",
+              "name": "central",
+              "descriptions": {
+                "ja": "中央",
+                "en": "Central"
+              }
+            },
+            {
+              "edt": "0x44",
+              "name": "upperCenter",
+              "descriptions": {
+                "ja": "上中",
+                "en": "Midpoint between uppermost and central"
+              }
+            },
+            {
+              "edt": "0x45",
+              "name": "lowerCenter",
+              "descriptions": {
+                "ja": "下中",
+                "en": "Midpoint between lowermost and central"
+              }
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/airFlowDirectionVertical",
+      "name": "airFlowDirectionVertical"
+    },
+    {
+      "epc": "0xB0",
+      "descriptions": {
+        "ja": "自動/冷房/暖房/除湿/送風/その他の運転モードを設定し、設定状態を取得する",
+        "en": "Used to specify the operation mode ('automatic','cooling','heating','dehumidification','air circulator' or 'other'), and to acquire the current setting."
+      },
+      "epcAtomic": "0xB0",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": true,
+      "schema": {
+        "epc": "0xB0",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "運転モード設定",
+          "en": "Operation mode setting"
+        },
+        "shortName": "operationMode",
+        "accessRule": {
+          "get": "required",
+          "set": "required",
+          "inf": "required"
+        },
+        "descriptions": {
+          "ja": "自動/冷房/暖房/除湿/送風/その他の運転モードを設定し、設定状態を取得する",
+          "en": "Used to specify the operation mode ('automatic','cooling','heating','dehumidification','air circulator' or 'other'), and to acquire the current setting."
+        },
+        "data": {
+          "type": "state",
+          "size": 1,
+          "enum": [
+            {
+              "edt": "0x41",
+              "name": "auto",
+              "descriptions": {
+                "ja": "自動",
+                "en": "Automatic"
+              }
+            },
+            {
+              "edt": "0x42",
+              "name": "cooling",
+              "descriptions": {
+                "ja": "冷房",
+                "en": "Cooling"
+              }
+            },
+            {
+              "edt": "0x43",
+              "name": "heating",
+              "descriptions": {
+                "ja": "暖房",
+                "en": "Heating"
+              }
+            },
+            {
+              "edt": "0x44",
+              "name": "dehumidification",
+              "descriptions": {
+                "ja": "除湿",
+                "en": "Dehumidification"
+              }
+            },
+            {
+              "edt": "0x45",
+              "name": "circulation",
+              "descriptions": {
+                "ja": "送風",
+                "en": "Air circulation"
+              }
+            },
+            {
+              "edt": "0x40",
+              "name": "other",
+              "descriptions": {
+                "ja": "その他",
+                "en": "Other"
+              }
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/operationMode",
+      "name": "operationMode"
+    },
+    {
+      "epc": "0xB3",
+      "descriptions": {
+        "ja": "温度設定値を設定し、設定状態を取得する",
+        "en": "Used to set the temperature and to acquire the current setting."
+      },
+      "epcAtomic": "0xB3",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": true,
+      "writable": true,
+      "schema": {
+        "epc": "0xB3",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "温度設定値",
+          "en": "Set temperature value"
+        },
+        "shortName": "targetTemperature",
+        "accessRule": {
+          "get": "required",
+          "set": "required",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "温度設定値を設定し、設定状態を取得する",
+          "en": "Used to set the temperature and to acquire the current setting."
+        },
+        "data": {
+          "oneOf": [
+            {
+              "type": "number",
+              "format": "uint8",
+              "unit": "Celsius",
+              "minimum": 0,
+              "maximum": 50
+            },
+            {
+              "type": "state",
+              "size": 1,
+              "enum": [
+                {
+                  "edt": "0xFD",
+                  "name": "undefined",
+                  "descriptions": {
+                    "ja": "不明",
+                    "en": "Undefined"
+                  },
+                  "readOnly": true
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/targetTemperature",
+      "name": "targetTemperature"
+    },
+    {
+      "epc": "0xBA",
+      "descriptions": {
+        "ja": "室内相対湿度計測値",
+        "en": "Measured value of room relative humidity"
+      },
+      "epcAtomic": "0xBA",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0xBA",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "室内相対湿度計測値",
+          "en": "Measured value of room relative humidity"
+        },
+        "shortName": "humidity",
+        "accessRule": {
+          "get": "optional",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "室内相対湿度計測値",
+          "en": "Measured value of room relative humidity"
+        },
+        "data": {
+          "oneOf": [
+            {
+              "type": "number",
+              "format": "uint8",
+              "unit": "%",
+              "minimum": 0,
+              "maximum": 100
+            },
+            {
+              "type": "state",
+              "size": 1,
+              "enum": [
+                {
+                  "edt": "0xFD",
+                  "name": "unmeasurable",
+                  "descriptions": {
+                    "ja": "計測不能",
+                    "en": "Unmeasurable"
+                  },
+                  "readOnly": true
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/humidity",
+      "name": "humidity"
+    },
+    {
+      "epc": "0xBB",
+      "descriptions": {
+        "ja": "室内温度計測値",
+        "en": "Measured value of room temperature"
+      },
+      "epcAtomic": "0xBB",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0xBB",
+        "validRelease": {
+          "from": "A",
+          "to": "C"
+        },
+        "propertyName": {
+          "ja": "室内温度計測値",
+          "en": "Measured value of room temperature"
+        },
+        "shortName": "roomTemperature",
+        "accessRule": {
+          "get": "optional",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "室内温度計測値",
+          "en": "Measured value of room temperature"
+        },
+        "data": {
+          "oneOf": [
+            {
+              "type": "number",
+              "format": "int8",
+              "unit": "Celsius",
+              "minimum": -127,
+              "maximum": 125
+            },
+            {
+              "type": "state",
+              "size": 1,
+              "enum": [
+                {
+                  "edt": "0x7E",
+                  "name": "unmeasurable",
+                  "descriptions": {
+                    "ja": "計測不能",
+                    "en": "Unmeasurable"
+                  },
+                  "readOnly": true
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/roomTemperature",
+      "name": "roomTemperature"
+    },
+    {
+      "epc": "0xBE",
+      "descriptions": {
+        "ja": "外気温度計測値",
+        "en": "This property indicates the measured outdoor air temperature."
+      },
+      "epcAtomic": "0xBE",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": false,
+      "schema": {
+        "epc": "0xBE",
+        "validRelease": {
+          "from": "A",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "外気温度計測値",
+          "en": "Measured outdoor air temperature"
+        },
+        "shortName": "outdoorTemperature",
+        "accessRule": {
+          "get": "optional",
+          "set": "notApplicable",
+          "inf": "optional"
+        },
+        "descriptions": {
+          "ja": "外気温度計測値",
+          "en": "This property indicates the measured outdoor air temperature."
+        },
+        "data": {
+          "oneOf": [
+            {
+              "type": "number",
+              "format": "int8",
+              "unit": "Celsius",
+              "minimum": -127,
+              "maximum": 125
+            },
+            {
+              "type": "state",
+              "size": 1,
+              "enum": [
+                {
+                  "edt": "0x7E",
+                  "name": "unmeasurable",
+                  "descriptions": {
+                    "ja": "計測不能",
+                    "en": "Unmeasurable"
+                  },
+                  "readOnly": true
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/outdoorTemperature",
+      "name": "outdoorTemperature"
+    },
+    {
+      "epc": "0xD0",
+      "descriptions": {
+        "ja": "ブザー音を発生する",
+        "en": "Used to generate a buzzer sound."
+      },
+      "epcAtomic": "0xD0",
+      "note": {
+        "en": "",
+        "ja": ""
+      },
+      "observable": false,
+      "writable": true,
+      "schema": {
+        "epc": "0xD0",
+        "validRelease": {
+          "from": "H",
+          "to": "latest"
+        },
+        "propertyName": {
+          "ja": "ブザー",
+          "en": "Buzzer"
+        },
+        "shortName": "beepBuzzer",
+        "accessRule": {
+          "get": "notApplicable",
+          "set": "optional",
+          "inf": "notApplicable"
+        },
+        "descriptions": {
+          "ja": "ブザー音を発生する",
+          "en": "Used to generate a buzzer sound."
+        },
+        "data": {
+          "type": "state",
+          "size": 1,
+          "enum": [
+            {
+              "edt": "0x41",
+              "name": "buzzer",
+              "descriptions": {
+                "ja": "ブザー音発生",
+                "en": "Buzzer sound generation"
+              }
+            }
+          ]
+        },
+        "note": {
+          "ja": "ECHONET LiteではSet only property",
+          "en": "Access rule of the corresponding ECHONET Lite property is Set only."
+        }
+      },
+      "urlParameters": [],
+      "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/beepBuzzer",
+      "name": "beepBuzzer"
+    }
+  ],
+  "ip": "192.168.1.71",
+  "mqttTopics": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000",
+  "propertyValues": {
+    "operationStatus": "true",
+    "installationLocation": "00",
+    "protocol": "00004900",
+    "id": "fe00000b0000013001000000000000000",
+    "consumedCumulativeElectricEnergy": 3646.442,
+    "manufacturerFaultCode": "2a00000b010000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "faultStatus": "false",
+    "faultDescription": "0000",
+    "manufacturer": "00000b",
+    "productCode": "43532d303030303030303030",
+    "powerSavingOperation": "false",
+    "airFlowLevel": "auto",
+    "automaticControlAirFlowDirection": "autoVertical",
+    "airFlowDirectionVertical": "central",
+    "operationMode": "heating",
+    "targetTemperature": 19,
+    "humidity": 40,
+    "roomTemperature": 22,
+    "outdoorTemperature": 1
+  },
+  "values": {
+    "operationStatus": {
+      "name": "operationStatus",
+      "deviceProperty": {
+        "name": "operationStatus",
+        "descriptions": {
+          "ja": "ON/OFFの状態を示す",
+          "en": "This property indicates the ON/OFF status."
+        },
+        "epc": "0x80",
+        "readable": true,
+        "observable": true,
+        "writable": true,
+        "schema": {
+          "epc": "0x80",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "動作状態",
+            "en": "Operation status"
+          },
+          "shortName": "operationStatus",
+          "accessRule": {
+            "get": "required",
+            "set": "required",
+            "inf": "required"
+          },
+          "descriptions": {
+            "ja": "ON/OFFの状態を示す",
+            "en": "This property indicates the ON/OFF status."
+          },
+          "data": {
+            "type": "state",
+            "size": 1,
+            "enum": [
+              {
+                "edt": "0x30",
+                "name": "true",
+                "descriptions": {
+                  "ja": "ON",
+                  "en": "On"
+                }
+              },
+              {
+                "edt": "0x31",
+                "name": "false",
+                "descriptions": {
+                  "ja": "OFF",
+                  "en": "Off"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "value": "true",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "installationLocation": {
+      "name": "installationLocation",
+      "deviceProperty": {
+        "name": "installationLocation",
+        "descriptions": {
+          "ja": "設置場所を示す",
+          "en": "This property indicates the installation location"
+        },
+        "epc": "0x81",
+        "readable": true,
+        "observable": true,
+        "writable": true,
+        "schema": {
+          "epc": "0x81",
+          "validRelease": {
+            "from": "A",
+            "to": "B"
+          },
+          "propertyName": {
+            "ja": "設置場所",
+            "en": "Installation location"
+          },
+          "shortName": "installationLocation",
+          "accessRule": {
+            "get": "required",
+            "set": "required",
+            "inf": "required"
+          },
+          "descriptions": {
+            "ja": "設置場所を示す",
+            "en": "This property indicates the installation location"
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 1,
+            "maxSize": 1
+          },
+          "remark": {
+            "ja": "bitmap(例 0x00: 未設定(初期値), 0x08: リビング)",
+            "en": "bitmap (eg. 0x00: undefined (initial data), 0x08: living)"
+          }
+        }
+      },
+      "value": "00",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "protocol": {
+      "name": "protocol",
+      "deviceProperty": {
+        "name": "protocol",
+        "descriptions": {
+          "ja": "対応するAPPENDIXのリリース番号を示す",
+          "en": "This property indicates the release number of the corresponding Appendix."
+        },
+        "epc": "0x82",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0x82",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "規格Version情報",
+            "en": "Standard version information"
+          },
+          "shortName": "protocol",
+          "accessRule": {
+            "get": "required",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "対応するAPPENDIXのリリース番号を示す",
+            "en": "This property indicates the release number of the corresponding Appendix."
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 4,
+            "maxSize": 4
+          },
+          "remark": {
+            "ja": "1,2バイト目は0x00。3バイト目は機器オブジェクトのリリースバージョンをASCIIで表す。リリース Aのみ小文字で0x61, B以降は大文字で0x42, 0x43...。4バイト目は、そのリリースバージョンのリビジョン番ををASCIIで表す(0x00～0xFF)。",
+            "en": "1st and 2nd data is 0x00. 3rd data is the release version of Device Object in ASCII. Only release A utilize lower case letter 0x61, Release B and later utilize upper case letter such as 0x42, 0x43... 4th data is the revision number of the release version in ASCII (0x00 - 0xFF)."
+          }
+        }
+      },
+      "value": "00004900",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "id": {
+      "name": "id",
+      "deviceProperty": {
+        "name": "id",
+        "descriptions": {
+          "ja": "オブジェクトを固有に識別する番号",
+          "en": "A number that allows each object to be uniquely identified."
+        },
+        "epc": "0x83",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0x83",
+          "validRelease": {
+            "from": "A",
+            "to": "A"
+          },
+          "propertyName": {
+            "ja": "識別番号",
+            "en": "Identification number"
+          },
+          "shortName": "id",
+          "accessRule": {
+            "get": "optional",
+            "set": "optional",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "オブジェクトを固有に識別する番号",
+            "en": "A number that allows each object to be uniquely identified."
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 17,
+            "maxSize": 17
+          },
+          "remark": {
+            "ja": "1バイト目は0xFE。2～4バイト目はメーカコード。残りは機器毎のユニーク値",
+            "en": "1st data is 0xFE. 2nd to 4th data is manufacture code. The rest should be unique to each device."
+          }
+        }
+      },
+      "value": "fe00000b0000013001000000000000000",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "consumedCumulativeElectricEnergy": {
+      "name": "consumedCumulativeElectricEnergy",
+      "deviceProperty": {
+        "name": "consumedCumulativeElectricEnergy",
+        "descriptions": {
+          "ja": "機器の積算消費電力を0.001kWhで示す",
+          "en": "This property indicates the cumulative power consumption of the device in increments of 0.001kWh."
+        },
+        "epc": "0x85",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0x85",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "積算消費電力計測値",
+            "en": "Measured cumulative power consumption"
+          },
+          "shortName": "consumedCumulativeElectricEnergy",
+          "accessRule": {
+            "get": "optional",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "機器の積算消費電力を0.001kWhで示す",
+            "en": "This property indicates the cumulative power consumption of the device in increments of 0.001kWh."
+          },
+          "data": {
+            "type": "number",
+            "format": "uint32",
+            "minimum": 0,
+            "maximum": 999999999,
+            "unit": "kWh",
+            "multiple": 0.001
+          }
+        }
+      },
+      "value": 3646.442,
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "manufacturerFaultCode": {
+      "name": "manufacturerFaultCode",
+      "deviceProperty": {
+        "name": "manufacturerFaultCode",
+        "descriptions": {
+          "ja": "各メーカ独自の異常コードを示す",
+          "en": "This property indicates the manufacturer-defined fault code."
+        },
+        "epc": "0x86",
+        "readable": true,
+        "observable": true,
+        "writable": false,
+        "schema": {
+          "epc": "0x86",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "メーカ異常コード",
+            "en": "Manufacturer's fault code"
+          },
+          "shortName": "manufacturerFaultCode",
+          "accessRule": {
+            "get": "optional",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "各メーカ独自の異常コードを示す",
+            "en": "This property indicates the manufacturer-defined fault code."
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 1,
+            "maxSize": 255
+          }
+        }
+      },
+      "value": "2a00000b010000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "faultStatus": {
+      "name": "faultStatus",
+      "deviceProperty": {
+        "name": "faultStatus",
+        "descriptions": {
+          "ja": "何らかの異常(センサトラブル等)の発生状況を示す",
+          "en": "This property indicates whether a fault (e.g. a sensor trouble) has occurred or not."
+        },
+        "epc": "0x88",
+        "readable": true,
+        "observable": true,
+        "writable": false,
+        "schema": {
+          "epc": "0x88",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "異常発生状態",
+            "en": "Fault status"
+          },
+          "shortName": "faultStatus",
+          "accessRule": {
+            "get": "required",
+            "set": "notApplicable",
+            "inf": "required"
+          },
+          "descriptions": {
+            "ja": "何らかの異常(センサトラブル等)の発生状況を示す",
+            "en": "This property indicates whether a fault (e.g. a sensor trouble) has occurred or not."
+          },
+          "data": {
+            "type": "state",
+            "size": 1,
+            "enum": [
+              {
+                "edt": "0x41",
+                "name": "true",
+                "descriptions": {
+                  "ja": "異常あり",
+                  "en": "Fault occurred."
+                }
+              },
+              {
+                "edt": "0x42",
+                "name": "false",
+                "descriptions": {
+                  "ja": "異常なし",
+                  "en": "No fault has occurred."
+                }
+              }
+            ]
+          }
+        }
+      },
+      "value": "false",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "faultDescription": {
+      "name": "faultDescription",
+      "deviceProperty": {
+        "name": "faultDescription",
+        "descriptions": {
+          "ja": "異常内容",
+          "en": "Describes the fault."
+        },
+        "epc": "0x89",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0x89",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "異常内容",
+            "en": "Fault description"
+          },
+          "shortName": "faultDescription",
+          "accessRule": {
+            "get": "optional",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "異常内容",
+            "en": "Describes the fault."
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 2,
+            "maxSize": 2
+          },
+          "remark": {
+            "ja": "Appendixの2.5章 異常内容プロパティ参照",
+            "en": "See Chapter 2.5 'Fault Description' Property of the Appendix."
+          }
+        }
+      },
+      "value": "0000",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "manufacturer": {
+      "name": "manufacturer",
+      "deviceProperty": {
+        "name": "manufacturer",
+        "descriptions": {
+          "ja": "3バイトで指定",
+          "en": "3-byte manufacturer code"
+        },
+        "epc": "0x8A",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0x8A",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "メーカコード",
+            "en": "Manufacturer code"
+          },
+          "shortName": "manufacturer",
+          "accessRule": {
+            "get": "required",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "3バイトで指定",
+            "en": "3-byte manufacturer code"
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 3,
+            "maxSize": 3
+          }
+        }
+      },
+      "value": "00000b",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "productCode": {
+      "name": "productCode",
+      "deviceProperty": {
+        "name": "productCode",
+        "descriptions": {
+          "ja": "ASCIIコードで指定",
+          "en": "Identifies the product using ASCII code."
+        },
+        "epc": "0x8C",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0x8C",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "商品コード",
+            "en": "Product code"
+          },
+          "shortName": "productCode",
+          "accessRule": {
+            "get": "optional",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "ASCIIコードで指定",
+            "en": "Identifies the product using ASCII code."
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 12,
+            "maxSize": 12
+          }
+        }
+      },
+      "value": "43532d303030303030303030",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "powerSavingOperation": {
+      "name": "powerSavingOperation",
+      "deviceProperty": {
+        "name": "powerSavingOperation",
+        "descriptions": {
+          "ja": "機器の節電動作を設定し、状態を取得する",
+          "en": "This property indicates whether the device is operating in power-saving mode."
+        },
+        "epc": "0x8F",
+        "readable": true,
+        "observable": true,
+        "writable": true,
+        "schema": {
+          "epc": "0x8F",
+          "validRelease": {
+            "from": "D",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "節電動作設定",
+            "en": "Power-saving operation setting"
+          },
+          "shortName": "powerSavingOperation",
+          "accessRule": {
+            "get": "required",
+            "set": "required",
+            "inf": "required"
+          },
+          "descriptions": {
+            "ja": "機器の節電動作を設定し、状態を取得する",
+            "en": "This property indicates whether the device is operating in power-saving mode."
+          },
+          "data": {
+            "type": "state",
+            "size": 1,
+            "enum": [
+              {
+                "edt": "0x41",
+                "name": "true",
+                "descriptions": {
+                  "ja": "節電動作中",
+                  "en": "Operating in power-saving mode"
+                }
+              },
+              {
+                "edt": "0x42",
+                "name": "false",
+                "descriptions": {
+                  "ja": "通常動作中",
+                  "en": "Operating in normal operation mode"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "value": "false",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "locationInformation": {
+      "name": "locationInformation",
+      "deviceProperty": {
+        "name": "locationInformation",
+        "descriptions": {
+          "ja": "位置情報",
+          "en": "Location information"
+        },
+        "epc": "0x93",
+        "readable": true,
+        "observable": false,
+        "writable": true,
+        "schema": {
+          "epc": "0x93",
+          "validRelease": {
+            "from": "A",
+            "to": "A"
+          },
+          "propertyName": {
+            "ja": "位置情報",
+            "en": "Location information"
+          },
+          "shortName": "locationInformation",
+          "accessRule": {
+            "get": "optional",
+            "set": "optional",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "位置情報",
+            "en": "Location information"
+          },
+          "data": {
+            "type": "raw",
+            "minSize": 16,
+            "maxSize": 16
+          }
+        }
+      },
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "airFlowLevel": {
+      "name": "airFlowLevel",
+      "deviceProperty": {
+        "name": "airFlowLevel",
+        "descriptions": {
+          "ja": "風量レベルおよび風量自動状態を設定し、設定状態を取得する。風量レベルは8段階で指定",
+          "en": "Used to specify the air flow rate or use the function to automatically control the air flow rate, and to acquire the current setting. The air flow rate shall be selected from among the 8 predefined levels."
+        },
+        "epc": "0xA0",
+        "readable": true,
+        "observable": true,
+        "writable": true,
+        "schema": {
+          "epc": "0xA0",
+          "validRelease": {
+            "from": "A",
+            "to": "C"
+          },
+          "propertyName": {
+            "ja": "風量設定",
+            "en": "Air flow rate setting"
+          },
+          "shortName": "airFlowLevel",
+          "accessRule": {
+            "get": "optional",
+            "set": "optional",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "風量レベルおよび風量自動状態を設定し、設定状態を取得する。風量レベルは8段階で指定",
+            "en": "Used to specify the air flow rate or use the function to automatically control the air flow rate, and to acquire the current setting. The air flow rate shall be selected from among the 8 predefined levels."
+          },
+          "data": {
+            "oneOf": [
+              {
+                "type": "level",
+                "base": "0x31",
+                "maximum": 8
+              },
+              {
+                "type": "state",
+                "size": 1,
+                "enum": [
+                  {
+                    "edt": "0x41",
+                    "name": "auto",
+                    "descriptions": {
+                      "ja": "風量自動設定",
+                      "en": "Automatic air flow rate control function used."
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "value": "auto",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "automaticControlAirFlowDirection": {
+      "name": "automaticControlAirFlowDirection",
+      "deviceProperty": {
+        "name": "automaticControlAirFlowDirection",
+        "descriptions": {
+          "ja": "風向き上下左右のAUTO/非AUTOを設定し、設定状態を取得する",
+          "en": "Used to specify whether or not to use the automatic air flow direction control function, to specify the plane(s) (vertical and/or horizontal) in which the automatic air flow direction control function is to be used, and to acquire the current setting."
+        },
+        "epc": "0xA1",
+        "readable": true,
+        "observable": true,
+        "writable": true,
+        "schema": {
+          "epc": "0xA1",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "風向自動設定",
+            "en": "Automatic control of air flow direction setting"
+          },
+          "shortName": "automaticControlAirFlowDirection",
+          "accessRule": {
+            "get": "optional",
+            "set": "optional",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "風向き上下左右のAUTO/非AUTOを設定し、設定状態を取得する",
+            "en": "Used to specify whether or not to use the automatic air flow direction control function, to specify the plane(s) (vertical and/or horizontal) in which the automatic air flow direction control function is to be used, and to acquire the current setting."
+          },
+          "data": {
+            "type": "state",
+            "size": 1,
+            "enum": [
+              {
+                "edt": "0x41",
+                "name": "auto",
+                "descriptions": {
+                  "ja": "AUTO",
+                  "en": "Automatic"
+                }
+              },
+              {
+                "edt": "0x42",
+                "name": "nonAuto",
+                "descriptions": {
+                  "ja": "非AUTO",
+                  "en": "Non-automatic"
+                }
+              },
+              {
+                "edt": "0x43",
+                "name": "autoVertical",
+                "descriptions": {
+                  "ja": "上下AUTO",
+                  "en": "Automatic (vertical)"
+                }
+              },
+              {
+                "edt": "0x44",
+                "name": "autoHorizontal",
+                "descriptions": {
+                  "ja": "左右AUTO",
+                  "en": "Automatic (horizontal)"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "value": "autoVertical",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "airFlowDirectionVertical": {
+      "name": "airFlowDirectionVertical",
+      "deviceProperty": {
+        "name": "airFlowDirectionVertical",
+        "descriptions": {
+          "ja": "上下方向の風向きを5通りのパターンで設定し、設定状態を取得する",
+          "en": "Used to specify the air flow direction in the vertical plane by selecting a pattern from among the 5 predefined patterns, and to acquire the current setting."
+        },
+        "epc": "0xA4",
+        "readable": true,
+        "observable": true,
+        "writable": true,
+        "schema": {
+          "epc": "0xA4",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "風向上下設定",
+            "en": "Air flow direction (vertical) setting"
+          },
+          "shortName": "airFlowDirectionVertical",
+          "accessRule": {
+            "get": "optional",
+            "set": "optional",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "上下方向の風向きを5通りのパターンで設定し、設定状態を取得する",
+            "en": "Used to specify the air flow direction in the vertical plane by selecting a pattern from among the 5 predefined patterns, and to acquire the current setting."
+          },
+          "data": {
+            "type": "state",
+            "size": 1,
+            "enum": [
+              {
+                "edt": "0x41",
+                "name": "uppermost",
+                "descriptions": {
+                  "ja": "上",
+                  "en": "Uppermost"
+                }
+              },
+              {
+                "edt": "0x42",
+                "name": "lowermost",
+                "descriptions": {
+                  "ja": "下",
+                  "en": "Lowermost"
+                }
+              },
+              {
+                "edt": "0x43",
+                "name": "central",
+                "descriptions": {
+                  "ja": "中央",
+                  "en": "Central"
+                }
+              },
+              {
+                "edt": "0x44",
+                "name": "upperCenter",
+                "descriptions": {
+                  "ja": "上中",
+                  "en": "Midpoint between uppermost and central"
+                }
+              },
+              {
+                "edt": "0x45",
+                "name": "lowerCenter",
+                "descriptions": {
+                  "ja": "下中",
+                  "en": "Midpoint between lowermost and central"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "value": "central",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "operationMode": {
+      "name": "operationMode",
+      "deviceProperty": {
+        "name": "operationMode",
+        "descriptions": {
+          "ja": "自動/冷房/暖房/除湿/送風/その他の運転モードを設定し、設定状態を取得する",
+          "en": "Used to specify the operation mode ('automatic','cooling','heating','dehumidification','air circulator' or 'other'), and to acquire the current setting."
+        },
+        "epc": "0xB0",
+        "readable": true,
+        "observable": true,
+        "writable": true,
+        "schema": {
+          "epc": "0xB0",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "運転モード設定",
+            "en": "Operation mode setting"
+          },
+          "shortName": "operationMode",
+          "accessRule": {
+            "get": "required",
+            "set": "required",
+            "inf": "required"
+          },
+          "descriptions": {
+            "ja": "自動/冷房/暖房/除湿/送風/その他の運転モードを設定し、設定状態を取得する",
+            "en": "Used to specify the operation mode ('automatic','cooling','heating','dehumidification','air circulator' or 'other'), and to acquire the current setting."
+          },
+          "data": {
+            "type": "state",
+            "size": 1,
+            "enum": [
+              {
+                "edt": "0x41",
+                "name": "auto",
+                "descriptions": {
+                  "ja": "自動",
+                  "en": "Automatic"
+                }
+              },
+              {
+                "edt": "0x42",
+                "name": "cooling",
+                "descriptions": {
+                  "ja": "冷房",
+                  "en": "Cooling"
+                }
+              },
+              {
+                "edt": "0x43",
+                "name": "heating",
+                "descriptions": {
+                  "ja": "暖房",
+                  "en": "Heating"
+                }
+              },
+              {
+                "edt": "0x44",
+                "name": "dehumidification",
+                "descriptions": {
+                  "ja": "除湿",
+                  "en": "Dehumidification"
+                }
+              },
+              {
+                "edt": "0x45",
+                "name": "circulation",
+                "descriptions": {
+                  "ja": "送風",
+                  "en": "Air circulation"
+                }
+              },
+              {
+                "edt": "0x40",
+                "name": "other",
+                "descriptions": {
+                  "ja": "その他",
+                  "en": "Other"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "value": "heating",
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "targetTemperature": {
+      "name": "targetTemperature",
+      "deviceProperty": {
+        "name": "targetTemperature",
+        "descriptions": {
+          "ja": "温度設定値を設定し、設定状態を取得する",
+          "en": "Used to set the temperature and to acquire the current setting."
+        },
+        "epc": "0xB3",
+        "readable": true,
+        "observable": true,
+        "writable": true,
+        "schema": {
+          "epc": "0xB3",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "温度設定値",
+            "en": "Set temperature value"
+          },
+          "shortName": "targetTemperature",
+          "accessRule": {
+            "get": "required",
+            "set": "required",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "温度設定値を設定し、設定状態を取得する",
+            "en": "Used to set the temperature and to acquire the current setting."
+          },
+          "data": {
+            "oneOf": [
+              {
+                "type": "number",
+                "format": "uint8",
+                "unit": "Celsius",
+                "minimum": 0,
+                "maximum": 50
+              },
+              {
+                "type": "state",
+                "size": 1,
+                "enum": [
+                  {
+                    "edt": "0xFD",
+                    "name": "undefined",
+                    "descriptions": {
+                      "ja": "不明",
+                      "en": "Undefined"
+                    },
+                    "readOnly": true
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "value": 19,
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "humidity": {
+      "name": "humidity",
+      "deviceProperty": {
+        "name": "humidity",
+        "descriptions": {
+          "ja": "室内相対湿度計測値",
+          "en": "Measured value of room relative humidity"
+        },
+        "epc": "0xBA",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0xBA",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "室内相対湿度計測値",
+            "en": "Measured value of room relative humidity"
+          },
+          "shortName": "humidity",
+          "accessRule": {
+            "get": "optional",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "室内相対湿度計測値",
+            "en": "Measured value of room relative humidity"
+          },
+          "data": {
+            "oneOf": [
+              {
+                "type": "number",
+                "format": "uint8",
+                "unit": "%",
+                "minimum": 0,
+                "maximum": 100
+              },
+              {
+                "type": "state",
+                "size": 1,
+                "enum": [
+                  {
+                    "edt": "0xFD",
+                    "name": "unmeasurable",
+                    "descriptions": {
+                      "ja": "計測不能",
+                      "en": "Unmeasurable"
+                    },
+                    "readOnly": true
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "value": 40,
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "roomTemperature": {
+      "name": "roomTemperature",
+      "deviceProperty": {
+        "name": "roomTemperature",
+        "descriptions": {
+          "ja": "室内温度計測値",
+          "en": "Measured value of room temperature"
+        },
+        "epc": "0xBB",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0xBB",
+          "validRelease": {
+            "from": "A",
+            "to": "C"
+          },
+          "propertyName": {
+            "ja": "室内温度計測値",
+            "en": "Measured value of room temperature"
+          },
+          "shortName": "roomTemperature",
+          "accessRule": {
+            "get": "optional",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "室内温度計測値",
+            "en": "Measured value of room temperature"
+          },
+          "data": {
+            "oneOf": [
+              {
+                "type": "number",
+                "format": "int8",
+                "unit": "Celsius",
+                "minimum": -127,
+                "maximum": 125
+              },
+              {
+                "type": "state",
+                "size": 1,
+                "enum": [
+                  {
+                    "edt": "0x7E",
+                    "name": "unmeasurable",
+                    "descriptions": {
+                      "ja": "計測不能",
+                      "en": "Unmeasurable"
+                    },
+                    "readOnly": true
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "value": 22,
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "outdoorTemperature": {
+      "name": "outdoorTemperature",
+      "deviceProperty": {
+        "name": "outdoorTemperature",
+        "descriptions": {
+          "ja": "外気温度計測値",
+          "en": "This property indicates the measured outdoor air temperature."
+        },
+        "epc": "0xBE",
+        "readable": true,
+        "observable": false,
+        "writable": false,
+        "schema": {
+          "epc": "0xBE",
+          "validRelease": {
+            "from": "A",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "外気温度計測値",
+            "en": "Measured outdoor air temperature"
+          },
+          "shortName": "outdoorTemperature",
+          "accessRule": {
+            "get": "optional",
+            "set": "notApplicable",
+            "inf": "optional"
+          },
+          "descriptions": {
+            "ja": "外気温度計測値",
+            "en": "This property indicates the measured outdoor air temperature."
+          },
+          "data": {
+            "oneOf": [
+              {
+                "type": "number",
+                "format": "int8",
+                "unit": "Celsius",
+                "minimum": -127,
+                "maximum": 125
+              },
+              {
+                "type": "state",
+                "size": 1,
+                "enum": [
+                  {
+                    "edt": "0x7E",
+                    "name": "unmeasurable",
+                    "descriptions": {
+                      "ja": "計測不能",
+                      "en": "Unmeasurable"
+                    },
+                    "readOnly": true
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "value": 1,
+      "updated": "2025-01-03 20:28:00Z"
+    },
+    "beepBuzzer": {
+      "name": "beepBuzzer",
+      "deviceProperty": {
+        "name": "beepBuzzer",
+        "descriptions": {
+          "ja": "ブザー音を発生する",
+          "en": "Used to generate a buzzer sound."
+        },
+        "epc": "0xD0",
+        "readable": false,
+        "observable": false,
+        "writable": true,
+        "schema": {
+          "epc": "0xD0",
+          "validRelease": {
+            "from": "H",
+            "to": "latest"
+          },
+          "propertyName": {
+            "ja": "ブザー",
+            "en": "Buzzer"
+          },
+          "shortName": "beepBuzzer",
+          "accessRule": {
+            "get": "notApplicable",
+            "set": "optional",
+            "inf": "notApplicable"
+          },
+          "descriptions": {
+            "ja": "ブザー音を発生する",
+            "en": "Used to generate a buzzer sound."
+          },
+          "data": {
+            "type": "state",
+            "size": 1,
+            "enum": [
+              {
+                "edt": "0x41",
+                "name": "buzzer",
+                "descriptions": {
+                  "ja": "ブザー音発生",
+                  "en": "Buzzer sound generation"
+                }
+              }
+            ]
+          },
+          "note": {
+            "ja": "ECHONET LiteではSet only property",
+            "en": "Access rule of the corresponding ECHONET Lite property is Set only."
+          }
+        }
+      },
+      "updated": "2025-01-03 20:28:00Z"
+    }
+  }
+}

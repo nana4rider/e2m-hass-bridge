@@ -1,0 +1,7 @@
+{
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_026b01/properties/energyShiftParticipation",
+  "payload_on": "true",
+  "payload_off": "false",
+  "unique_id": "echonetlite_fe00007700000200000000000000000001_026b01_simple_energyShiftParticipation",
+  "name": "エネルギーシフト参加状態"
+}

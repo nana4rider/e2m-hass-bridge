@@ -13,7 +13,7 @@ export default function buildBinarySensor(
   assertBooleanType(data);
 
   const [on, off] = data.enum;
-  const deviceClass = getDeviceClass(apiDevice, property, on.name);
+  const deviceClass = getDeviceClass(apiDevice, property);
 
   const payload: Payload = {
     state_topic: property.mqttTopics,
@@ -21,7 +21,7 @@ export default function buildBinarySensor(
     payload_off: off.name,
   };
 
-  if (deviceClass) {
+  if (deviceClass !== undefined) {
     payload.device_class = deviceClass;
   }
 
@@ -31,24 +31,17 @@ export default function buildBinarySensor(
 function getDeviceClass(
   { deviceType }: ApiDevice,
   { name }: ApiDeviceProperty,
-  onValue: string,
 ): string | undefined {
   if (deviceType === "humanDetectionSensor" && name === "detection") {
     return "motion";
   }
 
-  if (name === "smokeDetection") {
-    return "smoke";
-  } else if (name === "faultStatus") {
+  if (name === "faultStatus") {
     return "problem";
   } else if (name.match(/door/i)) {
     return "door";
-  } else if (name.match(/detection/i)) {
-    return "motion";
   } else if (name.match(/Status$/)) {
     return "running";
-  } else if (onValue === "open") {
-    return "opening";
   } else {
     return undefined;
   }

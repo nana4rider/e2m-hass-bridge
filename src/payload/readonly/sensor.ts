@@ -49,17 +49,17 @@ export default function buildSensor(
   }
 
   const unit = getUnit(data);
-  if (unit) {
+  if (unit !== undefined) {
     payload.unit_of_measurement = unit;
 
     const stateClass = getStateClass(unit);
-    if (stateClass) {
+    if (stateClass !== undefined) {
       payload.state_class = stateClass;
     }
   }
 
   const deviceClass = getDeviceClass(apiDevice, property);
-  if (deviceClass) {
+  if (deviceClass !== undefined) {
     payload.device_class = deviceClass;
   }
 
@@ -84,8 +84,6 @@ function getDeviceClass(
     name.match(/^bathWaterVolume/)
   ) {
     return "volume";
-  } else if (name.match(/ElectricPowerFor/)) {
-    return "power";
   } else if (name.match(/temperature/i)) {
     return "temperature";
   } else if (name.match(/humidity/i)) {

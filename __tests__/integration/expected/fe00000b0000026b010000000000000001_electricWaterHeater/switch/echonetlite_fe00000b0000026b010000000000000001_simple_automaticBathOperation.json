@@ -1,0 +1,8 @@
+{
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/automaticBathOperation",
+  "command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/automaticBathOperation/set",
+  "payload_on": "true",
+  "payload_off": "false",
+  "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_automaticBathOperation",
+  "name": "風呂自動モード設定"
+}

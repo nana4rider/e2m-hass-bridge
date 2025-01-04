@@ -1,0 +1,9 @@
+{
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/bathWaterVolume3",
+  "native_value": "int",
+  "value_template": "{% if value | int(default=None) is not none %}\n  {{ value | int }}\n{% else %}\n  unknown\n{% endif %}",
+  "unit_of_measurement": "L",
+  "device_class": "volume",
+  "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_bathWaterVolume3",
+  "name": "風呂湯量設定3"
+}

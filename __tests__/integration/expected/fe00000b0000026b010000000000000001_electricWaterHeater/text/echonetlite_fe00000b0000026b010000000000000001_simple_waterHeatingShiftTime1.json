@@ -1,0 +1,6 @@
+{
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/waterHeatingShiftTime1",
+  "command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/waterHeatingShiftTime1/set",
+  "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_waterHeatingShiftTime1",
+  "name": "昼間沸き上げシフト時刻1"
+}
