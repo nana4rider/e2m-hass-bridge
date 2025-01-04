@@ -33,6 +33,8 @@ jobs:
     needs: get-version
     if: ${{ needs.get-version.outputs.current != needs.get-version.outputs.previous }}
     steps:
+      - uses: actions/checkout@v4
+
       - name: Add Tag
         run: |
           git tag "v${{ needs.get-version.outputs.current }}"
