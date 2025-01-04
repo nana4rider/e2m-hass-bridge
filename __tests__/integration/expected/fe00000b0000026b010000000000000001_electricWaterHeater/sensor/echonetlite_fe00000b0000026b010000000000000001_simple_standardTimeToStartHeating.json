@@ -1,9 +1,7 @@
 {
-  "payload": {
-    "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/standardTimeToStartHeating",
-    "native_value": "int",
-    "value_template": "{% if value | int(default=None) is not none %}\n  {{ value | int }}\n{% else %}\n  unknown\n{% endif %}",
-    "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_standardTimeToStartHeating",
-    "name": "沸き上げ開始基準時刻"
-  }
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/standardTimeToStartHeating",
+  "native_value": "int",
+  "value_template": "{% if value | int(default=None) is not none %}\n  {{ value | int }}\n{% else %}\n  unknown\n{% endif %}",
+  "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_standardTimeToStartHeating",
+  "name": "沸き上げ開始基準時刻"
 }

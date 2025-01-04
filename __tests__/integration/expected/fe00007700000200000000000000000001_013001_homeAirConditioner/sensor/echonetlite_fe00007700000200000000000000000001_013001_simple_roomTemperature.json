@@ -1,9 +1,7 @@
 {
-  "payload": {
-    "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_013001/properties/roomTemperature",
-    "unit_of_measurement": "°C",
-    "device_class": "temperature",
-    "unique_id": "echonetlite_fe00007700000200000000000000000001_013001_simple_roomTemperature",
-    "name": "室内温度計測値"
-  }
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_013001/properties/roomTemperature",
+  "unit_of_measurement": "°C",
+  "device_class": "temperature",
+  "unique_id": "echonetlite_fe00007700000200000000000000000001_013001_simple_roomTemperature",
+  "name": "室内温度計測値"
 }

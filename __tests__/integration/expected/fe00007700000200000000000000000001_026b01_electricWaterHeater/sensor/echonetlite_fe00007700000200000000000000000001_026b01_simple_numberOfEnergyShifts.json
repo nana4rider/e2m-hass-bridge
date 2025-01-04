@@ -1,9 +1,7 @@
 {
-  "payload": {
-    "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_026b01/properties/numberOfEnergyShifts",
-    "native_value": "int",
-    "value_template": "{% if value | int(default=None) is not none %}\n  {{ value | int }}\n{% else %}\n  unknown\n{% endif %}",
-    "unique_id": "echonetlite_fe00007700000200000000000000000001_026b01_simple_numberOfEnergyShifts",
-    "name": "エネルギーシフト回数"
-  }
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_026b01/properties/numberOfEnergyShifts",
+  "native_value": "int",
+  "value_template": "{% if value | int(default=None) is not none %}\n  {{ value | int }}\n{% else %}\n  unknown\n{% endif %}",
+  "unique_id": "echonetlite_fe00007700000200000000000000000001_026b01_simple_numberOfEnergyShifts",
+  "name": "エネルギーシフト回数"
 }

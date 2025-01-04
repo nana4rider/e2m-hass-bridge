@@ -1,10 +1,8 @@
 {
-  "payload": {
-    "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b00000ef001000000000000000_05ff01/properties/faultStatus",
-    "payload_on": "true",
-    "payload_off": "false",
-    "device_class": "problem",
-    "unique_id": "echonetlite_fe00000b00000ef001000000000000000_05ff01_simple_faultStatus",
-    "name": "異常発生状態"
-  }
+  "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b00000ef001000000000000000_05ff01/properties/faultStatus",
+  "payload_on": "true",
+  "payload_off": "false",
+  "device_class": "problem",
+  "unique_id": "echonetlite_fe00000b00000ef001000000000000000_05ff01_simple_faultStatus",
+  "name": "異常発生状態"
 }
