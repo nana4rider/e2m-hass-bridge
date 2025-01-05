@@ -25,7 +25,7 @@ import {
   getSimpleOverridePayload,
 } from "@/util/deviceUtil";
 import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
-import * as fs from "fs";
+import { readFile } from "fs/promises";
 import { PackageJson } from "type-fest";
 
 /** 単一のプロパティから構成されるコンポーネント */
@@ -114,9 +114,9 @@ export function buildDevice(apiDevice: ApiDevice): Readonly<Payload> {
   return { device };
 }
 
-export function buildOrigin(): Readonly<Payload> {
+export async function buildOrigin(): Promise<Readonly<Payload>> {
   const { homepage, name, version } = toJson<PackageJson>(
-    fs.readFileSync("package.json", "utf-8"),
+    await readFile("package.json", "utf-8"),
   );
   const origin: Payload = {};
   if (typeof name === "string") origin.name = name;

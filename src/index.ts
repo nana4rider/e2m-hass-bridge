@@ -22,7 +22,7 @@ async function main() {
     .asIntPositive();
 
   const targetDevices = new Map<string, ApiDevice>();
-  const origin = buildOrigin();
+  const origin = await buildOrigin();
 
   const mqtt = await initializeMqttClient((apiDevice) => {
     logger.info(`handleDevice: ${apiDevice.id}`);
