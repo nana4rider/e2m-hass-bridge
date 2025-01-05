@@ -1,13 +1,13 @@
-import { buildDevice } from "@/payload/builder";
+import { buildDevice, buildOrigin } from "@/payload/builder";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 
-const env = process.env;
-beforeEach(() => {
-  jest.resetModules();
-  process.env = { ...env };
-});
-
 describe("device", () => {
+  const env = process.env;
+  beforeEach(() => {
+    jest.resetModules();
+    process.env = { ...env };
+  });
+
   test("manufacturerが含まれない", () => {
     const actual = () =>
       buildDevice({
@@ -140,5 +140,14 @@ describe("device", () => {
         name: "test_descriptions_ja(127.0.0.1)",
       },
     });
+  });
+});
+
+describe("origin", () => {
+  test("必要な属性が揃っている", async () => {
+    const origin = await buildOrigin();
+    expect(origin).toHaveProperty("origin.name");
+    expect(origin).toHaveProperty("origin.sw_version");
+    expect(origin).toHaveProperty("origin.support_url");
   });
 });
