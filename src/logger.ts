@@ -17,7 +17,17 @@ const logger = createLogger({
       return log;
     }),
   ),
-  transports: [new transports.Console()],
+  transports: [
+    new transports.Console({
+      level: "error",
+      stderrLevels: ["error"],
+      consoleWarnLevels: ["warn"],
+    }),
+    new transports.Console({
+      level: "info",
+      stderrLevels: [],
+    }),
+  ],
 });
 
 export default logger;
