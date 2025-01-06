@@ -5,7 +5,7 @@ import { JsonValue } from "type-fest";
 import { promisify } from "util";
 
 export default async function initializeHttpServer() {
-  const port = env.get("PORT").default(3000).asIntPositive();
+  const port = env.get("PORT").default(3000).asPortNumber();
   const endpoints = new Map<string, () => JsonValue>();
 
   const server = createServer((req, res) => {

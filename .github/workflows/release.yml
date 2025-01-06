@@ -92,3 +92,18 @@ jobs:
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           content: "@everyone"
+
+  deploy-webhook:
+    runs-on: ubuntu-latest
+    needs: build-and-publish
+    steps:
+      - env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
+        run: |
+          TIMESTAMP=$(date +%s)
+          SIGNATURE=$(echo -n "$TIMESTAMP" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | awk '{print $2}')
+          curl -X POST "$WEBHOOK_URL" \
+                -H "Content-Type: application/json" \
+                -H "X-Signature: $SIGNATURE" \
+                -H "X-Timestamp: $TIMESTAMP"
