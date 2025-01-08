@@ -1,10 +1,10 @@
 import env from "env-var";
 import { createLogger, format, transports } from "winston";
 
-const level = env.get("LOG_LEVEL").default("info").asString();
+const LOG_LEVEL = env.get("LOG_LEVEL").default("info").asString();
 
 const logger = createLogger({
-  level,
+  level: LOG_LEVEL,
   format: format.combine(
     format.errors({ stack: true }),
     format.colorize(),
@@ -19,13 +19,7 @@ const logger = createLogger({
   ),
   transports: [
     new transports.Console({
-      level: "error",
-      stderrLevels: ["error"],
-      consoleWarnLevels: ["warn"],
-    }),
-    new transports.Console({
-      level: "info",
-      stderrLevels: [],
+      stderrLevels: ["warn", "error"],
     }),
   ],
 });
