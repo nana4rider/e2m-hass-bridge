@@ -7,29 +7,29 @@ import env from "env-var";
 import mqttjs from "mqtt";
 import { setInterval } from "timers/promises";
 
+const HA_DISCOVERY_PREFIX = env
+  .get("HA_DISCOVERY_PREFIX")
+  .default("homeassistant")
+  .asString();
+const ECHONETLITE2MQTT_BASE_TOPIC = env
+  .get("ECHONETLITE2MQTT_BASE_TOPIC")
+  .default("echonetlite2mqtt/elapi/v2/devices")
+  .asString();
+const MQTT_BROKER = env.get("MQTT_BROKER").required().asString();
+const MQTT_USERNAME = env.get("MQTT_USERNAME").asString();
+const MQTT_PASSWORD = env.get("MQTT_PASSWORD").asString();
+const MQTT_TASK_INTERVAL = env
+  .get("MQTT_TASK_INTERVAL")
+  .default(100)
+  .asIntPositive();
+
 export default async function initializeMqttClient(
   handleDevice: (apiDevice: ApiDevice) => void,
 ) {
-  const haDiscoveryPrefix = env
-    .get("HA_DISCOVERY_PREFIX")
-    .default("homeassistant")
-    .asString();
-  const echonetlite2mqttBaseTopic = env
-    .get("ECHONETLITE2MQTT_BASE_TOPIC")
-    .default("echonetlite2mqtt/elapi/v2/devices")
-    .asString();
-  const mqttTaskInterval = env
-    .get("MQTT_TASK_INTERVAL")
-    .default(100)
-    .asIntPositive();
-
-  const client = await mqttjs.connectAsync(
-    env.get("MQTT_BROKER").required().asString(),
-    {
-      username: env.get("MQTT_USERNAME").asString(),
-      password: env.get("MQTT_PASSWORD").asString(),
-    },
-  );
+  const client = await mqttjs.connectAsync(MQTT_BROKER, {
+    username: MQTT_USERNAME,
+    password: MQTT_PASSWORD,
+  });
   const taskQueue: (() => Promise<void>)[] = [];
 
   const subscribeDeviceTopics = new Set<string>();
@@ -54,7 +54,7 @@ export default async function initializeMqttClient(
   client.on("message", (topic, payload) => {
     logger.debug("[MQTT] receive topic:", topic);
     try {
-      if (topic === echonetlite2mqttBaseTopic) {
+      if (topic === ECHONETLITE2MQTT_BASE_TOPIC) {
         handleDeviceList(toJson(payload.toString()));
         return;
       } else if (subscribeDeviceTopics.has(topic)) {
@@ -71,11 +71,11 @@ export default async function initializeMqttClient(
   logger.info("[MQTT] connected");
 
   // デバイスリストを購読
-  await client.subscribeAsync(echonetlite2mqttBaseTopic);
+  await client.subscribeAsync(ECHONETLITE2MQTT_BASE_TOPIC);
 
   let isMqttTaskRunning = true;
   const mqttTask = (async () => {
-    for await (const _ of setInterval(mqttTaskInterval)) {
+    for await (const _ of setInterval(MQTT_TASK_INTERVAL)) {
       logger.silly(`[MQTT] taskQueue: ${taskQueue.length}`);
       if (!isMqttTaskRunning) break;
       const task = taskQueue.shift();
@@ -101,7 +101,7 @@ export default async function initializeMqttClient(
     const message = JSON.stringify(payload);
     taskQueue.push(async () => {
       await client.publishAsync(
-        `${haDiscoveryPrefix}/${relativeTopic}`,
+        `${HA_DISCOVERY_PREFIX}/${relativeTopic}`,
         message,
         {
           qos: 1,

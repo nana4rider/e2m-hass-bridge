@@ -13,13 +13,13 @@ import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import env from "env-var";
 import { setInterval } from "timers/promises";
 
+const AUTO_REQUEST_INTERVAL = env
+  .get("AUTO_REQUEST_INTERVAL")
+  .default(60000)
+  .asIntPositive();
+
 async function main() {
   logger.info("start");
-
-  const autoRequestInterval = env
-    .get("AUTO_REQUEST_INTERVAL")
-    .default(60000)
-    .asIntPositive();
 
   const targetDevices = new Map<string, ApiDevice>();
   const origin = await buildOrigin();
@@ -79,7 +79,7 @@ async function main() {
 
   // 更新通知をしないプロパティに対して、定期的に自動リクエストする
   void (async () => {
-    for await (const _ of setInterval(autoRequestInterval)) {
+    for await (const _ of setInterval(AUTO_REQUEST_INTERVAL)) {
       Array.from(targetDevices.values()).map((apiDevice) => {
         const autoRequestProperties = getAutoRequestProperties(apiDevice);
         mqtt.pushE2mRequest(apiDevice, autoRequestProperties);

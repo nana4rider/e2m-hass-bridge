@@ -3,8 +3,10 @@
 import { CompositeComponentId, Payload } from "@/payload/payloadType";
 import env from "env-var";
 
-export const language =
+const DESCRIPTION_LANGUAGE =
   env.get("DESCRIPTION_LANGUAGE").asString() === "en" ? "en" : "ja";
+
+export const language = DESCRIPTION_LANGUAGE;
 
 /**
  * メーカーコード

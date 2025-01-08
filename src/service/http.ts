@@ -4,8 +4,9 @@ import { createServer } from "http";
 import { JsonValue } from "type-fest";
 import { promisify } from "util";
 
+const PORT = env.get("PORT").default(3000).asPortNumber();
+
 export default async function initializeHttpServer() {
-  const port = env.get("PORT").default(3000).asPortNumber();
   const endpoints = new Map<string, () => JsonValue>();
 
   const server = createServer((req, res) => {
@@ -21,8 +22,8 @@ export default async function initializeHttpServer() {
     }
   });
 
-  await promisify(server.listen.bind(server, port))();
-  logger.info(`[HTTP] listen port: ${port}`);
+  await promisify(server.listen.bind(server, PORT))();
+  logger.info(`[HTTP] listen port: ${PORT}`);
 
   const setEndpoint = (path: string, handler: () => JsonValue) => {
     endpoints.set(path, handler);
