@@ -1,5 +1,6 @@
 import { Payload } from "@/payload/payloadType";
-import { assertElNumberType, getUnit } from "@/util/deviceUtil";
+import { getUnit, isElNumberType } from "@/util/deviceUtil";
+import assert from "assert";
 import type {
   ApiDevice,
   ApiDeviceProperty,
@@ -10,7 +11,7 @@ export default function buildNumber(
   property: ApiDeviceProperty,
 ): Payload {
   const { data } = property.schema;
-  assertElNumberType(data);
+  assert(isElNumberType(data));
 
   const payload: Payload = {
     state_topic: property.mqttTopics,

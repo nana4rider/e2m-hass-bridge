@@ -87,24 +87,8 @@ export function isElNumberType(data: ElDataType): data is ElNumberType {
   return "type" in data && data.type === "number";
 }
 
-export function assertElNumberType(
-  data: ElDataType,
-): asserts data is ElNumberType {
-  if (!isElNumberType(data)) {
-    throw new Error(`data is not ElNumberType.`);
-  }
-}
-
 export function isElStateType(data: ElDataType): data is ElStateType {
   return "type" in data && data.type === "state";
-}
-
-export function assertElStateType(
-  data: ElDataType,
-): asserts data is ElStateType {
-  if (!isElStateType(data)) {
-    throw new Error(`data is not ElStateType.`);
-  }
 }
 
 export function isBooleanType(data: ElDataType): data is ElStateType {
@@ -113,14 +97,6 @@ export function isBooleanType(data: ElDataType): data is ElStateType {
     data.enum.length === 2 &&
     data.enum[0].name === "true"
   );
-}
-
-export function assertBooleanType(
-  data: ElDataType,
-): asserts data is ElStateType {
-  if (!isBooleanType(data)) {
-    throw new Error(`data is not boolean.`);
-  }
 }
 
 export function getManifactureConfig<T extends keyof DeviceConfig>(

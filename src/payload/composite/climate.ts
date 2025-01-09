@@ -2,12 +2,12 @@ import { language } from "@/deviceConfig";
 import { Payload } from "@/payload/payloadType";
 import { formattedPythonDict, reverseKeyValue } from "@/util/dataTransformUtil";
 import {
-  assertElStateType,
   getDeviceProperties,
   getDeviceValue,
   getManifactureConfig,
   isElStateType,
 } from "@/util/deviceUtil";
+import assert from "assert";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 
 const OperationModeMapping: Record<string, string> = {
@@ -52,7 +52,7 @@ function buildOperationMode(apiDevice: ApiDevice): Payload {
   if (!operationMode) return {};
 
   const { data } = operationMode.schema;
-  assertElStateType(data);
+  assert(isElStateType(data));
   const modes = data.enum
     .map(({ name }) => OperationModeMapping[name])
     .filter(Boolean);

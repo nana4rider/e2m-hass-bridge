@@ -1,7 +1,8 @@
 import { language } from "@/deviceConfig";
 import { Payload } from "@/payload/payloadType";
 import { formattedPythonDict } from "@/util/dataTransformUtil";
-import { assertElStateType } from "@/util/deviceUtil";
+import { isElStateType } from "@/util/deviceUtil";
+import assert from "assert";
 import type {
   ApiDevice,
   ApiDeviceProperty,
@@ -12,7 +13,7 @@ export default function buildSelect(
   property: ApiDeviceProperty,
 ): Payload {
   const { data } = property.schema;
-  assertElStateType(data);
+  assert(isElStateType(data));
 
   const valueMapping: Record<string, string> = {};
   const commandMapping: Record<string, string> = {};
