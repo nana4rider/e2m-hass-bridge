@@ -1,5 +1,5 @@
 import { buildDiscoveryEntries } from "@/payload/builder";
-import { toJson } from "@/util/dataTransformUtil";
+import { parseJson } from "@/util/dataTransformUtil";
 import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import { readFile } from "fs/promises";
 import { glob, globSync } from "glob";
@@ -8,7 +8,7 @@ import { JsonObject } from "type-fest";
 import { fileURLToPath } from "url";
 
 async function readJsonFile<T>(filePath: string): Promise<T> {
-  return toJson<T>(await readFile(filePath, "utf-8"));
+  return parseJson<T>(await readFile(filePath, "utf-8"));
 }
 
 describe("entity", () => {

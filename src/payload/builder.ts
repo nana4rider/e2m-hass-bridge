@@ -17,7 +17,7 @@ import buildNumber from "@/payload/writable/number";
 import buildSelect from "@/payload/writable/select";
 import buildSwitch from "@/payload/writable/switch";
 import buildText from "@/payload/writable/text";
-import { toJson } from "@/util/dataTransformUtil";
+import { parseJson } from "@/util/dataTransformUtil";
 import {
   getAsciiProductCode,
   getCompositeOverridePayload,
@@ -115,7 +115,7 @@ export function buildDevice(apiDevice: ApiDevice): Readonly<Payload> {
 }
 
 export async function buildOrigin(): Promise<Readonly<Payload>> {
-  const { homepage, name, version } = toJson<PackageJson>(
+  const { homepage, name, version } = parseJson<PackageJson>(
     await readFile("package.json", "utf-8"),
   );
   const origin: Payload = {};

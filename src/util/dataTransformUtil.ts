@@ -31,6 +31,6 @@ export function getDecimalPlaces(value: number): number {
   return valueString.length - decimalIndex - 1;
 }
 
-export function toJson<T>(text: string): T {
+export function parseJson<T>(text: string): T {
   return JSON.parse(text) as T;
 }
