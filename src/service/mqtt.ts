@@ -56,8 +56,6 @@ export default async function initializeMqttClient(
   })();
 
   const close = async (wait: boolean = false): Promise<void> => {
-    isMqttTaskRunning = false;
-
     if (wait) {
       logger.info("[MQTT] waiting for taskQueue to empty...");
       while (taskQueue.length > 0) {
@@ -66,6 +64,7 @@ export default async function initializeMqttClient(
       logger.info("[MQTT] taskQueue is empty");
     }
 
+    isMqttTaskRunning = false;
     await mqttTask;
     logger.info("[MQTT] task stopped");
     await client.endAsync();
