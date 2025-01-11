@@ -14,7 +14,7 @@ export default async function initializeHttpServer() {
       res.writeHead(statusCode, { "Content-Type": "application/json" });
       res.end(JSON.stringify(jsonValue));
     };
-    const handler = req.url ? endpoints.get(req.url) : undefined;
+    const handler = endpoints.get(req.url!);
     if (handler) {
       resJson(handler());
     } else {
