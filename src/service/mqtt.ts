@@ -11,6 +11,17 @@ const MQTT_TASK_INTERVAL = env
   .default(100)
   .asIntPositive();
 
+export type MqttClient = {
+  taskQueueSize: number;
+  publish: (
+    topic: string,
+    message: string,
+    options?: { retain?: boolean; qos?: 0 | 1 | 2 },
+  ) => void;
+  addSubscribe: (topic: string) => void;
+  close: (wait?: boolean) => Promise<void>;
+};
+
 export default async function initializeMqttClient(
   subscribeTopics: string[],
   handleMessage: (topic: string, message: string) => void | Promise<void>,
