@@ -75,6 +75,38 @@ describe("initializeHttpServer", () => {
     expect(mockClose).toHaveBeenCalledTimes(1);
   });
 
+  test("ヘルスチェックが200を返す", async () => {
+    mockListen.mockImplementation((port, callback) => {
+      callback();
+    });
+
+    let requestHandler!: (req: IncomingMessage, res: ServerResponse) => void;
+
+    mockCreateServer.mockImplementation((handler) => {
+      requestHandler = handler;
+      return {
+        listen: mockListen,
+        close: mockClose,
+      };
+    });
+
+    const { default: initializeHttpServer } = await import("@/service/http");
+    await initializeHttpServer();
+
+    const mockReq = { url: "/health" } as IncomingMessage;
+    const mockRes = {
+      end: jest.fn(),
+      writeHead: jest.fn(),
+    } as unknown as ServerResponse;
+
+    requestHandler(mockReq, mockRes);
+
+    expect(mockRes.writeHead).toHaveBeenCalledWith(200, {
+      "Content-Type": "application/json",
+    });
+    expect(mockRes.end).toHaveBeenCalledWith(JSON.stringify({}));
+  });
+
   test("setEndpointで登録したエンドポイントが正しいレスポンスを返す", async () => {
     mockListen.mockImplementation((port, callback) => {
       callback();
