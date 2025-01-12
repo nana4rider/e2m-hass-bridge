@@ -82,7 +82,7 @@ function buildOperationMode(apiDevice: ApiDevice): Payload {
 
 function buildFanMode(apiDevice: ApiDevice): Payload {
   const airFlowLevel = getDeviceProperties(apiDevice, "airFlowLevel");
-  if (!airFlowLevel || !airFlowLevel.writable) return {};
+  if (!airFlowLevel?.writable) return {};
 
   const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
   const climateConfig = getManifactureConfig(manufacturer, "climate");
@@ -114,10 +114,8 @@ function buildSwingMode(apiDevice: ApiDevice): Payload {
     "automaticControlAirFlowDirection",
   );
   if (
-    !airFlowDirectionVertical ||
-    !airFlowDirectionVertical.writable ||
-    !automaticControlAirFlowDirection ||
-    !automaticControlAirFlowDirection.writable
+    !airFlowDirectionVertical?.writable ||
+    !automaticControlAirFlowDirection?.writable
   ) {
     return {};
   }
