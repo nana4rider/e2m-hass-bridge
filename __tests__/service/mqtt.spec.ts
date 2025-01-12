@@ -1,58 +1,41 @@
-import { jest } from "@jest/globals";
-import {
-  IPublishPacket,
-  MqttClient,
-  MqttClientEventCallbacks,
-  OnMessageCallback,
-} from "mqtt";
+import initializeMqttClient from "@/service/mqtt";
+import mqttjs, { IPublishPacket, MqttClient, OnMessageCallback } from "mqtt";
 import { setTimeout } from "timers/promises";
 
-const mockConnectAsync = jest.fn();
+// 必要なモック関数
 const mockSubscribeAsync = jest.fn();
 const mockPublishAsync = jest.fn();
 const mockEndAsync = jest.fn();
-const mockOn =
-  jest.fn<
-    (
-      event: keyof MqttClientEventCallbacks,
-      callback: MqttClientEventCallbacks[keyof MqttClientEventCallbacks],
-    ) => MqttClient
-  >();
+const mockOn = jest.fn<
+  ReturnType<MqttClient["on"]>,
+  Parameters<MqttClient["on"]>
+>();
 
-jest.unstable_mockModule("mqtt", () => ({
-  default: {
-    connectAsync: mockConnectAsync,
-  },
-}));
-
-const env = process.env;
+jest.mock("mqtt", () => {
+  return {
+    connectAsync: jest.fn(),
+  };
+});
 
 beforeEach(() => {
   jest.resetModules();
   jest.clearAllMocks();
-  process.env = { ...env };
-  process.env.MQTT_BROKER = "mtqq:/localhost";
-  process.env.MQTT_USERNAME = "username";
-  process.env.MQTT_PASSWORD = "password";
 });
 
 describe("initializeMqttClient", () => {
   test("MQTTクライアントが正常に接続される", async () => {
-    // モックの設定
-    mockConnectAsync.mockReturnValue(
-      Promise.resolve({
-        subscribeAsync: mockSubscribeAsync,
-        publishAsync: mockPublishAsync,
-        endAsync: mockEndAsync,
-        on: mockOn,
-      }),
-    );
+    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    mockConnectAsync.mockResolvedValue({
+      subscribeAsync: mockSubscribeAsync,
+      publishAsync: mockPublishAsync,
+      endAsync: mockEndAsync,
+      on: mockOn,
+    });
 
-    const { default: initializeMqttClient } = await import("@/service/mqtt");
+    const mockHandleMessage = jest.fn();
+    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
-    const mockHandleMessage =
-      jest.fn<(topic: string, message: string) => void>();
-    await initializeMqttClient(["topic/test"], mockHandleMessage);
+    await mqtt.close();
 
     // MQTTクライアントの接続確認
     expect(mockConnectAsync).toHaveBeenCalledWith(
@@ -69,26 +52,24 @@ describe("initializeMqttClient", () => {
 
   test("メッセージを受信するとhandleMessageが呼ばれる", async () => {
     const mockPayload = Buffer.from("test message");
-    mockConnectAsync.mockReturnValue(
-      Promise.resolve({
-        subscribeAsync: mockSubscribeAsync,
-        publishAsync: mockPublishAsync,
-        endAsync: mockEndAsync,
-        on: mockOn,
-      }),
-    );
+    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    mockConnectAsync.mockResolvedValue({
+      subscribeAsync: mockSubscribeAsync,
+      publishAsync: mockPublishAsync,
+      endAsync: mockEndAsync,
+      on: mockOn,
+    });
 
-    const { default: initializeMqttClient } = await import("@/service/mqtt");
-
-    const mockHandleMessage =
-      jest.fn<(topic: string, message: string) => void>();
-    await initializeMqttClient(["topic/test"], mockHandleMessage);
+    const mockHandleMessage = jest.fn();
+    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     // メッセージイベントをトリガー
     const onMessageCallback = mockOn.mock.calls.find(
       ([event]) => event === "message",
     )?.[1] as OnMessageCallback;
     onMessageCallback?.("topic/test", mockPayload, {} as IPublishPacket);
+
+    await mqtt.close();
 
     // handleMessageが正しく呼び出されたか確認
     expect(mockHandleMessage).toHaveBeenCalledWith(
@@ -99,28 +80,26 @@ describe("initializeMqttClient", () => {
 
   test("handleMessageで同期エラーが発生しても例外をスローしない", async () => {
     const mockPayload = Buffer.from("test message");
-    mockConnectAsync.mockReturnValue(
-      Promise.resolve({
-        subscribeAsync: mockSubscribeAsync,
-        publishAsync: mockPublishAsync,
-        endAsync: mockEndAsync,
-        on: mockOn,
-      }),
-    );
+    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    mockConnectAsync.mockResolvedValue({
+      subscribeAsync: mockSubscribeAsync,
+      publishAsync: mockPublishAsync,
+      endAsync: mockEndAsync,
+      on: mockOn,
+    });
 
-    const { default: initializeMqttClient } = await import("@/service/mqtt");
-
-    const mockHandleMessage =
-      jest.fn<(topic: string, message: string) => void>();
+    const mockHandleMessage = jest.fn();
     mockHandleMessage.mockImplementation(() => {
       throw new Error("test error");
     });
 
-    await initializeMqttClient(["topic/test"], mockHandleMessage);
+    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     const onMessageCallback = mockOn.mock.calls.find(
       ([event]) => event === "message",
     )?.[1] as OnMessageCallback;
+
+    await mqtt.close();
 
     // トリガーしても例外が発生しないことを確認
     expect(() => {
@@ -130,24 +109,20 @@ describe("initializeMqttClient", () => {
 
   test("handleMessageで非同期エラーが発生しても例外をスローしない", async () => {
     const mockPayload = Buffer.from("test message");
-    mockConnectAsync.mockReturnValue(
-      Promise.resolve({
-        subscribeAsync: mockSubscribeAsync,
-        publishAsync: mockPublishAsync,
-        endAsync: mockEndAsync,
-        on: mockOn,
-      }),
-    );
+    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    mockConnectAsync.mockResolvedValue({
+      subscribeAsync: mockSubscribeAsync,
+      publishAsync: mockPublishAsync,
+      endAsync: mockEndAsync,
+      on: mockOn,
+    });
 
-    const { default: initializeMqttClient } = await import("@/service/mqtt");
-
-    const mockHandleMessage =
-      jest.fn<(topic: string, message: string) => Promise<void>>();
+    const mockHandleMessage = jest.fn();
     mockHandleMessage.mockImplementation(() =>
       Promise.reject(new Error("test error")),
     );
 
-    await initializeMqttClient(["topic/test"], mockHandleMessage);
+    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     const onMessageCallback = mockOn.mock.calls.find(
       ([event]) => event === "message",
@@ -157,43 +132,39 @@ describe("initializeMqttClient", () => {
     expect(() => {
       onMessageCallback?.("topic/test", mockPayload, {} as IPublishPacket);
     }).not.toThrow();
+
+    await mqtt.close();
   });
 
   test("publishがタスクキューに追加される", async () => {
-    mockConnectAsync.mockReturnValue(
-      Promise.resolve({
-        subscribeAsync: mockSubscribeAsync,
-        publishAsync: mockPublishAsync,
-        endAsync: mockEndAsync,
-        on: mockOn,
-      }),
-    );
+    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    mockConnectAsync.mockResolvedValue({
+      subscribeAsync: mockSubscribeAsync,
+      publishAsync: mockPublishAsync,
+      endAsync: mockEndAsync,
+      on: mockOn,
+    });
 
-    const { default: initializeMqttClient } = await import("@/service/mqtt");
-
-    const mqtt = await initializeMqttClient(
-      ["topic/test"],
-      jest.fn<(topic: string, message: string) => void>(),
-    );
+    const mockHandleMessage = jest.fn();
+    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     // publishを呼び出す
     mqtt.publish("topic/publish", "test message", { retain: true });
 
     // タスクキューの状態を確認
     expect(mqtt.taskQueueSize).toBe(1);
+
+    await mqtt.close(true);
   });
 
   test("addSubscribeがタスクキューに追加される", async () => {
-    mockConnectAsync.mockReturnValue(
-      Promise.resolve({
-        subscribeAsync: mockSubscribeAsync,
-        publishAsync: mockPublishAsync,
-        endAsync: mockEndAsync,
-        on: mockOn,
-      }),
-    );
-
-    const { default: initializeMqttClient } = await import("@/service/mqtt");
+    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    mockConnectAsync.mockResolvedValue({
+      subscribeAsync: mockSubscribeAsync,
+      publishAsync: mockPublishAsync,
+      endAsync: mockEndAsync,
+      on: mockOn,
+    });
 
     const mqtt = await initializeMqttClient(["topic/test"], () => {});
 
@@ -202,23 +173,22 @@ describe("initializeMqttClient", () => {
 
     // タスクキューの状態を確認
     expect(mqtt.taskQueueSize).toBe(1);
+
+    await mqtt.close(true);
   });
 
   test("close(true)を呼び出すとタスクキューが空になりクライアントが終了する", async () => {
-    mockConnectAsync.mockReturnValue(
-      Promise.resolve({
-        subscribeAsync: mockSubscribeAsync,
-        publishAsync: mockPublishAsync,
-        endAsync: mockEndAsync,
-        on: mockOn,
-      }),
-    );
+    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    mockConnectAsync.mockResolvedValue({
+      subscribeAsync: mockSubscribeAsync,
+      publishAsync: mockPublishAsync,
+      endAsync: mockEndAsync,
+      on: mockOn,
+    });
     mockPublishAsync.mockImplementation(async () => {
       await setTimeout(100);
       return Promise.resolve();
     });
-
-    const { default: initializeMqttClient } = await import("@/service/mqtt");
 
     const mqtt = await initializeMqttClient(["topic/test"], () => {});
 
@@ -235,25 +205,20 @@ describe("initializeMqttClient", () => {
   });
 
   test("close()を呼び出すとタスクキューが残っていてもクライアントが終了する", async () => {
-    mockConnectAsync.mockReturnValue(
-      Promise.resolve({
-        subscribeAsync: mockSubscribeAsync,
-        publishAsync: mockPublishAsync,
-        endAsync: mockEndAsync,
-        on: mockOn,
-      }),
-    );
+    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    mockConnectAsync.mockResolvedValue({
+      subscribeAsync: mockSubscribeAsync,
+      publishAsync: mockPublishAsync,
+      endAsync: mockEndAsync,
+      on: mockOn,
+    });
     mockPublishAsync.mockImplementation(async () => {
       await setTimeout(100);
       return Promise.resolve();
     });
 
-    const { default: initializeMqttClient } = await import("@/service/mqtt");
-
-    const mqtt = await initializeMqttClient(
-      ["topic/test"],
-      jest.fn<(topic: string, message: string) => void>(),
-    );
+    const mockHandleMessage = jest.fn();
+    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     mqtt.publish("topic", "message");
 

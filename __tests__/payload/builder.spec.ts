@@ -1,11 +1,24 @@
+import * as deviceConfig from "@/deviceConfig";
 import { buildDevice, buildOrigin } from "@/payload/builder";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 
+let language: string;
+jest.mock("@/deviceConfig", () => {
+  const originalModule =
+    jest.requireActual<typeof deviceConfig>("@/deviceConfig");
+  return {
+    ...originalModule,
+    get language() {
+      return language;
+    },
+  };
+});
+
 describe("buildDevice", () => {
-  const env = process.env;
   beforeEach(() => {
+    language = "ja";
     jest.resetModules();
-    process.env = { ...env };
+    jest.clearAllMocks();
   });
 
   test("manufacturerが含まれない", () => {
@@ -91,10 +104,8 @@ describe("buildDevice", () => {
     });
   });
 
-  test("英語設定", async () => {
-    process.env.DESCRIPTION_LANGUAGE = "en";
-
-    const { buildDevice } = await import("@/payload/builder");
+  test("英語設定", () => {
+    language = "en";
     const actual = buildDevice({
       id: "test_id",
       ip: "127.0.0.1",

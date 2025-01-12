@@ -1,28 +1,21 @@
-import { jest } from "@jest/globals";
-import { IncomingMessage, ServerResponse } from "http";
+import initializeHttpServer from "@/service/http";
+import http, { IncomingMessage, Server, ServerResponse } from "http";
 
-const mockListen: jest.Mock<
-  (this: void, port: number, callback: (err?: Error) => void) => void
-> = jest.fn();
-const mockClose =
-  jest.fn<(this: void, callback: (err?: Error) => void) => void>();
-const mockCreateServer: jest.Mock<
-  (handler: (req: IncomingMessage, res: ServerResponse) => void) => {
-    listen: typeof mockListen;
-    close: typeof mockClose;
-  }
-> = jest.fn();
+const mockListen = jest.fn<
+  void,
+  [port: number, callback: (err?: Error) => void]
+>();
+const mockClose = jest.fn<void, [callback: (err?: Error) => void]>();
 
-jest.unstable_mockModule("http", () => {
+jest.mock("http", () => {
   return {
-    createServer: mockCreateServer,
+    createServer: jest.fn(),
   };
 });
 
-const env = process.env;
 beforeEach(() => {
   jest.resetModules();
-  process.env = { ...env };
+  jest.clearAllMocks();
 });
 
 describe("initializeHttpServer", () => {
@@ -30,12 +23,14 @@ describe("initializeHttpServer", () => {
     mockListen.mockImplementation((port, callback) => {
       callback(new Error("test error"));
     });
+
+    const mockCreateServer = http.createServer as jest.Mock;
+
     mockCreateServer.mockReturnValue({
       listen: mockListen,
       close: mockClose,
-    });
+    } as unknown as Server);
 
-    const { default: initializeHttpServer } = await import("@/service/http");
     const actual = initializeHttpServer();
 
     await expect(actual).rejects.toThrow("test error");
@@ -45,12 +40,14 @@ describe("initializeHttpServer", () => {
     mockListen.mockImplementation((port, callback) => {
       callback();
     });
+
+    const mockCreateServer = http.createServer as jest.Mock;
+
     mockCreateServer.mockReturnValue({
       listen: mockListen,
       close: mockClose,
     });
 
-    const { default: initializeHttpServer } = await import("@/service/http");
     await initializeHttpServer();
 
     expect(mockListen).toHaveBeenCalledWith(3000, expect.any(Function));
@@ -60,15 +57,18 @@ describe("initializeHttpServer", () => {
     mockListen.mockImplementation((port, callback) => {
       callback();
     });
+
     mockClose.mockImplementation((callback) => {
       callback();
     });
+
+    const mockCreateServer = http.createServer as jest.Mock;
+
     mockCreateServer.mockReturnValue({
       listen: mockListen,
       close: mockClose,
     });
 
-    const { default: initializeHttpServer } = await import("@/service/http");
     const { close } = await initializeHttpServer();
     await close();
 
@@ -80,17 +80,17 @@ describe("initializeHttpServer", () => {
       callback();
     });
 
-    let requestHandler!: (req: IncomingMessage, res: ServerResponse) => void;
+    const mockCreateServer = http.createServer as jest.Mock;
 
+    let requestHandler!: http.RequestListener;
     mockCreateServer.mockImplementation((handler) => {
-      requestHandler = handler;
+      requestHandler = handler as http.RequestListener;
       return {
         listen: mockListen,
         close: mockClose,
       };
     });
 
-    const { default: initializeHttpServer } = await import("@/service/http");
     await initializeHttpServer();
 
     const mockReq = { url: "/health" } as IncomingMessage;
@@ -112,17 +112,17 @@ describe("initializeHttpServer", () => {
       callback();
     });
 
-    let requestHandler!: (req: IncomingMessage, res: ServerResponse) => void;
+    const mockCreateServer = http.createServer as jest.Mock;
 
+    let requestHandler!: http.RequestListener;
     mockCreateServer.mockImplementation((handler) => {
-      requestHandler = handler;
+      requestHandler = handler as http.RequestListener;
       return {
         listen: mockListen,
         close: mockClose,
       };
     });
 
-    const { default: initializeHttpServer } = await import("@/service/http");
     const { setEndpoint } = await initializeHttpServer();
 
     setEndpoint("/test", () => ({ message: "Hello, world!" }));
@@ -148,17 +148,17 @@ describe("initializeHttpServer", () => {
       callback();
     });
 
-    let requestHandler!: (req: IncomingMessage, res: ServerResponse) => void;
+    const mockCreateServer = http.createServer as jest.Mock;
 
+    let requestHandler!: http.RequestListener;
     mockCreateServer.mockImplementation((handler) => {
-      requestHandler = handler;
+      requestHandler = handler as http.RequestListener;
       return {
         listen: mockListen,
         close: mockClose,
       };
     });
 
-    const { default: initializeHttpServer } = await import("@/service/http");
     await initializeHttpServer();
 
     const mockReq = { url: "/not-found" } as IncomingMessage;
