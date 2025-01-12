@@ -11,7 +11,7 @@ export default async function setupHttpDeviceManager(
   getTaskQueueSize: () => number,
 ) {
   const http = await initializeHttpServer();
-  http.setEndpoint("/health", () => ({}));
+
   http.setEndpoint("/", () => {
     const devices = Array.from(targetDevices.values()).map((apiDevice) => {
       const { id, deviceType } = apiDevice;
