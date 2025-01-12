@@ -164,6 +164,10 @@ export const ManufacturerDeviceConfig: Readonly<
         },
       },
     },
+    autoRequestProperties: {
+      // humidityは存在しないがITのために追加
+      homeAirConditioner: ["roomTemperature", "humidity"],
+    },
   },
 };
 

@@ -1,5 +1,6 @@
 import { buildDiscoveryEntries } from "@/payload/builder";
 import { parseJson } from "@/util/dataTransformUtil";
+import { getAutoRequestProperties } from "@/util/deviceUtil";
 import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import { readFile } from "fs/promises";
 import { glob, globSync } from "glob";
@@ -40,14 +41,30 @@ describe("entity", () => {
           expectedDir,
           relativeTopic.replace(/\/config$/, ".json"),
         );
+        // await fs.writeFile(expectedFile, JSON.stringify(expected));
         // Payloadが一致するか
         const expected = await readJsonFile<JsonObject>(expectedFile);
-        // await fs.writeFile(expectedFile, JSON.stringify(expected));
         expect(payload).toEqual(expected);
         finishedFiles.add(expectedFile);
       }
 
-      // エンティティが全て揃っているか
+      const autoRequestProperties = getAutoRequestProperties(apiDevice);
+      const autoRequestPropertiesFile = path.join(
+        expectedDir,
+        "autoRequestProperties.json",
+      );
+      // await writeFile(
+      //   path.join(expectedDir, "autoRequestProperties.json"),
+      //   JSON.stringify(autoRequestProperties),
+      // );
+      // 自動更新プロパティが一致するか
+      const expected = await readJsonFile<JsonObject>(
+        autoRequestPropertiesFile,
+      );
+      expect(autoRequestProperties).toEqual(expected);
+      finishedFiles.add(autoRequestPropertiesFile);
+
+      // 検証ファイルを全て消化できているか
       const expectedFiles = await glob(path.join(expectedDir, "**", "*.json"));
       expect(finishedFiles).toEqual(new Set(expectedFiles));
     },

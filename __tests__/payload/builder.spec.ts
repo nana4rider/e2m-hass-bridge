@@ -1,7 +1,7 @@
 import { buildDevice, buildOrigin } from "@/payload/builder";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 
-describe("device", () => {
+describe("buildDevice", () => {
   const env = process.env;
   beforeEach(() => {
     jest.resetModules();
@@ -143,7 +143,7 @@ describe("device", () => {
   });
 });
 
-describe("origin", () => {
+describe("buildOrigin", () => {
   test("必要な属性が揃っている", async () => {
     const origin = await buildOrigin();
     expect(origin).toHaveProperty("origin.name");

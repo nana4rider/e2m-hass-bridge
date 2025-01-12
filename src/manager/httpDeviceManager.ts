@@ -12,7 +12,8 @@ export default async function setupHttpDeviceManager(
 ) {
   const http = await initializeHttpServer();
 
-  http.setEndpoint("/", () => {
+  // for debug
+  http.setEndpoint("/status", () => {
     const devices = Array.from(targetDevices.values()).map((apiDevice) => {
       const { id, deviceType } = apiDevice;
       const autoRequestProperties = getAutoRequestProperties(apiDevice);

@@ -72,6 +72,7 @@ export default async function setupMqttDeviceManager(
         },
       );
 
+      /* istanbul ignore next */
       if (logger.isDebugEnabled()) {
         logger.debug(`[MQTT] pushHassDiscovery: ${relativeTopic}`);
         const separator = "-".repeat(80);
