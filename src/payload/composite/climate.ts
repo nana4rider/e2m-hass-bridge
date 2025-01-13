@@ -1,4 +1,4 @@
-import { language } from "@/deviceConfig";
+import env from "@/env";
 import { Payload } from "@/payload/payloadType";
 import { formattedPythonDict, reverseKeyValue } from "@/util/dataTransformUtil";
 import {
@@ -135,8 +135,8 @@ function buildSwingMode(apiDevice: ApiDevice): Payload {
   const stateMapping: Record<string, string> = {};
   const commandMapping: Record<string, string> = {};
   verticalData.enum.forEach(({ name, descriptions }) => {
-    stateMapping[name] = descriptions[language];
-    commandMapping[descriptions[language]] = name;
+    stateMapping[name] = descriptions[env.DESCRIPTION_LANGUAGE];
+    commandMapping[descriptions[env.DESCRIPTION_LANGUAGE]] = name;
   });
 
   // enum
@@ -149,14 +149,14 @@ function buildSwingMode(apiDevice: ApiDevice): Payload {
 
   return {
     swing_modes: [
-      SwingAutoValue[language],
+      SwingAutoValue[env.DESCRIPTION_LANGUAGE],
       ...orderedSwingModes,
       ...unorderedSwingModes,
     ],
     swing_mode_state_topic: `${apiDevice.mqttTopics}/properties`,
     swing_mode_state_template: `
 {% if value_json.automaticControlAirFlowDirection == 'autoVertical' %}
-  ${SwingAutoValue[language]}
+  ${SwingAutoValue[env.DESCRIPTION_LANGUAGE]}
 {% else %}
   {% set mapping = ${formattedPythonDict(stateMapping)} %}
   {{ mapping.get(value_json.airFlowDirectionVertical, 'unknown') }}
@@ -164,7 +164,7 @@ function buildSwingMode(apiDevice: ApiDevice): Payload {
 `.trim(),
     swing_mode_command_topic: `${apiDevice.mqttTopics}/properties/set`,
     swing_mode_command_template: `
-{% if value == '${SwingAutoValue[language]}' %}
+{% if value == '${SwingAutoValue[env.DESCRIPTION_LANGUAGE]}' %}
     {"automaticControlAirFlowDirection": "autoVertical"}
 {% else %}
   {% set mapping = ${formattedPythonDict(commandMapping)} %}

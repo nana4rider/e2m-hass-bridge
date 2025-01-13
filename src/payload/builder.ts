@@ -1,4 +1,5 @@
-import { IgnorePropertyPatterns, language } from "@/deviceConfig";
+import { IgnorePropertyPatterns } from "@/deviceConfig";
+import env from "@/env";
 import logger from "@/logger";
 import buildClimate from "@/payload/composite/climate";
 import buildCover from "@/payload/composite/cover";
@@ -106,7 +107,7 @@ export function getCompositeComponentConfigs({
 export function buildDevice(apiDevice: ApiDevice): Readonly<Payload> {
   const device: Payload = {
     identifiers: [`echonetlite_${apiDevice.id}`],
-    name: `${apiDevice.descriptions[language]}(${apiDevice.ip})`,
+    name: `${apiDevice.descriptions[env.DESCRIPTION_LANGUAGE]}(${apiDevice.ip})`,
     manufacturer: getManufacturerName(apiDevice),
   };
   const model = getAsciiProductCode(apiDevice);
@@ -134,7 +135,7 @@ export function buildDiscoveryEntries(apiDevice: ApiDevice) {
     const relativeTopic = `${component}/${uniqueId}/config`;
     const payload = builder(apiDevice, property);
     payload.unique_id = uniqueId;
-    payload.name = property.schema.propertyName[language];
+    payload.name = property.schema.propertyName[env.DESCRIPTION_LANGUAGE];
     const override = getSimpleOverridePayload(apiDevice, property.name);
     discoveryEntries.push({
       relativeTopic,
@@ -148,7 +149,9 @@ export function buildDiscoveryEntries(apiDevice: ApiDevice) {
     const relativeTopic = `${component}/${uniqueId}/config`;
     const payload = builder(apiDevice);
     payload.unique_id = uniqueId;
-    payload.name = name?.[language] ?? apiDevice.descriptions[language];
+    payload.name =
+      name?.[env.DESCRIPTION_LANGUAGE] ??
+      apiDevice.descriptions[env.DESCRIPTION_LANGUAGE];
     const override = getCompositeOverridePayload(
       apiDevice,
       compositeComponentId,

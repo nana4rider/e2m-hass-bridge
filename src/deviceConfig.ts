@@ -1,12 +1,6 @@
 // ご自宅の家電で正しく動作しない場合はPRをお願いします。
 // https://github.com/nana4rider/e2m-hass-bridge/pulls
 import { CompositeComponentId, Payload } from "@/payload/payloadType";
-import env from "env-var";
-
-const DESCRIPTION_LANGUAGE =
-  env.get("DESCRIPTION_LANGUAGE").asString() === "en" ? "en" : "ja";
-
-export const language = DESCRIPTION_LANGUAGE;
 
 /**
  * メーカーコード

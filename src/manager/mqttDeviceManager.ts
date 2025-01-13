@@ -1,4 +1,5 @@
 import { IgnoreDeviceTypePatterns } from "@/deviceConfig";
+import env from "@/env";
 import logger from "@/logger";
 import {
   buildDevice,
@@ -10,21 +11,7 @@ import initializeMqttClient from "@/service/mqtt";
 import { parseJson } from "@/util/dataTransformUtil";
 import { getAutoRequestProperties } from "@/util/deviceUtil";
 import { ApiDevice, ApiDeviceSummary } from "echonetlite2mqtt/server/ApiTypes";
-import env from "env-var";
 import { setTimeout } from "timers/promises";
-
-const AUTO_REQUEST_INTERVAL = env
-  .get("AUTO_REQUEST_INTERVAL")
-  .default(60000)
-  .asIntPositive();
-const HA_DISCOVERY_PREFIX = env
-  .get("HA_DISCOVERY_PREFIX")
-  .default("homeassistant")
-  .asString();
-const ECHONETLITE2MQTT_BASE_TOPIC = env
-  .get("ECHONETLITE2MQTT_BASE_TOPIC")
-  .default("echonetlite2mqtt/elapi/v2/devices")
-  .asString();
 
 export default async function setupMqttDeviceManager(
   targetDevices: Map<string, ApiDevice>,
@@ -64,7 +51,7 @@ export default async function setupMqttDeviceManager(
         ...origin,
       };
       mqtt.publish(
-        `${HA_DISCOVERY_PREFIX}/${relativeTopic}`,
+        `${env.HA_DISCOVERY_PREFIX}/${relativeTopic}`,
         JSON.stringify(payload),
         {
           qos: 1,
@@ -88,7 +75,7 @@ export default async function setupMqttDeviceManager(
   };
 
   const handleMessage = (topic: string, message: string) => {
-    if (topic === ECHONETLITE2MQTT_BASE_TOPIC) {
+    if (topic === env.ECHONETLITE2MQTT_BASE_TOPIC) {
       handleDeviceList(parseJson(message));
       return;
     } else if (subscribeDeviceTopics.has(topic)) {
@@ -100,7 +87,7 @@ export default async function setupMqttDeviceManager(
   };
 
   const mqtt = await initializeMqttClient(
-    [ECHONETLITE2MQTT_BASE_TOPIC],
+    [env.ECHONETLITE2MQTT_BASE_TOPIC],
     handleMessage,
   );
 
@@ -121,7 +108,7 @@ export default async function setupMqttDeviceManager(
           `[MQTT] request e2m message: ${message} id: ${apiDevice.id}`,
         );
       }
-      await setTimeout(AUTO_REQUEST_INTERVAL);
+      await setTimeout(env.AUTO_REQUEST_INTERVAL);
     }
   })();
 

@@ -1,4 +1,4 @@
-import { language } from "@/deviceConfig";
+import env from "@/env";
 import { Payload } from "@/payload/payloadType";
 import { formattedPythonDict } from "@/util/dataTransformUtil";
 import { isElStateType } from "@/util/deviceUtil";
@@ -18,8 +18,8 @@ export default function buildSelect(
   const valueMapping: Record<string, string> = {};
   const commandMapping: Record<string, string> = {};
   data.enum.forEach(({ name, descriptions }) => {
-    valueMapping[name] = descriptions[language];
-    commandMapping[descriptions[language]] = name;
+    valueMapping[name] = descriptions[env.DESCRIPTION_LANGUAGE];
+    commandMapping[descriptions[env.DESCRIPTION_LANGUAGE]] = name;
   });
 
   return {

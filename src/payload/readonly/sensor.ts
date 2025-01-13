@@ -1,4 +1,4 @@
-import { language } from "@/deviceConfig";
+import env from "@/env";
 import { Payload } from "@/payload/payloadType";
 import {
   formattedPythonDict,
@@ -39,7 +39,7 @@ export default function buildSensor(
   } else if (isElStateType(data)) {
     const valueMapping: Record<string, string> = {};
     data.enum.forEach(({ name, descriptions }) => {
-      valueMapping[name] = descriptions[language];
+      valueMapping[name] = descriptions[env.DESCRIPTION_LANGUAGE];
     });
 
     payload.value_template = `

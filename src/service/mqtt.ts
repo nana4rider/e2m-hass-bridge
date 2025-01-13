@@ -1,15 +1,7 @@
+import env from "@/env";
 import logger from "@/logger";
-import env from "env-var";
 import mqttjs from "mqtt";
 import { setTimeout } from "timers/promises";
-
-const MQTT_BROKER = env.get("MQTT_BROKER").required().asString();
-const MQTT_USERNAME = env.get("MQTT_USERNAME").asString();
-const MQTT_PASSWORD = env.get("MQTT_PASSWORD").asString();
-const MQTT_TASK_INTERVAL = env
-  .get("MQTT_TASK_INTERVAL")
-  .default(100)
-  .asIntPositive();
 
 export type MqttClient = {
   taskQueueSize: number;
@@ -26,9 +18,9 @@ export default async function initializeMqttClient(
   subscribeTopics: string[],
   handleMessage: (topic: string, message: string) => void | Promise<void>,
 ) {
-  const client = await mqttjs.connectAsync(MQTT_BROKER, {
-    username: MQTT_USERNAME,
-    password: MQTT_PASSWORD,
+  const client = await mqttjs.connectAsync(env.MQTT_BROKER, {
+    username: env.MQTT_USERNAME,
+    password: env.MQTT_PASSWORD,
   });
   const taskQueue: (() => Promise<void>)[] = [];
 
@@ -62,7 +54,7 @@ export default async function initializeMqttClient(
       if (task) {
         await task();
       }
-      await setTimeout(MQTT_TASK_INTERVAL);
+      await setTimeout(env.MQTT_TASK_INTERVAL);
     }
   })();
 
@@ -70,7 +62,7 @@ export default async function initializeMqttClient(
     if (wait) {
       logger.info("[MQTT] waiting for taskQueue to empty...");
       while (taskQueue.length > 0) {
-        await setTimeout(MQTT_TASK_INTERVAL);
+        await setTimeout(env.MQTT_TASK_INTERVAL);
       }
       logger.info("[MQTT] taskQueue is empty");
     }

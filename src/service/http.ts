@@ -1,10 +1,8 @@
+import env from "@/env";
 import logger from "@/logger";
-import env from "env-var";
 import { createServer } from "http";
 import { JsonValue } from "type-fest";
 import { promisify } from "util";
-
-const PORT = env.get("PORT").default(3000).asPortNumber();
 
 export default async function initializeHttpServer() {
   const endpoints = new Map<string, () => JsonValue>();
@@ -22,8 +20,8 @@ export default async function initializeHttpServer() {
     }
   });
 
-  await promisify(server.listen.bind(server, PORT))();
-  logger.info(`[HTTP] listen port: ${PORT}`);
+  await promisify(server.listen.bind(server, env.PORT))();
+  logger.info(`[HTTP] listen port: ${env.PORT}`);
 
   const setEndpoint = (path: string, handler: () => JsonValue) => {
     endpoints.set(path, handler);

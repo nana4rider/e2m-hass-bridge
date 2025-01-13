@@ -1,10 +1,8 @@
-import env from "env-var";
+import env from "@/env";
 import { createLogger, format, transports } from "winston";
 
-const LOG_LEVEL = env.get("LOG_LEVEL").default("info").asString();
-
 const logger = createLogger({
-  level: LOG_LEVEL,
+  level: env.LOG_LEVEL,
   format: format.combine(
     format.errors({ stack: true }),
     format.colorize(),

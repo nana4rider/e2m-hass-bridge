@@ -9,7 +9,7 @@ export default {
   moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
     prefix: "<rootDir>/",
   }),
-  setupFiles: ["<rootDir>/jest.setup.js"],
+  setupFiles: ["<rootDir>/jest.setup.ts"],
   transform: {
     "^.+\\.(t|j)sx?$": "@swc/jest",
   },
