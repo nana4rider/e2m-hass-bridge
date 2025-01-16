@@ -103,6 +103,5 @@ jobs:
           TIMESTAMP=$(date +%s)
           SIGNATURE=$(echo -n "$TIMESTAMP" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | awk '{print $2}')
           curl -X POST "$WEBHOOK_URL" \
-                -H "Content-Type: application/json" \
                 -H "X-Signature: $SIGNATURE" \
                 -H "X-Timestamp: $TIMESTAMP"
