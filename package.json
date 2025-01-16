@@ -1,6 +1,6 @@
 {
   "name": "e2m-hass-bridge",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "main": "dist/index.js",
   "type": "module",
   "homepage": "https://github.com/nana4rider/e2m-hass-bridge",
@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "envalid": "^8.0.0",
+    "fastify": "^5.2.1",
     "mqtt": "^5.10.3",
     "winston": "^3.17.0"
   },

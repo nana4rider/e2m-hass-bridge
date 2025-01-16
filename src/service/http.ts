@@ -1,39 +1,58 @@
 import env from "@/env";
 import logger from "@/logger";
-import { createServer } from "http";
-import { JsonValue } from "type-fest";
-import { promisify } from "util";
+import {
+  getCompositeComponentConfigs,
+  getSimpleComponentConfigs,
+} from "@/payload/builder";
+import { getAutoRequestProperties } from "@/util/deviceUtil";
+import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
+import fastify from "fastify";
 
-export default async function initializeHttpServer() {
-  const endpoints = new Map<string, () => JsonValue>();
+export default async function initializeHttpServer(
+  targetDevices: Map<string, ApiDevice>,
+  getTaskQueueSize: () => number,
+) {
+  const server = fastify();
 
-  const server = createServer((req, res) => {
-    const resJson = (jsonValue: JsonValue, statusCode = 200) => {
-      res.writeHead(statusCode, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(jsonValue));
+  server.get("/health", () => ({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: Date.now(),
+  }));
+
+  // for debug
+  server.get("/status", () => {
+    const devices = Array.from(targetDevices.values()).map((apiDevice) => {
+      const { id, deviceType } = apiDevice;
+      const autoRequestProperties = getAutoRequestProperties(apiDevice);
+      const simpleComponents = getSimpleComponentConfigs(apiDevice).map(
+        ({ property, component }) => ({
+          name: property.name,
+          component,
+        }),
+      );
+      const compositeComponents = getCompositeComponentConfigs(apiDevice).map(
+        ({ compositeComponentId, component }) => ({
+          compositeComponentId,
+          component,
+        }),
+      );
+      return {
+        id,
+        deviceType,
+        autoRequestProperties,
+        simpleComponents,
+        compositeComponents,
+      };
+    });
+    return {
+      taskQueueSize: getTaskQueueSize(),
+      devices,
     };
-    const handler = endpoints.get(req.url!);
-    if (handler) {
-      resJson(handler());
-    } else {
-      resJson({ error: "Not Found" }, 404);
-    }
   });
 
-  await promisify(server.listen.bind(server, env.PORT))();
+  await server.listen({ host: "0.0.0.0", port: env.PORT });
   logger.info(`[HTTP] listen port: ${env.PORT}`);
 
-  const setEndpoint = (path: string, handler: () => JsonValue) => {
-    endpoints.set(path, handler);
-  };
-
-  const close = async () => {
-    await promisify(server.close.bind(server))();
-    logger.info("[HTTP] closed");
-  };
-
-  // health check
-  setEndpoint("/health", () => ({}));
-
-  return { setEndpoint, close };
+  return server;
 }

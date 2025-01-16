@@ -6,7 +6,7 @@ const logger = createLogger({
   format: format.combine(
     format.errors({ stack: true }),
     format.colorize(),
-    format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    format.timestamp({ format: "YYYY-MM-DD HH:mm:ss.SSS" }),
     format.printf(({ timestamp, level, message, stack }) => {
       let log = `[${timestamp as string}] [${level}]: ${message as string}`;
       if (typeof stack === "string") {

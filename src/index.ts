@@ -1,6 +1,6 @@
 import logger from "@/logger";
-import setupHttpDeviceManager from "@/manager/httpDeviceManager";
 import setupMqttDeviceManager from "@/manager/mqttDeviceManager";
+import initializeHttpServer from "@/service/http";
 import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 
 async function main() {
@@ -8,12 +8,12 @@ async function main() {
 
   const targetDevices = new Map<string, ApiDevice>();
   const mqtt = await setupMqttDeviceManager(targetDevices);
-  const http = await setupHttpDeviceManager(
+  const http = await initializeHttpServer(
     targetDevices,
     () => mqtt.taskQueueSize,
   );
 
-  const shutdownHandler = async () => {
+  const handleShutdown = async () => {
     logger.info("shutdown start");
     await mqtt.close();
     await http.close();
@@ -21,8 +21,8 @@ async function main() {
     process.exit(0);
   };
 
-  process.on("SIGINT", () => void shutdownHandler());
-  process.on("SIGTERM", () => void shutdownHandler());
+  process.on("SIGINT", () => void handleShutdown());
+  process.on("SIGTERM", () => void handleShutdown());
 
   logger.info("ready");
 }
