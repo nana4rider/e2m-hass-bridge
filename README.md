@@ -31,10 +31,10 @@ node dist/index
 
 ```sh
 cat .env
-MQTT_BROKER=mqtt://localhost
-MQTT_USERNAME=username
-MQTT_PASSWORD=password
-LOG_LEVEL=debug
+export MQTT_BROKER=mqtt://localhost
+export MQTT_USERNAME=username
+export MQTT_PASSWORD=password
+export LOG_LEVEL=debug
 
 npm install
 npm run dev
