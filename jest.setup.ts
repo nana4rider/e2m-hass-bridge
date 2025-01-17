@@ -6,15 +6,16 @@ config({ path: "./.env.test" });
 
 export type MutableEnv = Partial<Writable<typeof env>>;
 
+let overrideEnv: MutableEnv = {};
+
+beforeEach(() => {
+  overrideEnv = {};
+});
+
 jest.mock("@/env", () => {
   const { default: defaultEnv } = jest.requireActual<{ default: typeof env }>(
     "@/env",
   );
-  let overrideEnv: MutableEnv = {};
-  beforeEach(() => {
-    overrideEnv = {};
-  });
-
   return new Proxy(
     { ...defaultEnv },
     {
