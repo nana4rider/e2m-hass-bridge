@@ -92,25 +92,36 @@ export default async function setupMqttDeviceManager(
   );
 
   // 更新通知をしないプロパティに対して、定期的に自動リクエストする
-  void (async () => {
-    while (true) {
-      for (const apiDevice of Array.from(targetDevices.values())) {
-        const topic = `${apiDevice.mqttTopics}/properties/request`;
+  let isAutoRequestRunning = true;
+  const autoRequestTask = (async () => {
+    while (isAutoRequestRunning) {
+      logger.info("Starting auto request...");
+      try {
+        for (const apiDevice of Array.from(targetDevices.values())) {
+          const topic = `${apiDevice.mqttTopics}/properties/request`;
 
-        const autoRequestProperties = getAutoRequestProperties(apiDevice);
-        const requestData: Record<string, string> = {};
-        for (const propertyName of autoRequestProperties) {
-          requestData[propertyName] = "";
+          const autoRequestProperties = getAutoRequestProperties(apiDevice);
+          const requestData: Record<string, string> = {};
+          for (const propertyName of autoRequestProperties) {
+            requestData[propertyName] = "";
+          }
+          const message = JSON.stringify(requestData);
+          mqtt.publish(topic, message);
+          logger.debug(
+            `[MQTT] request e2m message: ${message} id: ${apiDevice.id}`,
+          );
         }
-        const message = JSON.stringify(requestData);
-        mqtt.publish(topic, message);
-        logger.debug(
-          `[MQTT] request e2m message: ${message} id: ${apiDevice.id}`,
-        );
+      } catch (err) {
+        logger.error("Failed to auto request", err);
       }
       await setTimeout(env.AUTO_REQUEST_INTERVAL);
     }
   })();
 
-  return mqtt;
+  const stopAutoRequest = async () => {
+    isAutoRequestRunning = false;
+    await autoRequestTask;
+  };
+
+  return { mqtt, stopAutoRequest };
 }

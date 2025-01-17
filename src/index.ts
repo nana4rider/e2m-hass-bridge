@@ -7,7 +7,7 @@ async function main() {
   logger.info("start");
 
   const targetDevices = new Map<string, ApiDevice>();
-  const mqtt = await setupMqttDeviceManager(targetDevices);
+  const { mqtt, stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
   const http = await initializeHttpServer(
     targetDevices,
     () => mqtt.taskQueueSize,
@@ -15,6 +15,7 @@ async function main() {
 
   const handleShutdown = async () => {
     logger.info("shutdown start");
+    await stopAutoRequest();
     await mqtt.close();
     await http.close();
     logger.info("shutdown finished");
