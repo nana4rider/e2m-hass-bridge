@@ -16,7 +16,7 @@ import { setTimeout } from "timers/promises";
 export default async function setupMqttDeviceManager(
   targetDevices: Map<string, ApiDevice>,
 ) {
-  const origin = await buildOrigin();
+  const origin = buildOrigin();
 
   const subscribeDeviceTopics = new Set<string>();
   const handleDeviceList = (apiDeviceSummaries: ApiDeviceSummary[]) => {

@@ -144,8 +144,8 @@ describe("buildDevice", () => {
 });
 
 describe("buildOrigin", () => {
-  test("必要な属性が揃っている", async () => {
-    const origin = await buildOrigin();
+  test("必要な属性が揃っている", () => {
+    const origin = buildOrigin();
     expect(origin).toHaveProperty("origin.name");
     expect(origin).toHaveProperty("origin.sw_version");
     expect(origin).toHaveProperty("origin.support_url");

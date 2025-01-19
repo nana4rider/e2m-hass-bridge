@@ -18,7 +18,6 @@ import buildNumber from "@/payload/writable/number";
 import buildSelect from "@/payload/writable/select";
 import buildSwitch from "@/payload/writable/switch";
 import buildText from "@/payload/writable/text";
-import { parseJson } from "@/util/dataTransformUtil";
 import {
   getAsciiProductCode,
   getCompositeOverridePayload,
@@ -26,8 +25,11 @@ import {
   getSimpleOverridePayload,
 } from "@/util/deviceUtil";
 import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
-import { readFile } from "fs/promises";
-import { PackageJson } from "type-fest";
+import {
+  homepage as packageHomepage,
+  name as packageName,
+  version as packageVersion,
+} from "~/package.json";
 
 /** 単一のプロパティから構成されるコンポーネント */
 const simpleComponentBuilder = new Map<
@@ -115,14 +117,11 @@ export function buildDevice(apiDevice: ApiDevice): Readonly<Payload> {
   return { device };
 }
 
-export async function buildOrigin(): Promise<Readonly<Payload>> {
-  const { homepage, name, version } = parseJson<PackageJson>(
-    await readFile("package.json", "utf-8"),
-  );
+export function buildOrigin(): Readonly<Payload> {
   const origin: Payload = {};
-  if (typeof name === "string") origin.name = name;
-  if (typeof version === "string") origin.sw_version = version;
-  if (typeof homepage === "string") origin.support_url = homepage;
+  if (typeof packageName === "string") origin.name = packageName;
+  if (typeof packageVersion === "string") origin.sw_version = packageVersion;
+  if (typeof packageHomepage === "string") origin.support_url = packageHomepage;
   return { origin };
 }
 
