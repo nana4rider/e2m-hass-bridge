@@ -30,9 +30,9 @@ jobs:
       - id: tag_check
         run: |
           if git rev-parse "v${{ steps.version.outputs.current_version }}" >/dev/null 2>&1; then
-            echo "exists=true"
+            echo "exists=true" >> $GITHUB_OUTPUT
           else
-            echo "exists=false"
+            echo "exists=false" >> $GITHUB_OUTPUT
           fi
 
   release:
