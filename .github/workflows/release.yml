@@ -18,6 +18,8 @@ jobs:
       tag_exists: ${{ steps.tag_check.outputs.exists }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
 
       - id: version
         run: |
