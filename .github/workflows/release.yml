@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       current_version: ${{ steps.version.outputs.current_version }}
-      tag_exists: ${{ steps.tag_check.outputs.exists }}
+      tag_exists: ${{ steps.tag_check.outputs.tag_exists }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,9 +30,9 @@ jobs:
       - id: tag_check
         run: |
           if git rev-parse "v${{ steps.version.outputs.current_version }}" >/dev/null 2>&1; then
-            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
           else
-            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
           fi
 
   release:
