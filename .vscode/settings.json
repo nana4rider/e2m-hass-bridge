@@ -23,9 +23,6 @@
   "[ignore]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
-  "[nginx]": {
-    "editor.defaultFormatter": "raynigon.nginx-formatter"
-  },
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   }
