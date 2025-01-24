@@ -40,6 +40,13 @@ export default function buildClimate(apiDevice: ApiDevice): Payload {
     ...operationMode,
     ...fanMode,
     ...swingMode,
+    temperature_state_template: `
+{% if value == 'undefined' %}
+  None
+{% else %}
+  {{ value }}
+{% endif %}
+`.trim(),
     temperature_state_topic: `${apiDevice.mqttTopics}/properties/targetTemperature`,
     temperature_command_topic: `${apiDevice.mqttTopics}/properties/targetTemperature/set`,
     current_temperature_topic: `${apiDevice.mqttTopics}/properties/roomTemperature`,
@@ -67,7 +74,8 @@ function buildOperationMode(apiDevice: ApiDevice): Payload {
 {% else %}
   {% set mapping = ${formattedPythonDict(OperationModeMapping)} %}
   {{ mapping.get(value_json.operationMode, 'unknown') }}
-{% endif %}`.trim(),
+{% endif %}
+`.trim(),
     mode_command_topic: `${apiDevice.mqttTopics}/properties/set`,
     mode_command_template: `
 {% if value == 'off' %}
