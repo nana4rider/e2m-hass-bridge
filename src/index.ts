@@ -1,4 +1,3 @@
-import env from "@/env";
 import logger from "@/logger";
 import setupMqttDeviceManager from "@/manager/mqttDeviceManager";
 import initializeHttpServer from "@/service/http";
@@ -13,9 +12,6 @@ async function main() {
     targetDevices,
     () => mqtt.taskQueueSize,
   );
-
-  await http.listen({ host: "0.0.0.0", port: env.PORT });
-  logger.info(`[HTTP] listen port: ${env.PORT}`);
 
   const handleShutdown = async () => {
     logger.info("shutdown start");
