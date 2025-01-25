@@ -1,5 +1,3 @@
-import env from "@/env";
-import logger from "@/logger";
 import {
   getCompositeComponentConfigs,
   getSimpleComponentConfigs,
@@ -50,9 +48,6 @@ export default async function initializeHttpServer(
       devices,
     };
   });
-
-  await server.listen({ host: "0.0.0.0", port: env.PORT });
-  logger.info(`[HTTP] listen port: ${env.PORT}`);
 
   return server;
 }
