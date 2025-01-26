@@ -14,21 +14,13 @@ ECHONET Liteの仕様では取得できない設定値(エアコン設定温度�
 
 ## 使い方
 
-必要な環境変数については[こちら](https://github.com/nana4rider/e2m-hass-bridge/blob/main/src/env.ts)をご確認ください。
-
-### Production
+### Native
 
 ```sh
+export MQTT_BROKER=mqtt://localhost
 npm install
 npm run build
-node dist/index
-```
-
-### Development
-
-```sh
-npm install
-npm run dev
+npm start
 ```
 
 ### Docker
@@ -37,12 +29,13 @@ npm run dev
 docker run -d \
   --name e2m-hass-bridge \
   -e MQTT_BROKER=mqtt://localhost \
-  -e MQTT_USERNAME=username \
-  -e MQTT_PASSWORD=password \
   -p 3000:3000 \
   --restart always \
   nana4rider/e2m-hass-bridge:latest
 ```
+
+> [!TIP]
+> その他、必要な環境変数については[こちら](src/env.ts)をご確認ください。
 
 ## デモ
 
