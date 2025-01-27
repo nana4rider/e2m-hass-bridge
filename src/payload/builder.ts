@@ -24,6 +24,7 @@ import {
   getManufacturerName,
   getSimpleOverridePayload,
 } from "@/util/deviceUtil";
+import assert from "assert";
 import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import {
   homepage as packageHomepage,
@@ -89,11 +90,11 @@ export function getSimpleComponentConfigs(
       return;
     }
     const builder = simpleComponentBuilder.get(component);
-    if (!builder) {
-      throw new Error(
-        `Simple Component builder for '${component}' is not registered.`,
-      );
-    }
+    assert(
+      builder,
+      `Simple Component builder for '${component}' is not registered.`,
+    );
+
     simpleComponentBuilders.push({ property, component, builder });
   });
 

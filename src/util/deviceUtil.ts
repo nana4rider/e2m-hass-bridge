@@ -7,6 +7,7 @@ import {
 } from "@/deviceConfig";
 import { CompositeComponentId, Payload } from "@/payload/payloadType";
 import { hex2ascii } from "@/util/dataTransformUtil";
+import assert from "assert";
 import type {
   ApiDevice,
   ApiDeviceProperty,
@@ -24,9 +25,7 @@ export function getDeviceValue<T = string, R extends boolean = false>(
 ): R extends true ? T : T | undefined {
   const value = apiDevice.values[propertyName]?.value as T | undefined;
   if (strict) {
-    if (value === undefined) {
-      throw new Error(`Property "${propertyName}" is not defined.`);
-    }
+    assert(value !== undefined, `Property "${propertyName}" is not defined.`);
     return value as R extends true ? T : never;
   }
   return value as R extends true ? never : T | undefined;
@@ -41,9 +40,10 @@ export function getDeviceProperties<R extends boolean = false>(
     (prop) => prop.name === propertyName,
   );
   if (strict) {
-    if (property === undefined) {
-      throw new Error(`Property "${propertyName}" is not defined.`);
-    }
+    assert(
+      property !== undefined,
+      `Property "${propertyName}" is not defined.`,
+    );
     return property as R extends true ? ApiDeviceProperty : never;
   }
   return property as R extends true ? never : ApiDeviceProperty | undefined;

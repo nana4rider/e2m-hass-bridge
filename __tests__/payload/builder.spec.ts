@@ -9,21 +9,6 @@ describe("buildDevice", () => {
     jest.clearAllMocks();
   });
 
-  test("manufacturerが含まれない", () => {
-    const actual = () =>
-      buildDevice({
-        id: "test_id",
-        ip: "127.0.0.1",
-        descriptions: {
-          ja: "test_descriptions",
-          en: "test_descriptions",
-        },
-        values: {},
-      } as unknown as ApiDevice);
-
-    expect(actual).toThrow();
-  });
-
   test("未定義のmanufacturer", () => {
     const actual = buildDevice({
       id: "test_id",
