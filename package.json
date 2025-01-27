@@ -1,20 +1,23 @@
 {
   "name": "e2m-hass-bridge",
   "version": "1.4.4",
+  "author": "nana4rider",
+  "license": "ISC",
   "main": "dist/index.js",
   "type": "module",
   "homepage": "https://github.com/nana4rider/e2m-hass-bridge",
   "scripts": {
-    "dev": "npx tsx --env-file=.env src/index.ts",
+    "dev": "tsx --env-file=.env src/index.ts",
     "start": "node dist/index",
     "build": "node build.js",
-    "lint": "npx tsc --noEmit && npx eslint --max-warnings 0 && npx prettier . --check",
-    "lint:fix": "npx eslint --fix && npx prettier . --write",
+    "lint": "tsc --noEmit && eslint --max-warnings 0 && prettier . --check",
+    "lint:fix": "eslint --fix && prettier . --write",
     "test": "jest",
     "prepare": "husky"
   },
-  "author": "nana4rider",
-  "license": "ISC",
+  "lint-staged": {
+    "*.ts": "npm run lint"
+  },
   "dependencies": {
     "envalid": "^8.0.0",
     "fastify": "^5.2.1",
@@ -36,6 +39,7 @@
     "globals": "^15.14.0",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
+    "lint-staged": "^15.4.3",
     "prettier": "3.4.2",
     "ts-jest": "^29.2.5",
     "tsx": "^4.19.2",
