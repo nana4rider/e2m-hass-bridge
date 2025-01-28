@@ -10,7 +10,7 @@
     "dev": "tsx --env-file=.env src/index.ts",
     "start": "node dist/index",
     "build": "node build.js",
-    "lint": "tsc --noEmit && eslint --max-warnings 0 && prettier . --check",
+    "lint": "tsc && eslint --max-warnings 0 && prettier . --check",
     "lint:fix": "eslint --fix && prettier . --write",
     "test": "jest",
     "prepare": "husky"

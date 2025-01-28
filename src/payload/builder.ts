@@ -30,7 +30,7 @@ import {
   homepage as packageHomepage,
   name as packageName,
   version as packageVersion,
-} from "~/package.json";
+} from "package.json";
 
 /** 単一のプロパティから構成されるコンポーネント */
 const simpleComponentBuilder = new Map<
