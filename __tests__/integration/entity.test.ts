@@ -41,7 +41,7 @@ describe("entity", () => {
           expectedDir,
           relativeTopic.replace(/\/config$/, ".json"),
         );
-        // await fs.writeFile(expectedFile, JSON.stringify(expected));
+        // await writeFile(expectedFile, JSON.stringify(payload));
         // Payloadが一致するか
         const expected = await readJsonFile<JsonObject>(expectedFile);
         expect(payload).toEqual(expected);

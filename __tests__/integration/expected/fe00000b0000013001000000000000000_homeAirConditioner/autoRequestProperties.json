@@ -1,1 +1,11 @@
-["consumedCumulativeElectricEnergy","operationStatus","operationMode","targetTemperature","airFlowLevel","airFlowDirectionVertical","automaticControlAirFlowDirection","roomTemperature","humidity"]
+[
+  "consumedCumulativeElectricEnergy",
+  "operationStatus",
+  "operationMode",
+  "targetTemperature",
+  "airFlowLevel",
+  "airFlowDirectionVertical",
+  "automaticControlAirFlowDirection",
+  "roomTemperature",
+  "humidity"
+]

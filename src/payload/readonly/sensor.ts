@@ -4,7 +4,11 @@ import {
   formattedPythonDict,
   getDecimalPlaces,
 } from "@/util/dataTransformUtil";
-import { getUnit, isElNumberType, isElStateType } from "@/util/deviceUtil";
+import {
+  getFirstElNumberType,
+  getUnit,
+  isElStateType,
+} from "@/util/deviceUtil";
 import type {
   ApiDevice,
   ApiDeviceProperty,
@@ -20,13 +24,16 @@ export default function buildSensor(
     state_topic: property.mqttTopics,
   };
 
-  if (isElNumberType(data)) {
+  const elNumberType = getFirstElNumberType(data);
+  if (elNumberType) {
     let nativeValue: string;
-    if (!data.multiple || Number.isInteger(data.multiple)) {
+    if (!elNumberType.multiple || Number.isInteger(elNumberType.multiple)) {
       nativeValue = "int";
     } else {
       nativeValue = "float";
-      payload.suggested_display_precision = getDecimalPlaces(data.multiple);
+      payload.suggested_display_precision = getDecimalPlaces(
+        elNumberType.multiple,
+      );
     }
     payload.native_value = nativeValue;
     payload.value_template = `
