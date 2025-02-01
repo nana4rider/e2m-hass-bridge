@@ -1,6 +1,6 @@
 {
   "name": "e2m-hass-bridge",
-  "version": "1.4.4",
+  "version": "1.5.0",
   "author": "nana4rider",
   "license": "ISC",
   "main": "dist/index.js",
@@ -12,6 +12,7 @@
     "build": "node build.js",
     "lint": "tsc && eslint --max-warnings 0 && prettier . --check",
     "lint:fix": "eslint --fix && prettier . --write",
+    "format:test-json": "prettier '__tests__/**/*.json' --write --ignore-path /dev/null",
     "test": "jest",
     "prepare": "husky"
   },
