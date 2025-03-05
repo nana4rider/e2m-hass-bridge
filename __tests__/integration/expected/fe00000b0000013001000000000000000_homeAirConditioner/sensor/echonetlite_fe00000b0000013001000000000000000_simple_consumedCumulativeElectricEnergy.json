@@ -2,7 +2,7 @@
   "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000013001000000000000000/properties/consumedCumulativeElectricEnergy",
   "suggested_display_precision": 3,
   "native_value": "float",
-  "value_template": "{% if value | float(default=None) is not none %}\n  {{ value | float }}\n{% else %}\n  unknown\n{% endif %}",
+  "value_template": "{% if value | float(default=None) is not none %}\n  {{ value | float }}\n{% else %}\n  None\n{% endif %}",
   "unit_of_measurement": "kWh",
   "state_class": "total_increasing",
   "device_class": "energy",

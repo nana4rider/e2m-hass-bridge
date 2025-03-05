@@ -1,7 +1,7 @@
 {
   "modes": ["auto", "cool", "heat", "dry", "fan_only", "off"],
   "mode_state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_013001/properties",
-  "mode_state_template": "{% if value_json.operationStatus == 'false' %}\n  off\n{% else %}\n  {% set mapping = {'auto':'auto','cooling':'cool','heating':'heat','dehumidification':'dry','circulation':'fan_only'} %}\n  {{ mapping.get(value_json.operationMode, 'unknown') }}\n{% endif %}",
+  "mode_state_template": "{% if value_json.operationStatus == 'false' %}\n  off\n{% else %}\n  {% set mapping = {'auto':'auto','cooling':'cool','heating':'heat','dehumidification':'dry','circulation':'fan_only'} %}\n  {{ mapping.get(value_json.operationMode) }}\n{% endif %}",
   "mode_command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_013001/properties/set",
   "mode_command_template": "{% if value == 'off' %}\n  {\"operationStatus\": \"false\"}\n{% else %}\n  {% set mapping = {'auto':'auto','cool':'cooling','heat':'heating','dry':'dehumidification','fan_only':'circulation'} %}\n  {{ {\"operationStatus\": \"true\", \"operationMode\": mapping[value]} | tojson }}\n{% endif %}",
   "temperature_state_template": "{% if value == 'undefined' %}\n  None\n{% else %}\n  {{ value }}\n{% endif %}",

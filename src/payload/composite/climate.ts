@@ -73,7 +73,7 @@ function buildOperationMode(apiDevice: ApiDevice): Payload {
   off
 {% else %}
   {% set mapping = ${formattedPythonDict(OperationModeMapping)} %}
-  {{ mapping.get(value_json.operationMode, 'unknown') }}
+  {{ mapping.get(value_json.operationMode) }}
 {% endif %}
 `.trim(),
     mode_command_topic: `${apiDevice.mqttTopics}/properties/set`,
@@ -102,7 +102,7 @@ function buildFanMode(apiDevice: ApiDevice): Payload {
     fan_mode_state_topic: `${apiDevice.mqttTopics}/properties/airFlowLevel`,
     fan_mode_state_template: `
 {% set mapping = ${formattedPythonDict(fanmodeMapping.state)} %}
-{{ mapping.get(value, 'unknown') }}
+{{ mapping.get(value) }}
 `.trim(),
     fan_mode_command_topic: `${apiDevice.mqttTopics}/properties/airFlowLevel/set`,
     fan_mode_command_template: `
@@ -167,7 +167,7 @@ function buildSwingMode(apiDevice: ApiDevice): Payload {
   ${SwingAutoValue[env.DESCRIPTION_LANGUAGE]}
 {% else %}
   {% set mapping = ${formattedPythonDict(stateMapping)} %}
-  {{ mapping.get(value_json.airFlowDirectionVertical, 'unknown') }}
+  {{ mapping.get(value_json.airFlowDirectionVertical) }}
 {% endif %}
 `.trim(),
     swing_mode_command_topic: `${apiDevice.mqttTopics}/properties/set`,

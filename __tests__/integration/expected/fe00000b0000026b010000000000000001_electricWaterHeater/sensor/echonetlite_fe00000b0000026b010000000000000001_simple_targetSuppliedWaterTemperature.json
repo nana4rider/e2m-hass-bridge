@@ -1,7 +1,7 @@
 {
   "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00000b0000026b010000000000000001/properties/targetSuppliedWaterTemperature",
   "native_value": "int",
-  "value_template": "{% if value | int(default=None) is not none %}\n  {{ value | int }}\n{% else %}\n  unknown\n{% endif %}",
+  "value_template": "{% if value | int(default=None) is not none %}\n  {{ value | int }}\n{% else %}\n  None\n{% endif %}",
   "unit_of_measurement": "°C",
   "device_class": "temperature",
   "unique_id": "echonetlite_fe00000b0000026b010000000000000001_simple_targetSuppliedWaterTemperature",

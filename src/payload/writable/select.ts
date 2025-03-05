@@ -28,7 +28,7 @@ export default function buildSelect(
     command_topic: `${property.mqttTopics}/set`,
     value_template: `
 {% set mapping = ${formattedPythonDict(valueMapping)} %}
-{{ mapping.get(value, 'unknown') }}
+{{ mapping.get(value) }}
 `.trim(),
     command_template: `
 {% set mapping = ${formattedPythonDict(commandMapping)} %}

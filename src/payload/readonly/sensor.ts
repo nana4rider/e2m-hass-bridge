@@ -40,7 +40,7 @@ export default function buildSensor(
 {% if value | ${nativeValue}(default=None) is not none %}
   {{ value | ${nativeValue} }}
 {% else %}
-  unknown
+  None
 {% endif %}
 `.trim();
   } else if (isElStateType(data)) {
@@ -51,7 +51,7 @@ export default function buildSensor(
 
     payload.value_template = `
 {% set mapping = ${formattedPythonDict(valueMapping)} %}
-{{ mapping.get(value, 'unknown') }}
+{{ mapping.get(value) }}
     `.trim();
   }
 

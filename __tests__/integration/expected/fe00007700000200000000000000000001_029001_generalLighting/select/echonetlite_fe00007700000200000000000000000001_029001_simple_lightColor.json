@@ -2,7 +2,7 @@
   "options": ["電球色", "白色", "昼白色", "昼光色"],
   "state_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_029001/properties/lightColor",
   "command_topic": "echonetlite2mqtt/elapi/v2/devices/fe00007700000200000000000000000001_029001/properties/lightColor/set",
-  "value_template": "{% set mapping = {'incandescent':'電球色','white':'白色','daylightWhite':'昼白色','daylightColor':'昼光色'} %}\n{{ mapping.get(value, 'unknown') }}",
+  "value_template": "{% set mapping = {'incandescent':'電球色','white':'白色','daylightWhite':'昼白色','daylightColor':'昼光色'} %}\n{{ mapping.get(value) }}",
   "command_template": "{% set mapping = {'電球色':'incandescent','白色':'white','昼白色':'daylightWhite','昼光色':'daylightColor'} %}\n{{ mapping[value] }}",
   "unique_id": "echonetlite_fe00007700000200000000000000000001_029001_simple_lightColor",
   "name": "光色設定"
