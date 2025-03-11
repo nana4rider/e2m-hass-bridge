@@ -1,10 +1,11 @@
 import env from "@/env";
 import { buildDevice, buildOrigin } from "@/payload/builder";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
-import { MutableEnv } from "jest.setup";
+import { Writable } from "type-fest";
 
 describe("buildDevice", () => {
   beforeEach(() => {
+    (env as Writable<typeof env>).DESCRIPTION_LANGUAGE = "ja";
     jest.resetModules();
     jest.clearAllMocks();
   });
@@ -78,7 +79,7 @@ describe("buildDevice", () => {
   });
 
   test("英語設定", () => {
-    (env as MutableEnv).DESCRIPTION_LANGUAGE = "en";
+    (env as Writable<typeof env>).DESCRIPTION_LANGUAGE = "en";
 
     const actual = buildDevice({
       id: "test_id",

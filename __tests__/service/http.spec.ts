@@ -1,4 +1,3 @@
-import env from "@/env";
 import {
   getCompositeComponentConfigs,
   getSimpleComponentConfigs,
@@ -14,7 +13,6 @@ import type {
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
 import { FastifyInstance } from "fastify";
-import { MutableEnv } from "jest.setup";
 
 jest.mock("@/payload/builder", () => {
   return {
@@ -34,7 +32,6 @@ describe("initializeHttpServer", () => {
   const mockTaskQueueSize = jest.fn();
 
   beforeEach(async () => {
-    (env as MutableEnv).PORT = undefined;
     jest.clearAllMocks();
 
     server = await initializeHttpServer(

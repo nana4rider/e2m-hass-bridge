@@ -1,39 +1,18 @@
-import env from "@/env";
-import { config } from "dotenv";
-import { Writable } from "type-fest";
+import envalid, { accessorMiddleware, CleanedEnv, CleanOptions } from "envalid";
+import { getSanitizedEnv } from "envalid/dist/core";
 
-config({ path: "./.env.test" });
-
-export type MutableEnv = Partial<Writable<typeof env>>;
-
-let overrideEnv: MutableEnv = {};
-
-beforeEach(() => {
-  overrideEnv = {};
-});
-
-jest.mock("@/env", () => {
-  const { default: defaultEnv } = jest.requireActual<{ default: typeof env }>(
-    "@/env",
-  );
-  return new Proxy(
-    { ...defaultEnv },
-    {
-      get(target, prop: keyof typeof env) {
-        if (prop in overrideEnv) {
-          return overrideEnv[prop];
-        }
-        return target[prop];
-      },
-      set(
-        target,
-        prop: keyof typeof env,
-        value: (typeof env)[keyof typeof env],
-      ) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-        (overrideEnv as any)[prop] = value;
-        return true;
-      },
+jest.mock("envalid", () => {
+  const actual = jest.requireActual<typeof envalid>("envalid");
+  return {
+    ...actual,
+    cleanEnv: <S>(
+      environment: unknown,
+      specs: S,
+      options: CleanOptions<S> = {},
+    ): CleanedEnv<S> => {
+      // omit Object.freeze
+      const cleaned = getSanitizedEnv(environment, specs, options);
+      return accessorMiddleware(cleaned, environment) as CleanedEnv<S>;
     },
-  );
+  };
 });
