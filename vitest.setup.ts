@@ -1,8 +1,8 @@
 import envalid, { accessorMiddleware, CleanedEnv, CleanOptions } from "envalid";
 import { getSanitizedEnv } from "envalid/dist/core";
 
-jest.mock("envalid", () => {
-  const actual = jest.requireActual<typeof envalid>("envalid");
+vi.mock("envalid", async () => {
+  const actual = await vi.importActual<typeof envalid>("envalid");
   return {
     ...actual,
     cleanEnv: <S>(

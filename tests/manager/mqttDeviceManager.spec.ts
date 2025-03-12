@@ -6,45 +6,50 @@ import {
   buildDiscoveryEntries,
   buildOrigin,
 } from "@/payload/builder";
-import initializeMqttClient from "@/service/mqtt";
+import initializeMqttClient, { MqttClient } from "@/service/mqtt";
 import { parseJson } from "@/util/dataTransformUtil";
 import { getAutoRequestProperties } from "@/util/deviceUtil";
 import type {
   ApiDevice,
   ApiDeviceSummary,
 } from "echonetlite2mqtt/server/ApiTypes";
+import { Mock } from "vitest";
 
-jest.mock("@/payload/builder", () => ({
-  buildDevice: jest.fn(),
-  buildDiscoveryEntries: jest.fn(),
-  buildOrigin: jest.fn(),
+vi.mock("@/payload/builder", () => ({
+  buildDevice: vi.fn(),
+  buildDiscoveryEntries: vi.fn(),
+  buildOrigin: vi.fn(),
 }));
 
-jest.mock("@/service/mqtt", () => jest.fn());
-
-jest.mock("@/util/dataTransformUtil", () => ({
-  parseJson: jest.fn(),
+vi.mock("@/service/mqtt", () => ({
+  default: vi.fn(),
 }));
 
-jest.mock("@/util/deviceUtil", () => ({
-  getAutoRequestProperties: jest.fn(),
+vi.mock("@/util/dataTransformUtil", () => ({
+  parseJson: vi.fn(),
+}));
+
+vi.mock("@/util/deviceUtil", () => ({
+  getAutoRequestProperties: vi.fn(),
 }));
 
 describe("setupMqttDeviceManager", () => {
-  let mockMqttClient: { publish: jest.Mock; addSubscribe: jest.Mock };
+  let mockMqttClient: MqttClient;
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
 
     mockMqttClient = {
-      publish: jest.fn(),
-      addSubscribe: jest.fn(),
+      publish: vi.fn(),
+      taskQueueSize: 0,
+      addSubscribe: vi.fn(),
+      close: vi.fn(),
     };
 
-    (initializeMqttClient as jest.Mock).mockResolvedValue(mockMqttClient);
-    (buildOrigin as jest.Mock).mockReturnValue({ origin: "test-origin" });
-    (buildDevice as jest.Mock).mockReturnValue({ device: "test-device" });
-    (buildDiscoveryEntries as jest.Mock).mockImplementation(
+    (initializeMqttClient as Mock).mockResolvedValue(mockMqttClient);
+    (buildOrigin as Mock).mockReturnValue({ origin: "test-origin" });
+    (buildDevice as Mock).mockReturnValue({ device: "test-device" });
+    (buildDiscoveryEntries as Mock).mockImplementation(
       (apiDevice: ApiDevice) => [
         {
           relativeTopic: `${apiDevice.id}/config`,
@@ -52,8 +57,8 @@ describe("setupMqttDeviceManager", () => {
         },
       ],
     );
-    (parseJson as jest.Mock).mockImplementation(JSON.parse);
-    (getAutoRequestProperties as jest.Mock).mockReturnValue([
+    (parseJson as Mock).mockImplementation(JSON.parse);
+    (getAutoRequestProperties as Mock).mockReturnValue([
       "property1",
       "property2",
     ]);
@@ -78,8 +83,8 @@ describe("setupMqttDeviceManager", () => {
       { deviceType: "type2", mqttTopics: "topic2" },
     ] as ApiDeviceSummary[];
 
-    const handleMessage = jest.fn<void, [topic: string, message: string]>();
-    (initializeMqttClient as jest.Mock).mockImplementation(
+    const handleMessage = vi.fn();
+    (initializeMqttClient as Mock).mockImplementation(
       (_, handler: (topic: string, message: string) => void) => {
         handleMessage.mockImplementation(handler);
         return mockMqttClient;
@@ -113,10 +118,7 @@ describe("setupMqttDeviceManager", () => {
     await stopAutoRequest();
 
     const handleMessage = (
-      initializeMqttClient as jest.Mock<
-        ReturnType<typeof initializeMqttClient>,
-        Parameters<typeof initializeMqttClient>
-      >
+      initializeMqttClient as Mock<typeof initializeMqttClient>
     ).mock.calls[0][1];
 
     await handleMessage(
@@ -152,15 +154,15 @@ describe("setupMqttDeviceManager", () => {
 
   test("未知のトピックは無視する", async () => {
     const targetDevices = new Map<string, ApiDevice>();
-    const handleMessage = jest.fn();
-    (initializeMqttClient as jest.Mock).mockImplementation(
+    const handleMessage = vi.fn();
+    (initializeMqttClient as Mock).mockImplementation(
       (_, handler: (topic: string, message: string) => void) => {
         handleMessage.mockImplementation(handler);
         return mockMqttClient;
       },
     );
 
-    const logErrorSpy = jest.spyOn(logger, "error");
+    const logErrorSpy = vi.spyOn(logger, "error");
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
 
@@ -177,8 +179,8 @@ describe("setupMqttDeviceManager", () => {
       { deviceType: "Unknown_1", mqttTopics: "ignoredTopic" },
     ] as ApiDeviceSummary[];
 
-    const handleMessage = jest.fn();
-    (initializeMqttClient as jest.Mock).mockImplementation(
+    const handleMessage = vi.fn();
+    (initializeMqttClient as Mock).mockImplementation(
       (_, handler: (topic: string, message: string) => void) => {
         handleMessage.mockImplementation(handler);
         return mockMqttClient;
@@ -203,11 +205,11 @@ describe("setupMqttDeviceManager", () => {
       ["device1", { id: "device1", mqttTopics: "topic1" } as ApiDevice],
     ]);
 
-    mockMqttClient.publish.mockImplementation(() => {
+    (mockMqttClient.publish as Mock).mockImplementation(() => {
       throw new Error("Publish failed");
     });
 
-    const logErrorSpy = jest.spyOn(logger, "error");
+    const logErrorSpy = vi.spyOn(logger, "error");
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
 

@@ -6,8 +6,8 @@ import { Writable } from "type-fest";
 describe("buildDevice", () => {
   beforeEach(() => {
     (env as Writable<typeof env>).DESCRIPTION_LANGUAGE = "ja";
-    jest.resetModules();
-    jest.clearAllMocks();
+    vi.resetModules();
+    vi.clearAllMocks();
   });
 
   test("未定義のmanufacturer", () => {
