@@ -13,26 +13,27 @@ import type {
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
 import { FastifyInstance } from "fastify";
+import { Mock } from "vitest";
 
-jest.mock("@/payload/builder", () => {
+vi.mock("@/payload/builder", () => {
   return {
-    getCompositeComponentConfigs: jest.fn(),
-    getSimpleComponentConfigs: jest.fn(),
+    getCompositeComponentConfigs: vi.fn(),
+    getSimpleComponentConfigs: vi.fn(),
   };
 });
 
-jest.mock("@/util/deviceUtil", () => {
+vi.mock("@/util/deviceUtil", () => {
   return {
-    getAutoRequestProperties: jest.fn(),
+    getAutoRequestProperties: vi.fn(),
   };
 });
 
 describe("initializeHttpServer", () => {
   let server: FastifyInstance;
-  const mockTaskQueueSize = jest.fn();
+  const mockTaskQueueSize = vi.fn();
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     server = await initializeHttpServer(
       new Map<string, ApiDevice>([
@@ -63,7 +64,9 @@ describe("initializeHttpServer", () => {
   test("/status エンドポイントでデバイス情報が返されること", async () => {
     mockTaskQueueSize.mockReturnValue(10);
     (
-      getCompositeComponentConfigs as jest.Mock<CompositeComponentConfig[]>
+      getCompositeComponentConfigs as Mock<
+        (apiDevice: ApiDevice) => CompositeComponentConfig[]
+      >
     ).mockReturnValue([
       {
         compositeComponentId: "climate",
@@ -72,7 +75,9 @@ describe("initializeHttpServer", () => {
       },
     ]);
     (
-      getSimpleComponentConfigs as jest.Mock<SimpleComponentConfig[]>
+      getSimpleComponentConfigs as Mock<
+        (apiDevice: ApiDevice) => SimpleComponentConfig[]
+      >
     ).mockReturnValue([
       {
         component: "binary_sensor",
@@ -82,11 +87,9 @@ describe("initializeHttpServer", () => {
         builder: () => ({}),
       },
     ]);
-    (getAutoRequestProperties as jest.Mock<string[]>).mockReturnValue([
-      "foo",
-      "bar",
-      "baz",
-    ]);
+    (
+      getAutoRequestProperties as Mock<(apiDevice: ApiDevice) => string[]>
+    ).mockReturnValue(["foo", "bar", "baz"]);
 
     const response = await server.inject({
       method: "GET",

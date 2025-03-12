@@ -2,30 +2,28 @@ import env from "@/env";
 import initializeMqttClient from "@/service/mqtt";
 import mqttjs, { IPublishPacket, MqttClient, OnMessageCallback } from "mqtt";
 import { setTimeout } from "timers/promises";
+import { Mock } from "vitest";
 
 // 必要なモック関数
-const mockSubscribeAsync = jest.fn();
-const mockPublishAsync = jest.fn();
-const mockEndAsync = jest.fn();
-const mockOn = jest.fn<
-  ReturnType<MqttClient["on"]>,
-  Parameters<MqttClient["on"]>
->();
+const mockSubscribeAsync = vi.fn();
+const mockPublishAsync = vi.fn();
+const mockEndAsync = vi.fn();
+const mockOn = vi.fn<MqttClient["on"]>();
 
-jest.mock("mqtt", () => {
-  return {
-    connectAsync: jest.fn(),
-  };
-});
+vi.mock("mqtt", () => ({
+  default: {
+    connectAsync: vi.fn(),
+  },
+}));
 
 beforeEach(() => {
-  jest.resetModules();
-  jest.clearAllMocks();
+  vi.resetModules();
+  vi.clearAllMocks();
 });
 
 describe("initializeMqttClient", () => {
   test("MQTTクライアントが正常に接続される", async () => {
-    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    const mockConnectAsync = mqttjs.connectAsync as Mock;
     mockConnectAsync.mockResolvedValue({
       subscribeAsync: mockSubscribeAsync,
       publishAsync: mockPublishAsync,
@@ -33,7 +31,7 @@ describe("initializeMqttClient", () => {
       on: mockOn,
     });
 
-    const mockHandleMessage = jest.fn();
+    const mockHandleMessage = vi.fn();
     const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     await mqtt.close();
@@ -53,7 +51,7 @@ describe("initializeMqttClient", () => {
 
   test("メッセージを受信するとhandleMessageが呼ばれる", async () => {
     const mockPayload = Buffer.from("test message");
-    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    const mockConnectAsync = mqttjs.connectAsync as Mock;
     mockConnectAsync.mockResolvedValue({
       subscribeAsync: mockSubscribeAsync,
       publishAsync: mockPublishAsync,
@@ -61,7 +59,7 @@ describe("initializeMqttClient", () => {
       on: mockOn,
     });
 
-    const mockHandleMessage = jest.fn();
+    const mockHandleMessage = vi.fn();
     const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     // メッセージイベントをトリガー
@@ -81,7 +79,7 @@ describe("initializeMqttClient", () => {
 
   test("handleMessageで同期エラーが発生しても例外をスローしない", async () => {
     const mockPayload = Buffer.from("test message");
-    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    const mockConnectAsync = mqttjs.connectAsync as Mock;
     mockConnectAsync.mockResolvedValue({
       subscribeAsync: mockSubscribeAsync,
       publishAsync: mockPublishAsync,
@@ -89,7 +87,7 @@ describe("initializeMqttClient", () => {
       on: mockOn,
     });
 
-    const mockHandleMessage = jest.fn();
+    const mockHandleMessage = vi.fn();
     mockHandleMessage.mockImplementation(() => {
       throw new Error("test error");
     });
@@ -110,7 +108,7 @@ describe("initializeMqttClient", () => {
 
   test("handleMessageで非同期エラーが発生しても例外をスローしない", async () => {
     const mockPayload = Buffer.from("test message");
-    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    const mockConnectAsync = mqttjs.connectAsync as Mock;
     mockConnectAsync.mockResolvedValue({
       subscribeAsync: mockSubscribeAsync,
       publishAsync: mockPublishAsync,
@@ -118,7 +116,7 @@ describe("initializeMqttClient", () => {
       on: mockOn,
     });
 
-    const mockHandleMessage = jest.fn();
+    const mockHandleMessage = vi.fn();
     mockHandleMessage.mockImplementation(() =>
       Promise.reject(new Error("test error")),
     );
@@ -138,7 +136,7 @@ describe("initializeMqttClient", () => {
   });
 
   test("publishがタスクキューに追加される", async () => {
-    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    const mockConnectAsync = mqttjs.connectAsync as Mock;
     mockConnectAsync.mockResolvedValue({
       subscribeAsync: mockSubscribeAsync,
       publishAsync: mockPublishAsync,
@@ -146,7 +144,7 @@ describe("initializeMqttClient", () => {
       on: mockOn,
     });
 
-    const mockHandleMessage = jest.fn();
+    const mockHandleMessage = vi.fn();
     const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     // publishを呼び出す
@@ -159,7 +157,7 @@ describe("initializeMqttClient", () => {
   });
 
   test("addSubscribeがタスクキューに追加される", async () => {
-    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    const mockConnectAsync = mqttjs.connectAsync as Mock;
     mockConnectAsync.mockResolvedValue({
       subscribeAsync: mockSubscribeAsync,
       publishAsync: mockPublishAsync,
@@ -179,7 +177,7 @@ describe("initializeMqttClient", () => {
   });
 
   test("close(true)を呼び出すとタスクキューが空になりクライアントが終了する", async () => {
-    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    const mockConnectAsync = mqttjs.connectAsync as Mock;
     mockConnectAsync.mockResolvedValue({
       subscribeAsync: mockSubscribeAsync,
       publishAsync: mockPublishAsync,
@@ -206,7 +204,7 @@ describe("initializeMqttClient", () => {
   });
 
   test("close()を呼び出すとタスクキューが残っていてもクライアントが終了する", async () => {
-    const mockConnectAsync = mqttjs.connectAsync as jest.Mock;
+    const mockConnectAsync = mqttjs.connectAsync as Mock;
     mockConnectAsync.mockResolvedValue({
       subscribeAsync: mockSubscribeAsync,
       publishAsync: mockPublishAsync,
@@ -218,7 +216,7 @@ describe("initializeMqttClient", () => {
       return Promise.resolve();
     });
 
-    const mockHandleMessage = jest.fn();
+    const mockHandleMessage = vi.fn();
     const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     mqtt.publish("topic", "message");
