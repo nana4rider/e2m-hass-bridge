@@ -6,7 +6,7 @@ import { setTimeout } from "timers/promises";
 const mockSubscribeAsync = vi.fn();
 const mockPublishAsync = vi.fn();
 const mockEndAsync = vi.fn();
-const mockOn = vi.fn<MqttClient["on"]>();
+const mockOn = vi.fn();
 
 const mockHandleMessage = vi.fn();
 
