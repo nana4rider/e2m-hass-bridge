@@ -17,8 +17,8 @@ import { Mock } from "vitest";
 
 vi.mock("@/payload/builder", () => ({
   buildDevice: vi.fn(),
-  buildDiscoveryEntries: vi.fn(),
   buildOrigin: vi.fn(),
+  buildDiscoveryEntries: vi.fn(),
 }));
 
 vi.mock("@/service/mqtt", () => ({
@@ -34,22 +34,20 @@ vi.mock("@/util/deviceUtil", () => ({
 }));
 
 describe("setupMqttDeviceManager", () => {
-  let mockMqttClient: MqttClient;
+  const mockMqttClient: MqttClient = {
+    publish: vi.fn(),
+    taskQueueSize: 0,
+    addSubscribe: vi.fn(),
+    close: vi.fn(),
+  };
 
   beforeEach(() => {
     vi.resetAllMocks();
 
-    mockMqttClient = {
-      publish: vi.fn(),
-      taskQueueSize: 0,
-      addSubscribe: vi.fn(),
-      close: vi.fn(),
-    };
-
-    (initializeMqttClient as Mock).mockResolvedValue(mockMqttClient);
-    (buildOrigin as Mock).mockReturnValue({ origin: "test-origin" });
-    (buildDevice as Mock).mockReturnValue({ device: "test-device" });
-    (buildDiscoveryEntries as Mock).mockImplementation(
+    vi.mocked(initializeMqttClient).mockResolvedValue(mockMqttClient);
+    vi.mocked(buildOrigin).mockReturnValue({ origin: "test-origin" });
+    vi.mocked(buildDevice).mockReturnValue({ device: "test-device" });
+    vi.mocked(buildDiscoveryEntries).mockImplementation(
       (apiDevice: ApiDevice) => [
         {
           relativeTopic: `${apiDevice.id}/config`,
@@ -84,10 +82,10 @@ describe("setupMqttDeviceManager", () => {
     ] as ApiDeviceSummary[];
 
     const handleMessage = vi.fn();
-    (initializeMqttClient as Mock).mockImplementation(
-      (_, handler: (topic: string, message: string) => void) => {
+    vi.mocked(initializeMqttClient).mockImplementation(
+      (_subscribeTopics, handler: (topic: string, message: string) => void) => {
         handleMessage.mockImplementation(handler);
-        return mockMqttClient;
+        return Promise.resolve(mockMqttClient);
       },
     );
 
@@ -117,9 +115,7 @@ describe("setupMqttDeviceManager", () => {
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
 
-    const handleMessage = (
-      initializeMqttClient as Mock<typeof initializeMqttClient>
-    ).mock.calls[0][1];
+    const handleMessage = vi.mocked(initializeMqttClient).mock.calls[0][1];
 
     await handleMessage(
       env.ECHONETLITE2MQTT_BASE_TOPIC,
@@ -155,10 +151,10 @@ describe("setupMqttDeviceManager", () => {
   test("未知のトピックは無視する", async () => {
     const targetDevices = new Map<string, ApiDevice>();
     const handleMessage = vi.fn();
-    (initializeMqttClient as Mock).mockImplementation(
-      (_, handler: (topic: string, message: string) => void) => {
+    vi.mocked(initializeMqttClient).mockImplementation(
+      (_subscribeTopics, handler: (topic: string, message: string) => void) => {
         handleMessage.mockImplementation(handler);
-        return mockMqttClient;
+        return Promise.resolve(mockMqttClient);
       },
     );
 
@@ -180,10 +176,10 @@ describe("setupMqttDeviceManager", () => {
     ] as ApiDeviceSummary[];
 
     const handleMessage = vi.fn();
-    (initializeMqttClient as Mock).mockImplementation(
-      (_, handler: (topic: string, message: string) => void) => {
+    vi.mocked(initializeMqttClient).mockImplementation(
+      (_subscribeTopics, handler: (topic: string, message: string) => void) => {
         handleMessage.mockImplementation(handler);
-        return mockMqttClient;
+        return Promise.resolve(mockMqttClient);
       },
     );
 
@@ -205,7 +201,7 @@ describe("setupMqttDeviceManager", () => {
       ["device1", { id: "device1", mqttTopics: "topic1" } as ApiDevice],
     ]);
 
-    (mockMqttClient.publish as Mock).mockImplementation(() => {
+    vi.mocked(mockMqttClient.publish).mockImplementation(() => {
       throw new Error("Publish failed");
     });
 

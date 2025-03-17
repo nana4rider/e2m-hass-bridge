@@ -2,13 +2,13 @@ import env from "@/env";
 import initializeMqttClient from "@/service/mqtt";
 import mqttjs, { IPublishPacket, MqttClient, OnMessageCallback } from "mqtt";
 import { setTimeout } from "timers/promises";
-import { Mock } from "vitest";
 
-// 必要なモック関数
 const mockSubscribeAsync = vi.fn();
 const mockPublishAsync = vi.fn();
 const mockEndAsync = vi.fn();
 const mockOn = vi.fn<MqttClient["on"]>();
+
+const mockHandleMessage = vi.fn();
 
 vi.mock("mqtt", () => ({
   default: {
@@ -19,25 +19,26 @@ vi.mock("mqtt", () => ({
 beforeEach(() => {
   vi.resetModules();
   vi.clearAllMocks();
+
+  const mockMqttClient: Partial<MqttClient> = {
+    subscribeAsync: mockSubscribeAsync,
+    publishAsync: mockPublishAsync,
+    endAsync: mockEndAsync,
+    on: mockOn,
+  };
+  vi.mocked(mqttjs.connectAsync).mockResolvedValue(
+    mockMqttClient as MqttClient,
+  );
 });
 
 describe("initializeMqttClient", () => {
   test("MQTTクライアントが正常に接続される", async () => {
-    const mockConnectAsync = mqttjs.connectAsync as Mock;
-    mockConnectAsync.mockResolvedValue({
-      subscribeAsync: mockSubscribeAsync,
-      publishAsync: mockPublishAsync,
-      endAsync: mockEndAsync,
-      on: mockOn,
-    });
-
-    const mockHandleMessage = vi.fn();
     const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     await mqtt.close();
 
     // MQTTクライアントの接続確認
-    expect(mockConnectAsync).toHaveBeenCalledWith(
+    expect(vi.mocked(mqttjs.connectAsync)).toHaveBeenCalledWith(
       env.MQTT_BROKER,
       expect.objectContaining({
         username: env.MQTT_USERNAME,
@@ -51,15 +52,7 @@ describe("initializeMqttClient", () => {
 
   test("メッセージを受信するとhandleMessageが呼ばれる", async () => {
     const mockPayload = Buffer.from("test message");
-    const mockConnectAsync = mqttjs.connectAsync as Mock;
-    mockConnectAsync.mockResolvedValue({
-      subscribeAsync: mockSubscribeAsync,
-      publishAsync: mockPublishAsync,
-      endAsync: mockEndAsync,
-      on: mockOn,
-    });
 
-    const mockHandleMessage = vi.fn();
     const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     // メッセージイベントをトリガー
@@ -79,15 +72,7 @@ describe("initializeMqttClient", () => {
 
   test("handleMessageで同期エラーが発生しても例外をスローしない", async () => {
     const mockPayload = Buffer.from("test message");
-    const mockConnectAsync = mqttjs.connectAsync as Mock;
-    mockConnectAsync.mockResolvedValue({
-      subscribeAsync: mockSubscribeAsync,
-      publishAsync: mockPublishAsync,
-      endAsync: mockEndAsync,
-      on: mockOn,
-    });
 
-    const mockHandleMessage = vi.fn();
     mockHandleMessage.mockImplementation(() => {
       throw new Error("test error");
     });
@@ -108,15 +93,7 @@ describe("initializeMqttClient", () => {
 
   test("handleMessageで非同期エラーが発生しても例外をスローしない", async () => {
     const mockPayload = Buffer.from("test message");
-    const mockConnectAsync = mqttjs.connectAsync as Mock;
-    mockConnectAsync.mockResolvedValue({
-      subscribeAsync: mockSubscribeAsync,
-      publishAsync: mockPublishAsync,
-      endAsync: mockEndAsync,
-      on: mockOn,
-    });
 
-    const mockHandleMessage = vi.fn();
     mockHandleMessage.mockImplementation(() =>
       Promise.reject(new Error("test error")),
     );
@@ -136,15 +113,6 @@ describe("initializeMqttClient", () => {
   });
 
   test("publishがタスクキューに追加される", async () => {
-    const mockConnectAsync = mqttjs.connectAsync as Mock;
-    mockConnectAsync.mockResolvedValue({
-      subscribeAsync: mockSubscribeAsync,
-      publishAsync: mockPublishAsync,
-      endAsync: mockEndAsync,
-      on: mockOn,
-    });
-
-    const mockHandleMessage = vi.fn();
     const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     // publishを呼び出す
@@ -157,14 +125,6 @@ describe("initializeMqttClient", () => {
   });
 
   test("addSubscribeがタスクキューに追加される", async () => {
-    const mockConnectAsync = mqttjs.connectAsync as Mock;
-    mockConnectAsync.mockResolvedValue({
-      subscribeAsync: mockSubscribeAsync,
-      publishAsync: mockPublishAsync,
-      endAsync: mockEndAsync,
-      on: mockOn,
-    });
-
     const mqtt = await initializeMqttClient(["topic/test"], () => {});
 
     // addSubscribeを呼び出す
@@ -177,13 +137,6 @@ describe("initializeMqttClient", () => {
   });
 
   test("close(true)を呼び出すとタスクキューが空になりクライアントが終了する", async () => {
-    const mockConnectAsync = mqttjs.connectAsync as Mock;
-    mockConnectAsync.mockResolvedValue({
-      subscribeAsync: mockSubscribeAsync,
-      publishAsync: mockPublishAsync,
-      endAsync: mockEndAsync,
-      on: mockOn,
-    });
     mockPublishAsync.mockImplementation(async () => {
       await setTimeout(100);
       return Promise.resolve();
@@ -204,19 +157,11 @@ describe("initializeMqttClient", () => {
   });
 
   test("close()を呼び出すとタスクキューが残っていてもクライアントが終了する", async () => {
-    const mockConnectAsync = mqttjs.connectAsync as Mock;
-    mockConnectAsync.mockResolvedValue({
-      subscribeAsync: mockSubscribeAsync,
-      publishAsync: mockPublishAsync,
-      endAsync: mockEndAsync,
-      on: mockOn,
-    });
     mockPublishAsync.mockImplementation(async () => {
       await setTimeout(100);
       return Promise.resolve();
     });
 
-    const mockHandleMessage = vi.fn();
     const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
 
     mqtt.publish("topic", "message");

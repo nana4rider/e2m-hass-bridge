@@ -6,7 +6,6 @@ import { Writable } from "type-fest";
 describe("buildDevice", () => {
   beforeEach(() => {
     (env as Writable<typeof env>).DESCRIPTION_LANGUAGE = "ja";
-    vi.resetModules();
     vi.clearAllMocks();
   });
 

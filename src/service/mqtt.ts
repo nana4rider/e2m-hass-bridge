@@ -17,7 +17,7 @@ export type MqttClient = {
 export default async function initializeMqttClient(
   subscribeTopics: string[],
   handleMessage: (topic: string, message: string) => void | Promise<void>,
-) {
+): Promise<MqttClient> {
   const client = await mqttjs.connectAsync(env.MQTT_BROKER, {
     username: env.MQTT_USERNAME,
     password: env.MQTT_PASSWORD,
