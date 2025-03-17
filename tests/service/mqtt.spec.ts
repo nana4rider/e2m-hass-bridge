@@ -17,7 +17,6 @@ vi.mock("mqtt", () => ({
 }));
 
 beforeEach(() => {
-  vi.resetModules();
   vi.clearAllMocks();
 
   const mockMqttClient: Partial<MqttClient> = {
