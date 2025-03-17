@@ -37,7 +37,7 @@ describe("initializeMqttClient", () => {
     await mqtt.close();
 
     // MQTTクライアントの接続確認
-    expect(vi.mocked(mqttjs.connectAsync)).toHaveBeenCalledWith(
+    expect(mqttjs.connectAsync).toHaveBeenCalledWith(
       env.MQTT_BROKER,
       expect.objectContaining({
         username: env.MQTT_USERNAME,
