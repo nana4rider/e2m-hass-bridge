@@ -3,24 +3,28 @@ import { buildDevice, buildOrigin } from "@/payload/builder";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import { Writable } from "type-fest";
 
+const writableEnv: Writable<typeof env> = env;
+
 describe("buildDevice", () => {
   beforeEach(() => {
-    (env as Writable<typeof env>).DESCRIPTION_LANGUAGE = "ja";
+    writableEnv.DESCRIPTION_LANGUAGE = "ja";
     vi.clearAllMocks();
   });
 
   test("未定義のmanufacturer", () => {
-    const actual = buildDevice({
+    const mockApiDevice: Partial<ApiDevice> = {
       id: "test_id",
       ip: "127.0.0.1",
       descriptions: {
         ja: "test_descriptions",
-        eh: "test_descriptions",
+        en: "test_descriptions",
       },
       values: {
-        manufacturer: { value: "xxxxxx" },
+        manufacturer: { value: "xxxxxx", name: "", updated: "" },
       },
-    } as unknown as ApiDevice);
+    };
+
+    const actual = buildDevice(mockApiDevice as ApiDevice);
 
     expect(actual).toEqual({
       device: {
@@ -32,7 +36,7 @@ describe("buildDevice", () => {
   });
 
   test("定義済みのmanufacturer", () => {
-    const actual = buildDevice({
+    const mockApiDevice: Partial<ApiDevice> = {
       id: "test_id",
       ip: "127.0.0.1",
       descriptions: {
@@ -40,9 +44,10 @@ describe("buildDevice", () => {
         en: "test_descriptions",
       },
       values: {
-        manufacturer: { value: "ffffff" },
+        manufacturer: { value: "ffffff", name: "", updated: "" },
       },
-    } as unknown as ApiDevice);
+    };
+    const actual = buildDevice(mockApiDevice as ApiDevice);
 
     expect(actual).toEqual({
       device: {
@@ -54,7 +59,7 @@ describe("buildDevice", () => {
   });
 
   test("productCodeが存在する", () => {
-    const actual = buildDevice({
+    const mockApiDevice: Partial<ApiDevice> = {
       id: "test_id",
       ip: "127.0.0.1",
       descriptions: {
@@ -62,10 +67,11 @@ describe("buildDevice", () => {
         en: "test_descriptions",
       },
       values: {
-        manufacturer: { value: "manufacturer" },
-        productCode: { value: "6563686f6e6574" },
+        manufacturer: { value: "manufacturer", name: "", updated: "" },
+        productCode: { value: "6563686f6e6574", name: "", updated: "" },
       },
-    } as unknown as ApiDevice);
+    };
+    const actual = buildDevice(mockApiDevice as ApiDevice);
 
     expect(actual).toEqual({
       device: {
@@ -78,9 +84,9 @@ describe("buildDevice", () => {
   });
 
   test("英語設定", () => {
-    (env as Writable<typeof env>).DESCRIPTION_LANGUAGE = "en";
+    writableEnv.DESCRIPTION_LANGUAGE = "en";
 
-    const actual = buildDevice({
+    const mockApiDevice: Partial<ApiDevice> = {
       id: "test_id",
       ip: "127.0.0.1",
       descriptions: {
@@ -88,10 +94,11 @@ describe("buildDevice", () => {
         en: "test_descriptions_en",
       },
       values: {
-        manufacturer: { value: "manufacturer" },
-        productCode: { value: "6563686f6e6574" },
+        manufacturer: { value: "manufacturer", name: "", updated: "" },
+        productCode: { value: "6563686f6e6574", name: "", updated: "" },
       },
-    } as unknown as ApiDevice);
+    };
+    const actual = buildDevice(mockApiDevice as ApiDevice);
 
     expect(actual).toEqual({
       device: {
@@ -104,18 +111,19 @@ describe("buildDevice", () => {
   });
 
   test("日本語設定", () => {
-    const actual = buildDevice({
+    const mockApiDevice: Partial<ApiDevice> = {
       id: "test_id",
       ip: "127.0.0.1",
       descriptions: {
         ja: "test_descriptions_ja",
-        eh: "test_descriptions_en",
+        en: "test_descriptions_en",
       },
       values: {
-        manufacturer: { value: "manufacturer" },
-        productCode: { value: "6563686f6e6574" },
+        manufacturer: { value: "manufacturer", name: "", updated: "" },
+        productCode: { value: "6563686f6e6574", name: "", updated: "" },
       },
-    } as unknown as ApiDevice);
+    };
+    const actual = buildDevice(mockApiDevice as ApiDevice);
 
     expect(actual).toEqual({
       device: {
