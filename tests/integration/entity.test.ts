@@ -1,7 +1,7 @@
 import { buildDiscoveryEntries } from "@/payload/builder";
 import { parseJson } from "@/util/dataTransformUtil";
 import { getAutoRequestProperties } from "@/util/deviceUtil";
-import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
+import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import { readFile } from "fs/promises";
 import { glob, globSync } from "glob";
 import * as path from "path";

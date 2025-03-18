@@ -25,7 +25,7 @@ import {
   getSimpleOverridePayload,
 } from "@/util/deviceUtil";
 import assert from "assert";
-import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
+import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import {
   homepage as packageHomepage,
   name as packageName,

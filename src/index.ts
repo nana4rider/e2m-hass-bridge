@@ -1,7 +1,7 @@
 import logger from "@/logger";
 import setupMqttDeviceManager from "@/manager/mqttDeviceManager";
 import initializeHttpServer from "@/service/http";
-import { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
+import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 
 async function main() {
   logger.info("start");
