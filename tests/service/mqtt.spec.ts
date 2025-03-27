@@ -1,6 +1,7 @@
 import env from "@/env";
 import initializeMqttClient from "@/service/mqtt";
 import mqttjs, { IPublishPacket, MqttClient, OnMessageCallback } from "mqtt";
+import { name as packageName } from "package.json";
 import { setTimeout } from "timers/promises";
 
 const mockSubscribeAsync = vi.fn();
@@ -40,6 +41,9 @@ describe("initializeMqttClient", () => {
     expect(mqttjs.connectAsync).toHaveBeenCalledWith(
       env.MQTT_BROKER,
       expect.objectContaining({
+        clientId: expect.stringMatching(
+          `^${packageName}_[0-9a-z]{8}$`,
+        ) as string,
         username: env.MQTT_USERNAME,
         password: env.MQTT_PASSWORD,
       }),

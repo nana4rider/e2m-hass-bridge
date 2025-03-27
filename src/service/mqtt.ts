@@ -1,6 +1,8 @@
 import env from "@/env";
 import logger from "@/logger";
+import { randomBytes } from "crypto";
 import mqttjs from "mqtt";
+import { name as packageName } from "package.json";
 import { setTimeout } from "timers/promises";
 
 export type MqttClient = {
@@ -19,6 +21,7 @@ export default async function initializeMqttClient(
   handleMessage: (topic: string, message: string) => void | Promise<void>,
 ): Promise<MqttClient> {
   const client = await mqttjs.connectAsync(env.MQTT_BROKER, {
+    clientId: `${packageName}_${randomBytes(4).toString("hex")}`,
     username: env.MQTT_USERNAME,
     password: env.MQTT_PASSWORD,
   });
