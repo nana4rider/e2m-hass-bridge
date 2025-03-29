@@ -1,5 +1,5 @@
 import env from "@/env";
-import { Payload } from "@/payload/payloadType";
+import type { Payload } from "@/payload/payloadType";
 import { formattedPythonDict } from "@/util/dataTransformUtil";
 import { isElStateType } from "@/util/deviceUtil";
 import assert from "assert";

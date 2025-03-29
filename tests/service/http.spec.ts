@@ -2,7 +2,7 @@ import {
   getCompositeComponentConfigs,
   getSimpleComponentConfigs,
 } from "@/payload/builder";
-import {
+import type {
   CompositeComponentConfig,
   SimpleComponentConfig,
 } from "@/payload/payloadType";
@@ -12,8 +12,8 @@ import type {
   ApiDevice,
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
-import { FastifyInstance } from "fastify";
-import { Mock } from "vitest";
+import type { FastifyInstance } from "fastify";
+import type { Mock } from "vitest";
 
 vi.mock("@/payload/builder", () => {
   return {

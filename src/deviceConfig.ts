@@ -1,6 +1,6 @@
 // ご自宅の家電で正しく動作しない場合はPRをお願いします。
 // https://github.com/nana4rider/e2m-hass-bridge/pulls
-import { CompositeComponentId, Payload } from "@/payload/payloadType";
+import type { CompositeComponentId, Payload } from "@/payload/payloadType";
 
 /**
  * メーカーコード

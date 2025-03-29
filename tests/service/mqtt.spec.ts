@@ -1,6 +1,7 @@
 import env from "@/env";
 import initializeMqttClient from "@/service/mqtt";
-import mqttjs, { IPublishPacket, MqttClient, OnMessageCallback } from "mqtt";
+import type { IPublishPacket, MqttClient, OnMessageCallback } from "mqtt";
+import mqttjs from "mqtt";
 import { name as packageName } from "package.json";
 import { setTimeout } from "timers/promises";
 

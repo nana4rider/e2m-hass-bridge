@@ -1,4 +1,6 @@
-import envalid, { accessorMiddleware, CleanedEnv, CleanOptions } from "envalid";
+import type { CleanedEnv, CleanOptions } from "envalid";
+import type envalid from "envalid";
+import { accessorMiddleware } from "envalid";
 import { getSanitizedEnv } from "envalid/dist/core";
 
 vi.mock("envalid", async () => {

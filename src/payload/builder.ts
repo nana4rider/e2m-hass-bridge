@@ -3,7 +3,7 @@ import env from "@/env";
 import logger from "@/logger";
 import buildClimate from "@/payload/composite/climate";
 import buildCover from "@/payload/composite/cover";
-import {
+import type {
   CompositeComponentConfig,
   Payload,
   SimpleComponent,

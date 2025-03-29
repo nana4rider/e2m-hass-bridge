@@ -1,4 +1,4 @@
-import { Payload } from "@/payload/payloadType";
+import type { Payload } from "@/payload/payloadType";
 import type {
   ApiDevice,
   ApiDeviceProperty,

@@ -23,7 +23,8 @@ export default [
       },
     },
     rules: {
-      "@typescript-eslint/no-floating-promises": ["error"],
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {

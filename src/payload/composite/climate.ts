@@ -1,5 +1,5 @@
 import env from "@/env";
-import { Payload } from "@/payload/payloadType";
+import type { Payload } from "@/payload/payloadType";
 import { formattedPythonDict, reverseKeyValue } from "@/util/dataTransformUtil";
 import {
   getDeviceProperties,

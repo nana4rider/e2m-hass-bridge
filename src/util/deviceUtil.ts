@@ -1,18 +1,18 @@
+import type { DeviceConfig } from "@/deviceConfig";
 import {
-  DeviceConfig,
   GlobalDeviceConfig,
   Manufacturer,
   ManufacturerDeviceConfig,
   UnitMapping,
 } from "@/deviceConfig";
-import { CompositeComponentId, Payload } from "@/payload/payloadType";
+import type { CompositeComponentId, Payload } from "@/payload/payloadType";
 import { hex2ascii } from "@/util/dataTransformUtil";
 import assert from "assert";
 import type {
   ApiDevice,
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
-import {
+import type {
   ElDataType,
   ElNumberType,
   ElStateType,

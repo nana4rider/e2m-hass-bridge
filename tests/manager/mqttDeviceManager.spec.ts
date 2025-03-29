@@ -6,14 +6,15 @@ import {
   buildDiscoveryEntries,
   buildOrigin,
 } from "@/payload/builder";
-import initializeMqttClient, { MqttClient } from "@/service/mqtt";
+import type { MqttClient } from "@/service/mqtt";
+import initializeMqttClient from "@/service/mqtt";
 import { parseJson } from "@/util/dataTransformUtil";
 import { getAutoRequestProperties } from "@/util/deviceUtil";
 import type {
   ApiDevice,
   ApiDeviceSummary,
 } from "echonetlite2mqtt/server/ApiTypes";
-import { Mock } from "vitest";
+import type { Mock } from "vitest";
 
 vi.mock("@/payload/builder", () => ({
   buildDevice: vi.fn(),

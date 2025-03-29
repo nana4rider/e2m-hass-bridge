@@ -5,7 +5,7 @@ import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
 import { readFile } from "fs/promises";
 import { glob, globSync } from "glob";
 import * as path from "path";
-import { JsonObject } from "type-fest";
+import type { JsonObject } from "type-fest";
 import { fileURLToPath } from "url";
 
 async function readJsonFile<T>(filePath: string): Promise<T> {

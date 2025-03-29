@@ -1,7 +1,7 @@
 import env from "@/env";
 import { buildDevice, buildOrigin } from "@/payload/builder";
 import type { ApiDevice } from "echonetlite2mqtt/server/ApiTypes";
-import { Writable } from "type-fest";
+import type { Writable } from "type-fest";
 
 const writableEnv: Writable<typeof env> = env;
 

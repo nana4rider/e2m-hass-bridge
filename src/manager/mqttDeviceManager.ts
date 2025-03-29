@@ -6,11 +6,14 @@ import {
   buildDiscoveryEntries,
   buildOrigin,
 } from "@/payload/builder";
-import { Payload } from "@/payload/payloadType";
+import type { Payload } from "@/payload/payloadType";
 import initializeMqttClient from "@/service/mqtt";
 import { parseJson } from "@/util/dataTransformUtil";
 import { getAutoRequestProperties } from "@/util/deviceUtil";
-import { ApiDevice, ApiDeviceSummary } from "echonetlite2mqtt/server/ApiTypes";
+import type {
+  ApiDevice,
+  ApiDeviceSummary,
+} from "echonetlite2mqtt/server/ApiTypes";
 import { setTimeout } from "timers/promises";
 
 export default async function setupMqttDeviceManager(
