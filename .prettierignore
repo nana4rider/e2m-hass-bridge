@@ -1,3 +1,4 @@
+package-lock.json
 dist
-tests/**/*.json
 coverage
+tests/**/*.json

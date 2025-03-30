@@ -1,6 +1,6 @@
 {
   "name": "e2m-hass-bridge",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "author": "nana4rider",
   "license": "ISC",
   "main": "dist/index.js",
@@ -21,7 +21,8 @@
     "*.ts": [
       "eslint --max-warnings 0",
       "prettier --check"
-    ]
+    ],
+    "*.{js,json,md,yml,yaml}": "prettier --check"
   },
   "dependencies": {
     "envalid": "^8.0.0",
@@ -30,13 +31,13 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@esbuild-plugins/tsconfig-paths": "^0.1.2",
     "@eslint/js": "^9.17.0",
     "@types/node": "^22.13.14",
     "@vitest/coverage-v8": "^3.0.8",
     "@vitest/eslint-plugin": "^1.1.37",
     "echonetlite2mqtt": "github:banban525/echonetlite2mqtt#v3.4.0",
     "esbuild": "^0.24.2",
-    "esbuild-plugin-alias": "^0.2.1",
     "eslint": "^9.17.0",
     "glob": "^11.0.0",
     "globals": "^15.14.0",
