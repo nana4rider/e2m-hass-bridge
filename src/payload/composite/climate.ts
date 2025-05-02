@@ -82,7 +82,7 @@ function buildOperationMode(apiDevice: ApiDevice): Payload {
   {"operationStatus": "false"}
 {% else %}
   {% set mapping = ${formattedPythonDict(reverseKeyValue(OperationModeMapping))} %}
-  {{ {"operationStatus": "true", "operationMode": mapping[value]} | tojson }}
+  {"operationStatus": "true", "operationMode": "{{ mapping[value] }}"}
 {% endif %}
 `.trim(),
   };
