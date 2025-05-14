@@ -17,4 +17,4 @@ COPY --chown=node:node --from=build /app/dist dist
 USER node
 EXPOSE 3000
 
-ENTRYPOINT ["node", "dist/index"]
+ENTRYPOINT ["node", "--no-deprecation", "dist/index"]
