@@ -76,6 +76,9 @@ function buildOperationMode(apiDevice: ApiDevice): Payload {
   {{ mapping.get(value_json.operationMode) }}
 {% endif %}
 `.trim(),
+    power_command_topic: `${apiDevice.mqttTopics}/properties/set`,
+    payload_on: '{"operationStatus": "true"}',
+    payload_off: '{"operationStatus": "false"}',
     mode_command_topic: `${apiDevice.mqttTopics}/properties/set`,
     mode_command_template: `
 {% if value == 'off' %}
