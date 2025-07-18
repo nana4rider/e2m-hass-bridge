@@ -38,7 +38,7 @@ const env = cleanEnv(process.env, {
   }),
   AUTO_REQUEST_INTERVAL: num({
     desc: "定期的に自動リクエストする間隔",
-    default: 60000,
+    default: 180000,
     devDefault: testOnly(100),
   }),
 });

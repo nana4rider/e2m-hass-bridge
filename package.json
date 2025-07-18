@@ -1,6 +1,6 @@
 {
   "name": "e2m-hass-bridge",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "author": "nana4rider",
   "license": "ISC",
   "main": "dist/index.js",
