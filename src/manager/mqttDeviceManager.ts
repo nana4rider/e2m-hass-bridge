@@ -22,6 +22,9 @@ export default async function setupMqttDeviceManager(
   const origin = buildOrigin();
 
   const subscribeDeviceTopics = new Set<string>();
+
+  const mqtt = await initializeMqttClient([env.ECHONETLITE2MQTT_BASE_TOPIC]);
+
   const handleDeviceList = (apiDeviceSummaries: ApiDeviceSummary[]) => {
     logger.info("[MQTT] handleDeviceList");
     apiDeviceSummaries.forEach(({ deviceType, mqttTopics }) => {
@@ -90,10 +93,7 @@ export default async function setupMqttDeviceManager(
     }
   };
 
-  const mqtt = await initializeMqttClient(
-    [env.ECHONETLITE2MQTT_BASE_TOPIC],
-    handleMessage,
-  );
+  mqtt.setMessageHandler(handleMessage);
 
   // 更新通知をしないプロパティに対して、定期的に自動リクエストする
   let isAutoRequestRunning = true;

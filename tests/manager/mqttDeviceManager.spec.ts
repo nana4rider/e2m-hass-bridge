@@ -40,6 +40,7 @@ describe("setupMqttDeviceManager", () => {
     taskQueueSize: 0,
     addSubscribe: vi.fn(),
     close: vi.fn(),
+    setMessageHandler: vi.fn(),
   };
 
   beforeEach(() => {
@@ -69,10 +70,9 @@ describe("setupMqttDeviceManager", () => {
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
 
-    expect(initializeMqttClient).toHaveBeenCalledWith(
-      [env.ECHONETLITE2MQTT_BASE_TOPIC],
-      expect.any(Function),
-    );
+    expect(initializeMqttClient).toHaveBeenCalledWith([
+      env.ECHONETLITE2MQTT_BASE_TOPIC,
+    ]);
   });
 
   test("デバイスリストを処理し、新しいトピックを購読する", async () => {
@@ -83,12 +83,16 @@ describe("setupMqttDeviceManager", () => {
     ] as ApiDeviceSummary[];
 
     const handleMessage = vi.fn();
-    vi.mocked(initializeMqttClient).mockImplementation(
-      (_subscribeTopics, handler: (topic: string, message: string) => void) => {
-        handleMessage.mockImplementation(handler);
-        return Promise.resolve(mockMqttClient);
-      },
-    );
+    vi.mocked(initializeMqttClient).mockImplementation(() => {
+      return Promise.resolve({
+        ...mockMqttClient,
+        setMessageHandler: (
+          handler: (topic: string, message: string) => void,
+        ) => {
+          handleMessage.mockImplementation(handler);
+        },
+      });
+    });
 
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
@@ -116,7 +120,9 @@ describe("setupMqttDeviceManager", () => {
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
 
-    const handleMessage = vi.mocked(initializeMqttClient).mock.calls[0][1];
+    const setMessageHandlerCall = vi.mocked(mockMqttClient.setMessageHandler)
+      .mock.calls[0];
+    const handleMessage = setMessageHandlerCall[0];
 
     await handleMessage(
       env.ECHONETLITE2MQTT_BASE_TOPIC,
@@ -152,12 +158,16 @@ describe("setupMqttDeviceManager", () => {
   test("未知のトピックは無視する", async () => {
     const targetDevices = new Map<string, ApiDevice>();
     const handleMessage = vi.fn();
-    vi.mocked(initializeMqttClient).mockImplementation(
-      (_subscribeTopics, handler: (topic: string, message: string) => void) => {
-        handleMessage.mockImplementation(handler);
-        return Promise.resolve(mockMqttClient);
-      },
-    );
+    vi.mocked(initializeMqttClient).mockImplementation(() => {
+      return Promise.resolve({
+        ...mockMqttClient,
+        setMessageHandler: (
+          handler: (topic: string, message: string) => void,
+        ) => {
+          handleMessage.mockImplementation(handler);
+        },
+      });
+    });
 
     const logErrorSpy = vi.spyOn(logger, "error");
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
@@ -177,12 +187,16 @@ describe("setupMqttDeviceManager", () => {
     ] as ApiDeviceSummary[];
 
     const handleMessage = vi.fn();
-    vi.mocked(initializeMqttClient).mockImplementation(
-      (_subscribeTopics, handler: (topic: string, message: string) => void) => {
-        handleMessage.mockImplementation(handler);
-        return Promise.resolve(mockMqttClient);
-      },
-    );
+    vi.mocked(initializeMqttClient).mockImplementation(() => {
+      return Promise.resolve({
+        ...mockMqttClient,
+        setMessageHandler: (
+          handler: (topic: string, message: string) => void,
+        ) => {
+          handleMessage.mockImplementation(handler);
+        },
+      });
+    });
 
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
