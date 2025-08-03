@@ -50,11 +50,11 @@ export function getDeviceProperties<R extends boolean = false>(
 }
 
 export function getManufacturerName(apiDevice: ApiDevice): string {
-  const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
-  const entry = Object.entries(Manufacturer).find(
-    ([, value]) => value === manufacturer,
+  const manufacturerCode = getDeviceValue(apiDevice, "manufacturer", true);
+  return (
+    Manufacturer[manufacturerCode as keyof typeof Manufacturer] ??
+    manufacturerCode
   );
-  return entry ? entry[0] : manufacturer;
 }
 
 export function getAsciiProductCode(apiDevice: ApiDevice): string | undefined {
@@ -99,13 +99,16 @@ export function isBooleanType(data: ElDataType): data is ElStateType {
   );
 }
 
-export function getManifactureConfig<T extends keyof DeviceConfig>(
+export function getManufacturerConfig<T extends keyof DeviceConfig>(
   manufacturer: string,
   key: T,
 ): DeviceConfig[T] | undefined {
   if (!(manufacturer in ManufacturerDeviceConfig)) return undefined;
 
-  const configMap = ManufacturerDeviceConfig[manufacturer];
+  const configMap =
+    ManufacturerDeviceConfig[
+      manufacturer as keyof typeof ManufacturerDeviceConfig
+    ];
   if (!configMap) return undefined;
 
   return configMap[key];
@@ -122,7 +125,7 @@ export function getSimpleOverridePayload(
   };
   const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
   if (!(manufacturer in ManufacturerDeviceConfig)) return payload;
-  const overrideConfig = getManifactureConfig(manufacturer, "override");
+  const overrideConfig = getManufacturerConfig(manufacturer, "override");
 
   return {
     ...payload,
@@ -139,7 +142,7 @@ export function getCompositeOverridePayload(
   };
   const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
   if (!(manufacturer in ManufacturerDeviceConfig)) return payload;
-  const overrideConfig = getManifactureConfig(manufacturer, "override");
+  const overrideConfig = getManufacturerConfig(manufacturer, "override");
 
   return {
     ...payload,
@@ -155,7 +158,7 @@ export function getAutoRequestProperties(apiDevice: ApiDevice): string[] {
   ];
   const manufacturer = getDeviceValue(apiDevice, "manufacturer", true);
   if (manufacturer in ManufacturerDeviceConfig) {
-    const autoRequestProperties = getManifactureConfig(
+    const autoRequestProperties = getManufacturerConfig(
       manufacturer,
       "autoRequestProperties",
     );
