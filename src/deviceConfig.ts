@@ -3,16 +3,6 @@
 import type { CompositeComponentId, Payload } from "@/payload/payloadType";
 
 /**
- * メーカーコード定数
- * 使用頻度の高いメーカーのみ定数として定義
- */
-export const MANUFACTURER = {
-  PANASONIC: "00000b",
-  MOEKADEN_ROOM: "000000",
-  KADEN_EMULATOR: "ffffff",
-} as const;
-
-/**
  * メーカーコード → 会社名のマッピング
  * @see https://echonet.jp/wp/wp-content/uploads/pdf/General/Echonet/ManufacturerCode/list_code.pdf
  */
@@ -256,6 +246,16 @@ export const Manufacturer = {
   ffffff: "KadenEmulator",
 } as const;
 type ManufacturerCode = keyof typeof Manufacturer;
+
+/**
+ * メーカーコード定数
+ * 使用頻度の高いメーカーのみ定数として定義
+ */
+export const MANUFACTURER: Record<string, ManufacturerCode> = {
+  PANASONIC: "00000b",
+  MOEKADEN_ROOM: "000000",
+  KADEN_EMULATOR: "ffffff",
+} as const;
 
 /**
  * 検出を除外するデバイスタイプのパターン
