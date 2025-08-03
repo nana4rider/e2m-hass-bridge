@@ -19,9 +19,7 @@ export type MqttClient = {
   ) => void;
 };
 
-export default async function initializeMqttClient(
-  subscribeTopics: string[],
-): Promise<MqttClient> {
+export default async function initializeMqttClient(): Promise<MqttClient> {
   const client = await mqttjs.connectAsync(env.MQTT_BROKER, {
     clientId: `${packageName}_${randomBytes(4).toString("hex")}`,
     username: env.MQTT_USERNAME,
@@ -60,12 +58,6 @@ export default async function initializeMqttClient(
   };
 
   logger.info("[MQTT] connected");
-
-  await client.subscribeAsync(subscribeTopics);
-
-  for (const topic of subscribeTopics) {
-    logger.debug(`[MQTT] subscribe topic: ${topic}`);
-  }
 
   let isMqttTaskRunning = true;
   const mqttTask = (async () => {
@@ -107,6 +99,7 @@ export default async function initializeMqttClient(
 
   const addSubscribe = (topic: string): void => {
     taskQueue.push(async () => {
+      logger.debug(`[MQTT] subscribe topic: ${topic}`);
       await client.subscribeAsync(topic);
     });
   };

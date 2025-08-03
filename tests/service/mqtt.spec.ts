@@ -9,6 +9,7 @@ const mockSubscribeAsync = vi.fn();
 const mockPublishAsync = vi.fn();
 const mockEndAsync = vi.fn();
 const mockOn = vi.fn();
+const mockRemoveListener = vi.fn();
 
 const mockHandleMessage = vi.fn();
 
@@ -26,6 +27,7 @@ beforeEach(() => {
     publishAsync: mockPublishAsync,
     endAsync: mockEndAsync,
     on: mockOn,
+    removeListener: mockRemoveListener,
   };
   vi.mocked(mqttjs.connectAsync).mockResolvedValue(
     mockMqttClient as MqttClient,
@@ -34,8 +36,7 @@ beforeEach(() => {
 
 describe("initializeMqttClient", () => {
   test("MQTTクライアントが正常に接続される", async () => {
-    const mqtt = await initializeMqttClient(["topic/test"]);
-    mqtt.setMessageHandler(mockHandleMessage);
+    const mqtt = await initializeMqttClient();
 
     await mqtt.close();
 
@@ -50,15 +51,12 @@ describe("initializeMqttClient", () => {
         password: env.MQTT_PASSWORD,
       }),
     );
-
-    // トピックのサブスクライブ確認
-    expect(mockSubscribeAsync).toHaveBeenCalledWith(["topic/test"]);
   });
 
   test("メッセージを受信するとhandleMessageが呼ばれる", async () => {
     const mockPayload = Buffer.from("test message");
 
-    const mqtt = await initializeMqttClient(["topic/test"]);
+    const mqtt = await initializeMqttClient();
     mqtt.setMessageHandler(mockHandleMessage);
 
     // メッセージイベントをトリガー
@@ -83,7 +81,7 @@ describe("initializeMqttClient", () => {
       throw new Error("test error");
     });
 
-    const mqtt = await initializeMqttClient(["topic/test"]);
+    const mqtt = await initializeMqttClient();
     mqtt.setMessageHandler(mockHandleMessage);
 
     const onMessageCallback = mockOn.mock.calls.find(
@@ -105,7 +103,7 @@ describe("initializeMqttClient", () => {
       Promise.reject(new Error("test error")),
     );
 
-    const mqtt = await initializeMqttClient(["topic/test"]);
+    const mqtt = await initializeMqttClient();
     mqtt.setMessageHandler(mockHandleMessage);
 
     const onMessageCallback = mockOn.mock.calls.find(
@@ -120,9 +118,34 @@ describe("initializeMqttClient", () => {
     await mqtt.close();
   });
 
-  test("publishがタスクキューに追加される", async () => {
-    const mqtt = await initializeMqttClient(["topic/test"]);
+  test("handleMessageが既に設定されている場合、再登録を行う", async () => {
+    const mockPayload = Buffer.from("test message");
+
+    const mqtt = await initializeMqttClient();
+    mqtt.setMessageHandler(vi.fn());
     mqtt.setMessageHandler(mockHandleMessage);
+
+    // メッセージイベントをトリガー
+    const onMessageCallback = mockOn.mock.calls.findLast(
+      ([event]) => event === "message",
+    )?.[1] as OnMessageCallback;
+    onMessageCallback?.("topic/test", mockPayload, {} as IPublishPacket);
+
+    await mqtt.close();
+
+    expect(mockOn).toHaveBeenCalledTimes(2);
+    expect(mockRemoveListener).toHaveBeenCalledWith(
+      "message",
+      expect.any(Function),
+    );
+    expect(mockHandleMessage).toHaveBeenCalledWith(
+      "topic/test",
+      "test message",
+    );
+  });
+
+  test("publishがタスクキューに追加される", async () => {
+    const mqtt = await initializeMqttClient();
 
     // publishを呼び出す
     mqtt.publish("topic/publish", "test message", { retain: true });
@@ -134,7 +157,7 @@ describe("initializeMqttClient", () => {
   });
 
   test("addSubscribeがタスクキューに追加される", async () => {
-    const mqtt = await initializeMqttClient(["topic/test"]);
+    const mqtt = await initializeMqttClient();
 
     // addSubscribeを呼び出す
     mqtt.addSubscribe("topic/new");
@@ -151,7 +174,7 @@ describe("initializeMqttClient", () => {
       return Promise.resolve();
     });
 
-    const mqtt = await initializeMqttClient(["topic/test"]);
+    const mqtt = await initializeMqttClient();
 
     mqtt.publish("topic", "message");
 
@@ -171,8 +194,7 @@ describe("initializeMqttClient", () => {
       return Promise.resolve();
     });
 
-    const mqtt = await initializeMqttClient(["topic/test"]);
-    mqtt.setMessageHandler(mockHandleMessage);
+    const mqtt = await initializeMqttClient();
 
     mqtt.publish("topic", "message");
 
