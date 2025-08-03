@@ -70,9 +70,9 @@ describe("setupMqttDeviceManager", () => {
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
 
-    expect(initializeMqttClient).toHaveBeenCalledWith([
+    expect(mockMqttClient.addSubscribe).toHaveBeenCalledWith(
       env.ECHONETLITE2MQTT_BASE_TOPIC,
-    ]);
+    );
   });
 
   test("デバイスリストを処理し、新しいトピックを購読する", async () => {
