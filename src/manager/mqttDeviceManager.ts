@@ -90,10 +90,8 @@ export default async function setupMqttDeviceManager(
     }
   };
 
-  const mqtt = await initializeMqttClient(
-    [env.ECHONETLITE2MQTT_BASE_TOPIC],
-    handleMessage,
-  );
+  const mqtt = await initializeMqttClient([env.ECHONETLITE2MQTT_BASE_TOPIC]);
+  mqtt.setMessageHandler(handleMessage);
 
   // 更新通知をしないプロパティに対して、定期的に自動リクエストする
   let isAutoRequestRunning = true;

@@ -14,11 +14,13 @@ export type MqttClient = {
   ) => void;
   addSubscribe: (topic: string) => void;
   close: (wait?: boolean) => Promise<void>;
+  setMessageHandler: (
+    handler: (topic: string, message: string) => void | Promise<void>,
+  ) => void;
 };
 
 export default async function initializeMqttClient(
   subscribeTopics: string[],
-  handleMessage: (topic: string, message: string) => void | Promise<void>,
 ): Promise<MqttClient> {
   const client = await mqttjs.connectAsync(env.MQTT_BROKER, {
     clientId: `${packageName}_${randomBytes(4).toString("hex")}`,
@@ -26,20 +28,36 @@ export default async function initializeMqttClient(
     password: env.MQTT_PASSWORD,
   });
   const taskQueue: (() => Promise<void>)[] = [];
+  let currentMessageHandler:
+    | ((topic: string, payload: Buffer) => void)
+    | undefined;
 
-  client.on("message", (topic, payload) => {
-    logger.debug(`[MQTT] receive topic: ${topic}`);
-    try {
-      const result = handleMessage(topic, payload.toString());
-      if (result instanceof Promise) {
-        result.catch((err) => {
-          logger.error("[MQTT] message error:", err);
-        });
-      }
-    } catch (err) {
-      logger.error("[MQTT] message error:", err);
+  const setupMessageHandler = (
+    handler: (topic: string, message: string) => void | Promise<void>,
+  ) => {
+    // 既存のリスナーを削除
+    if (currentMessageHandler) {
+      client.removeListener("message", currentMessageHandler);
     }
-  });
+
+    // 新しいリスナーを作成
+    currentMessageHandler = (topic, payload) => {
+      logger.debug(`[MQTT] receive topic: ${topic}`);
+      try {
+        const result = handler(topic, payload.toString());
+        if (result instanceof Promise) {
+          result.catch((err) => {
+            logger.error("[MQTT] message error:", err);
+          });
+        }
+      } catch (err) {
+        logger.error("[MQTT] message error:", err);
+      }
+    };
+
+    // 新しいリスナーを登録
+    client.on("message", currentMessageHandler);
+  };
 
   logger.info("[MQTT] connected");
 
@@ -100,5 +118,8 @@ export default async function initializeMqttClient(
     publish,
     addSubscribe,
     close,
+    setMessageHandler: (handler) => {
+      setupMessageHandler(handler);
+    },
   };
 }

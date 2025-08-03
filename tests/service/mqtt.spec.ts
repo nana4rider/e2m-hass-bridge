@@ -34,7 +34,8 @@ beforeEach(() => {
 
 describe("initializeMqttClient", () => {
   test("MQTTクライアントが正常に接続される", async () => {
-    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
+    const mqtt = await initializeMqttClient(["topic/test"]);
+    mqtt.setMessageHandler(mockHandleMessage);
 
     await mqtt.close();
 
@@ -57,7 +58,8 @@ describe("initializeMqttClient", () => {
   test("メッセージを受信するとhandleMessageが呼ばれる", async () => {
     const mockPayload = Buffer.from("test message");
 
-    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
+    const mqtt = await initializeMqttClient(["topic/test"]);
+    mqtt.setMessageHandler(mockHandleMessage);
 
     // メッセージイベントをトリガー
     const onMessageCallback = mockOn.mock.calls.find(
@@ -81,7 +83,8 @@ describe("initializeMqttClient", () => {
       throw new Error("test error");
     });
 
-    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
+    const mqtt = await initializeMqttClient(["topic/test"]);
+    mqtt.setMessageHandler(mockHandleMessage);
 
     const onMessageCallback = mockOn.mock.calls.find(
       ([event]) => event === "message",
@@ -102,7 +105,8 @@ describe("initializeMqttClient", () => {
       Promise.reject(new Error("test error")),
     );
 
-    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
+    const mqtt = await initializeMqttClient(["topic/test"]);
+    mqtt.setMessageHandler(mockHandleMessage);
 
     const onMessageCallback = mockOn.mock.calls.find(
       ([event]) => event === "message",
@@ -117,7 +121,8 @@ describe("initializeMqttClient", () => {
   });
 
   test("publishがタスクキューに追加される", async () => {
-    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
+    const mqtt = await initializeMqttClient(["topic/test"]);
+    mqtt.setMessageHandler(mockHandleMessage);
 
     // publishを呼び出す
     mqtt.publish("topic/publish", "test message", { retain: true });
@@ -129,7 +134,7 @@ describe("initializeMqttClient", () => {
   });
 
   test("addSubscribeがタスクキューに追加される", async () => {
-    const mqtt = await initializeMqttClient(["topic/test"], () => {});
+    const mqtt = await initializeMqttClient(["topic/test"]);
 
     // addSubscribeを呼び出す
     mqtt.addSubscribe("topic/new");
@@ -146,7 +151,7 @@ describe("initializeMqttClient", () => {
       return Promise.resolve();
     });
 
-    const mqtt = await initializeMqttClient(["topic/test"], () => {});
+    const mqtt = await initializeMqttClient(["topic/test"]);
 
     mqtt.publish("topic", "message");
 
@@ -166,7 +171,8 @@ describe("initializeMqttClient", () => {
       return Promise.resolve();
     });
 
-    const mqtt = await initializeMqttClient(["topic/test"], mockHandleMessage);
+    const mqtt = await initializeMqttClient(["topic/test"]);
+    mqtt.setMessageHandler(mockHandleMessage);
 
     mqtt.publish("topic", "message");
 
