@@ -51,7 +51,9 @@ export function getSimpleComponent(
     // 更新不可
     if (
       isBooleanType(data) ||
-      (isElStateType(data) && data.enum[0].name === "open")
+      (isElStateType(data) &&
+        data.enum.length === 2 &&
+        data.enum[0].name === "open")
     ) {
       return "binary_sensor";
     } else {
