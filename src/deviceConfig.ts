@@ -112,6 +112,7 @@ export const ManufacturerDeviceConfig: Readonly<
         "roomTemperature",
         "humidity",
       ],
+      electricWaterHeater: ["remainingWater"],
     },
     climate: {
       fanmodeMapping: {
