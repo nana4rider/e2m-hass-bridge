@@ -1,5 +1,5 @@
 import type { Payload } from "@/payload/payloadType";
-import { isBooleanType } from "@/util/deviceUtil";
+import { isBooleanType, isElStateType } from "@/util/deviceUtil";
 import assert from "assert";
 import type {
   ApiDevice,
@@ -11,7 +11,13 @@ export default function buildBinarySensor(
   property: ApiDeviceProperty,
 ): Payload {
   const { data } = property.schema;
-  assert(isBooleanType(data));
+  assert(
+    isBooleanType(data) ||
+      (isElStateType(data) &&
+        data.enum.length === 2 &&
+        data.enum[0].name === "open"),
+    `Property ${property.name} is not a valid binary sensor type`,
+  );
 
   const [on, off] = data.enum;
   const deviceClass = getDeviceClass(apiDevice, property);
