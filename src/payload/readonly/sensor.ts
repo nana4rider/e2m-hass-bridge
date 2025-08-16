@@ -63,19 +63,58 @@ export default function buildSensor(
     if (stateClass !== undefined) {
       payload.state_class = stateClass;
     }
+
+    const deviceClassFromUnit = getDeviceClassFromUnit(unit);
+    if (deviceClassFromUnit !== undefined) {
+      payload.device_class = deviceClassFromUnit;
+    }
   }
 
+  // Fallback to property name-based detection for special cases
   const deviceClass = getDeviceClass(apiDevice, property);
-  if (deviceClass !== undefined) {
+  if (deviceClass !== undefined && !payload.device_class) {
     payload.device_class = deviceClass;
   }
 
   return payload;
 }
 
+function getStateClass(unit: string): string | undefined {
+  if (unit === "kWh" || unit === "Wh") {
+    return "total_increasing";
+  } else if (unit === "W" || unit === "kW") {
+    return "measurement";
+  }
+
+  return undefined;
+}
+
+function getDeviceClassFromUnit(unit: string): string | undefined {
+  // Energy units
+  if (unit === "kWh" || unit === "Wh") {
+    return "energy";
+  }
+  // Power units
+  else if (unit === "W" || unit === "kW") {
+    return "power";
+  }
+  // Temperature units (°C, °F, K)
+  else if (unit === "°C" || unit === "°F" || unit === "K") {
+    return "temperature";
+  }
+  // Volume units
+  else if (unit === "L" || unit === "mL" || unit === "m³") {
+    return "volume";
+  }
+  // Note: % is not mapped here as it can be battery, humidity, or other percentages
+  // These should be determined by property name instead
+
+  return undefined;
+}
+
 function getDeviceClass(
   { deviceType }: ApiDevice,
-  { name }: ApiDeviceProperty,
+  { name, schema }: ApiDeviceProperty,
 ): string | undefined {
   if (deviceType === "temperatureSensor" && name === "value") {
     return "temperature";
@@ -83,27 +122,35 @@ function getDeviceClass(
     return "humidity";
   }
 
-  if (name === "consumedCumulativeElectricEnergy") {
-    return "energy";
+  // Get unit to help with classification
+  const unit = getUnit(schema.data);
+
+  // For % unit, determine device_class based on property name
+  if (unit === "%") {
+    if (name.match(/humidity/i)) {
+      return "humidity";
+    } else if (
+      // ECHONET Lite MRA defined battery-related percentage properties
+      name === "remainingCapacity3"
+    ) {
+      return "battery";
+    }
+    // Other percentages don't get a specific device_class
+    return undefined;
+  }
+
+  // Fallback for properties without units but with clear naming patterns
+  if (name.match(/temperature/i)) {
+    return "temperature";
+  } else if (name.match(/humidity/i)) {
+    return "humidity";
   } else if (
     name === "remainingWater" ||
     name === "tankCapacity" ||
     name.match(/^bathWaterVolume/)
   ) {
     return "volume";
-  } else if (name.match(/temperature/i)) {
-    return "temperature";
-  } else if (name.match(/humidity/i)) {
-    return "humidity";
   } else {
     return undefined;
   }
-}
-
-function getStateClass(unit: string): string | undefined {
-  if (unit === "kWh" || unit === "Wh") {
-    return "total_increasing";
-  }
-
-  return undefined;
 }
