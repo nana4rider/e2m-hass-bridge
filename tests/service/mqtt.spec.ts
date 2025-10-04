@@ -41,7 +41,7 @@ describe("initializeMqttClient", () => {
     await mqtt.close();
 
     // MQTTクライアントの接続確認
-    expect(mqttjs.connectAsync).toHaveBeenCalledWith(
+    expect(mqttjs.connectAsync).toHaveBeenCalledExactlyOnceWith(
       env.MQTT_BROKER,
       expect.objectContaining({
         clientId: expect.stringMatching(
@@ -68,7 +68,7 @@ describe("initializeMqttClient", () => {
     await mqtt.close();
 
     // handleMessageが正しく呼び出されたか確認
-    expect(mockHandleMessage).toHaveBeenCalledWith(
+    expect(mockHandleMessage).toHaveBeenCalledExactlyOnceWith(
       "topic/test",
       "test message",
     );
@@ -134,11 +134,11 @@ describe("initializeMqttClient", () => {
     await mqtt.close();
 
     expect(mockOn).toHaveBeenCalledTimes(2);
-    expect(mockRemoveListener).toHaveBeenCalledWith(
+    expect(mockRemoveListener).toHaveBeenCalledExactlyOnceWith(
       "message",
       expect.any(Function),
     );
-    expect(mockHandleMessage).toHaveBeenCalledWith(
+    expect(mockHandleMessage).toHaveBeenCalledExactlyOnceWith(
       "topic/test",
       "test message",
     );

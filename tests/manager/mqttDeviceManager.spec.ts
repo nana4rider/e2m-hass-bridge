@@ -70,7 +70,7 @@ describe("setupMqttDeviceManager", () => {
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
 
-    expect(mockMqttClient.addSubscribe).toHaveBeenCalledWith(
+    expect(mockMqttClient.addSubscribe).toHaveBeenCalledExactlyOnceWith(
       env.ECHONETLITE2MQTT_BASE_TOPIC,
     );
   });
@@ -102,8 +102,12 @@ describe("setupMqttDeviceManager", () => {
       JSON.stringify(apiDeviceSummaries),
     );
 
-    expect(mockMqttClient.addSubscribe).toHaveBeenCalledWith("topic1");
-    expect(mockMqttClient.addSubscribe).toHaveBeenCalledWith("topic2");
+    expect(mockMqttClient.addSubscribe).toHaveBeenNthCalledWith(
+      1,
+      env.ECHONETLITE2MQTT_BASE_TOPIC,
+    );
+    expect(mockMqttClient.addSubscribe).toHaveBeenNthCalledWith(2, "topic1");
+    expect(mockMqttClient.addSubscribe).toHaveBeenNthCalledWith(3, "topic2");
   });
 
   test("Home Assistantにデバイス情報が送信される", async () => {
@@ -130,7 +134,7 @@ describe("setupMqttDeviceManager", () => {
     );
     await handleMessage("topic1", JSON.stringify(apiDevice));
 
-    expect(mockMqttClient.publish).toHaveBeenCalledWith(
+    expect(mockMqttClient.publish).toHaveBeenCalledExactlyOnceWith(
       `${env.HA_DISCOVERY_PREFIX}/device1/config`,
       JSON.stringify({
         unique_id: "device1_unique",
@@ -149,7 +153,7 @@ describe("setupMqttDeviceManager", () => {
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
 
-    expect(mockMqttClient.publish).toHaveBeenCalledWith(
+    expect(mockMqttClient.publish).toHaveBeenCalledExactlyOnceWith(
       "topic1/properties/request",
       JSON.stringify({ property1: "", property2: "" }),
     );
@@ -175,7 +179,7 @@ describe("setupMqttDeviceManager", () => {
 
     handleMessage("unknown/topic", "unknown");
 
-    expect(logErrorSpy).toHaveBeenCalledWith(
+    expect(logErrorSpy).toHaveBeenCalledExactlyOnceWith(
       "[MQTT] unknown topic: unknown/topic, message: unknown",
     );
   });
@@ -206,7 +210,7 @@ describe("setupMqttDeviceManager", () => {
       JSON.stringify(apiDeviceSummaries),
     );
 
-    expect(mockMqttClient.addSubscribe).not.toHaveBeenCalledWith(
+    expect(mockMqttClient.addSubscribe).not.toHaveBeenCalledExactlyOnceWith(
       "ignoredTopic",
     );
   });
@@ -224,7 +228,7 @@ describe("setupMqttDeviceManager", () => {
     const { stopAutoRequest } = await setupMqttDeviceManager(targetDevices);
     await stopAutoRequest();
 
-    expect(logErrorSpy).toHaveBeenCalledWith(
+    expect(logErrorSpy).toHaveBeenCalledExactlyOnceWith(
       "Failed to auto request",
       expect.any(Error),
     );
