@@ -17,7 +17,7 @@ jobs:
       current_version: ${{ steps.version.outputs.current_version }}
       tag_exists: ${{ steps.tag_check.outputs.tag_exists }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -40,7 +40,7 @@ jobs:
     needs: prepare-release
     if: ${{ needs.prepare-release.outputs.tag_exists == 'false' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Add Tag
         run: |
@@ -57,7 +57,7 @@ jobs:
     needs: prepare-release
     if: ${{ needs.prepare-release.outputs.tag_exists == 'false' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -67,9 +67,9 @@ jobs:
 
       - name: Docker meta
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
-          images: ${{ github.repository }}
+          images: ghcr.io/${{ github.repository }}
           tags: |
             type=raw,value=latest
             type=raw,value=v${{ needs.prepare-release.outputs.current_version }}
@@ -77,8 +77,9 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
