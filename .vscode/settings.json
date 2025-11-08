@@ -15,7 +15,7 @@
     "editor.defaultFormatter": "yzhang.markdown-all-in-one"
   },
   "[dockerfile]": {
-    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+    "editor.defaultFormatter": "ms-azuretools.vscode-containers"
   },
   "[dotenv]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
