@@ -140,7 +140,7 @@ jobs:
         run: |
           gh pr create --base main \
                        --head "${{ steps.commit-and-push.outputs.branch_name }}" \
-                       --title "Update e2m-hass-brige to ${{ steps.get-version.outputs.app_version }}" \
+                       --title "Update e2m-hass-bridge to ${{ steps.get-version.outputs.app_version }}" \
                        --body "This pull request updates the e2m-hass-bridge add-on to version [${{ steps.get-version.outputs.app_version }}](https://github.com/nana4rider/e2m-hass-bridge/releases/tag/${{ steps.get-version.outputs.app_version }})"
         env:
           GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
