@@ -65,7 +65,7 @@ export default async function setupMqttDeviceManager(
         },
       );
 
-      /* c8 ignore start */
+      /* v8 ignore if -- @preserve */
       if (logger.isDebugEnabled()) {
         logger.debug(`[MQTT] pushHassDiscovery: ${relativeTopic}`);
         const separator = "-".repeat(80);
@@ -77,7 +77,6 @@ export default async function setupMqttDeviceManager(
             separator,
         );
       }
-      /* c8 ignore end */
     });
   };
 
