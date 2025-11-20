@@ -1,3 +1,4 @@
+import env from "@/env";
 import {
   getCompositeComponentConfigs,
   getSimpleComponentConfigs,
@@ -12,7 +13,7 @@ import type {
   ApiDevice,
   ApiDeviceProperty,
 } from "echonetlite2mqtt/server/ApiTypes";
-import type { FastifyInstance } from "fastify";
+import type { Writable } from "type-fest";
 import type { Mock } from "vitest";
 
 vi.mock("@/payload/builder", () => {
@@ -28,13 +29,15 @@ vi.mock("@/util/deviceUtil", () => {
   };
 });
 
+const writableEnv: Writable<typeof env> = env;
+
 describe("initializeHttpServer", () => {
-  let server: FastifyInstance;
+  let server: Awaited<ReturnType<typeof initializeHttpServer>>;
   const mockTaskQueueSize = vi.fn();
 
   beforeEach(async () => {
     vi.clearAllMocks();
-
+    writableEnv.PORT = 0;
     server = await initializeHttpServer(
       new Map<string, ApiDevice>([
         ["id", { id: "deviceId", name: "deviceName" } as ApiDevice],
@@ -48,13 +51,10 @@ describe("initializeHttpServer", () => {
   });
 
   test("/health エンドポイントでヘルスステータスが返されること", async () => {
-    const response = await server.inject({
-      method: "GET",
-      url: "/health",
-    });
+    const response = await fetch(`http://localhost:${server.port}/health`);
 
-    expect(response.statusCode).toBe(200);
-    expect(response.json()).toMatchObject({
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
       status: "ok",
       uptime: expect.any(Number) as number,
       timestamp: expect.any(Number) as number,
@@ -91,13 +91,10 @@ describe("initializeHttpServer", () => {
       getAutoRequestProperties as Mock<(apiDevice: ApiDevice) => string[]>
     ).mockReturnValue(["foo", "bar", "baz"]);
 
-    const response = await server.inject({
-      method: "GET",
-      url: "/status",
-    });
+    const response = await fetch(`http://localhost:${server.port}/status`);
 
-    expect(response.statusCode).toBe(200);
-    expect(response.json()).toMatchObject({
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
       devices: [
         {
           id: "deviceId",
@@ -113,5 +110,22 @@ describe("initializeHttpServer", () => {
       ],
       taskQueueSize: 10,
     });
+  });
+
+  test("その他のパスは404を返すこと", async () => {
+    const response = await fetch(`http://localhost:${server.port}/foo`, {
+      method: "POST",
+    });
+
+    expect(response.status).toBe(404);
+  });
+
+  test("サーバーの立ち上げに失敗した場合は例外をスローすること", async () => {
+    // 同じポートで2つ目のHTTPサーバーを立ち上げる
+    writableEnv.PORT = server.port;
+
+    await expect(
+      initializeHttpServer(new Map(), vi.fn()),
+    ).rejects.toThrowError();
   });
 });
