@@ -34,7 +34,7 @@ docker run -d \
   --env-file .env \
   -p 3000:3000 \
   --restart always \
-  nana4rider/e2m-hass-bridge:latest
+  ghcr.io/nana4rider/e2m-hass-bridge:latest
 ```
 
 > [!TIP]
