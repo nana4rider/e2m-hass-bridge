@@ -1,6 +1,12 @@
 import env from "@/env";
+import logger from "@/logger";
 import initializeMqttClient from "@/service/mqtt";
-import type { IPublishPacket, MqttClient, OnMessageCallback } from "mqtt";
+import type {
+  IPublishPacket,
+  MqttClient,
+  OnErrorCallback,
+  OnMessageCallback,
+} from "mqtt";
 import mqttjs from "mqtt";
 import { name as packageName } from "package.json";
 import { setTimeout } from "timers/promises";
@@ -133,7 +139,9 @@ describe("initializeMqttClient", () => {
 
     await mqtt.close();
 
-    expect(mockOn).toHaveBeenCalledTimes(2);
+    expect(
+      mockOn.mock.calls.filter(([event]) => event === "message").length,
+    ).toBe(2);
     expect(mockRemoveListener).toHaveBeenCalledExactlyOnceWith(
       "message",
       expect.any(Function),
@@ -206,5 +214,18 @@ describe("initializeMqttClient", () => {
 
     // MQTTクライアントの終了を確認
     expect(mockEndAsync).toHaveBeenCalledTimes(1);
+  });
+
+  test("接続エラーが発生したとき、エラーログに出力する", async () => {
+    const logErrorSpy = vi.spyOn(logger, "error");
+
+    await initializeMqttClient();
+
+    const onErrorCallback = mockOn.mock.calls.find(
+      ([event]) => event === "error",
+    )?.[1] as OnErrorCallback;
+    onErrorCallback(new Error("test error"));
+
+    expect(logErrorSpy).toHaveBeenCalled();
   });
 });
