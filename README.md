@@ -10,13 +10,13 @@
 
 また特定のプロパティに対し、定期的に[更新要求](https://github.com/banban525/echonetlite2mqtt/blob/master/README.ja.md#2-echonet-lite-%E6%A9%9F%E5%99%A8%E3%81%8C%E8%87%AA%E5%8B%95%E3%81%A7%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3%E3%82%92%E9%80%81%E3%82%89%E3%81%AA%E3%81%84%E3%81%AE%E3%81%8B%E3%82%82)を送信します。
 
-ECHONET Liteの仕様では取得できない設定値(エアコン設定温度の範囲など)は、[deviceConfig.ts](src/deviceConfig.ts)で管理しています。
+ECHONET Liteの仕様では取得できない設定値(エアコン設定温度の範囲など)や更新要求対象となるプロパティは、[deviceConfig.ts](src/deviceConfig.ts)で管理しています。
 
 ## 使い方
 
-### Add-ons
+### Home Assistant App
 
-[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fnana4rider%2Fhome-assistant-addons)
+[![Open your Home Assistant instance and show the add app repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fnana4rider%2Fhome-assistant-addons)
 
 ### Native
 
