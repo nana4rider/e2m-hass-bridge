@@ -26,7 +26,7 @@ export function getDeviceValue<T = string, R extends boolean = false>(
   const value = apiDevice.values[propertyName]?.value as T | undefined;
   if (strict) {
     assert(value !== undefined, `Property "${propertyName}" is not defined.`);
-    return value as R extends true ? T : never;
+    return value;
   }
   return value as R extends true ? never : T | undefined;
 }
@@ -44,7 +44,7 @@ export function getDeviceProperties<R extends boolean = false>(
       property !== undefined,
       `Property "${propertyName}" is not defined.`,
     );
-    return property as R extends true ? ApiDeviceProperty : never;
+    return property;
   }
   return property as R extends true ? never : ApiDeviceProperty | undefined;
 }

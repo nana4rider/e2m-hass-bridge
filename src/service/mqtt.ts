@@ -27,8 +27,7 @@ export default async function initializeMqttClient(): Promise<MqttClient> {
   });
   const taskQueue: (() => Promise<void>)[] = [];
   let currentMessageHandler:
-    | ((topic: string, payload: Buffer) => void)
-    | undefined;
+    ((topic: string, payload: Buffer) => void) | undefined;
 
   const setupMessageHandler = (
     handler: (topic: string, message: string) => void | Promise<void>,
