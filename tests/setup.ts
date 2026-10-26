@@ -1,7 +1,4 @@
-import type { CleanedEnv, CleanOptions } from "envalid";
-import type envalid from "envalid";
-import { accessorMiddleware } from "envalid";
-import { getSanitizedEnv } from "envalid/dist/core";
+import type * as envalid from "envalid";
 
 vi.mock("envalid", async () => {
   const actual = await vi.importActual<typeof envalid>("envalid");
@@ -10,11 +7,10 @@ vi.mock("envalid", async () => {
     cleanEnv: <S>(
       environment: unknown,
       specs: S,
-      options: CleanOptions<S> = {},
-    ): CleanedEnv<S> => {
+      options: envalid.CleanOptions<S> = {},
+    ): envalid.CleanedEnv<S> => {
       // omit Object.freeze
-      const cleaned = getSanitizedEnv(environment, specs, options);
-      return accessorMiddleware(cleaned, environment) as CleanedEnv<S>;
+      return { ...actual.cleanEnv(environment, specs, options) };
     },
   };
 });

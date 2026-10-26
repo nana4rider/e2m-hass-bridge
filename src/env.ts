@@ -1,20 +1,20 @@
-import { cleanEnv, num, port, str, testOnly } from "envalid";
+import { cleanEnv, num, port, str } from "envalid";
 
 const env = cleanEnv(process.env, {
   MQTT_BROKER: str({
     desc: "MQTTブローカー",
     example: "mqtt://localhost",
-    devDefault: testOnly("mqtt://mqtt-broker"),
+    testDefault: "mqtt://mqtt-broker",
   }),
   MQTT_USERNAME: str({
     desc: "MQTTユーザ名",
     default: undefined,
-    devDefault: testOnly("test-user"),
+    testDefault: "test-user",
   }),
   MQTT_PASSWORD: str({
     desc: "MQTTパスワード",
     default: undefined,
-    devDefault: testOnly("test-password"),
+    testDefault: "test-password",
   }),
   MQTT_TASK_INTERVAL: num({ desc: "MQTTタスク実行間隔", default: 100 }),
   LOG_LEVEL: str({ desc: "ログレベル", default: "info" }),
@@ -29,7 +29,7 @@ const env = cleanEnv(process.env, {
   PORT: port({
     desc: "HTTPサーバーのポート",
     default: 3000,
-    devDefault: testOnly(0),
+    testDefault: 0,
   }),
   DESCRIPTION_LANGUAGE: str({
     desc: "言語",
@@ -39,7 +39,7 @@ const env = cleanEnv(process.env, {
   AUTO_REQUEST_INTERVAL: num({
     desc: "定期的に自動リクエストする間隔",
     default: 180000,
-    devDefault: testOnly(100),
+    testDefault: 100,
   }),
 });
 

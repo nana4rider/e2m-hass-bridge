@@ -1,6 +1,6 @@
 {
   "name": "e2m-hass-bridge",
-  "version": "1.15.2",
+  "version": "1.15.3",
   "author": "nana4rider",
   "license": "ISC",
   "main": "dist/index.js",
@@ -25,29 +25,29 @@
     "*.{js,json,md,yml,yaml}": "prettier --check"
   },
   "dependencies": {
-    "envalid": "^8.1.1",
-    "mqtt": "^5.15.0",
+    "envalid": "^9.0.0",
+    "mqtt": "^5.16.1",
     "winston": "^3.19.0"
   },
   "devDependencies": {
     "@esbuild-plugins/tsconfig-paths": "^0.1.2",
     "@eslint/js": "^10.0.1",
-    "@types/node": "^24.10.1",
-    "@vitest/coverage-v8": "^4.0.18",
-    "@vitest/eslint-plugin": "^1.6.9",
-    "echonetlite2mqtt": "github:banban525/echonetlite2mqtt#v3.7.0",
-    "esbuild": "^0.27.3",
-    "eslint": "^10.0.1",
+    "@types/node": "^24.19.2",
+    "@vitest/coverage-v8": "^5.0.5",
+    "@vitest/eslint-plugin": "^1.6.28",
+    "echonetlite2mqtt": "github:banban525/echonetlite2mqtt#v3.7.3",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.13.0",
     "glob": "^13.0.6",
-    "globals": "^17.3.0",
+    "globals": "^17.13.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.8.1",
-    "tsx": "^4.21.0",
-    "type-fest": "^5.4.4",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.0",
+    "lint-staged": "^17.6.0",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "type-fest": "^5.10.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.0",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.0.18"
+    "vitest": "^5.0.5"
   }
 }
