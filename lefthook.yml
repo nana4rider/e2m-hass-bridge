@@ -1,0 +1,18 @@
+pre-commit:
+  commands:
+    eslint:
+      glob: "*.ts"
+      run: npx eslint --max-warnings 0 {staged_files}
+    prettier-ts:
+      glob: "*.ts"
+      run: npx prettier --check {staged_files}
+    prettier-other:
+      glob: "*.{js,json,md,yml,yaml}"
+      run: npx prettier --check {staged_files}
+
+pre-push:
+  commands:
+    type-check:
+      run: npm run type-check
+    test:
+      run: npm test
