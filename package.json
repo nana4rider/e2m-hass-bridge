@@ -15,7 +15,7 @@
     "lint:fix": "eslint --fix && prettier . --write",
     "format:test-json": "prettier 'tests/**/*.json' --write --ignore-path /dev/null",
     "test": "vitest --run",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install || true"
   },
   "lint-staged": {
     "*.ts": [
