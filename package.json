@@ -1,6 +1,6 @@
 {
   "name": "e2m-hass-bridge",
-  "version": "1.15.3",
+  "version": "1.15.4",
   "author": "nana4rider",
   "license": "ISC",
   "main": "dist/index.js",
@@ -47,5 +47,12 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.0",
     "vitest": "^5.0.5"
+  },
+  "allowScripts": {
+    "@esbuild/linux-arm64": true,
+    "@esbuild/linux-x64": true,
+    "@esbuild/win32-x64": true,
+    "esbuild": true,
+    "lefthook": true
   }
 }
